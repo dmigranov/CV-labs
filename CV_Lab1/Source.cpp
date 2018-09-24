@@ -15,9 +15,9 @@ void mouseCallback(int event, int x, int y, int flags, void * userdata)
 	{
 		std::cout << x << " " << y << std::endl;
 		Vec3b bgr = img.at<Vec3b>(y, x);
-		uint blue = bgr[0];
-		uint green = bgr[1];
-		uint red = bgr[2];
+		double blue = bgr[0];
+		double green = bgr[1];
+		double red = bgr[2];
 
 		std::cout << "RGB: " << red << " " << green << " " << blue << std::endl;
 
@@ -25,7 +25,7 @@ void mouseCallback(int event, int x, int y, int flags, void * userdata)
 		double mn = min(min(red, blue), green);
 
 		double value = mx / 256 * 100;
-		double saturation = (1 - mn / mx)*100;
+		double saturation = mx != 0 ? (1 - mn / mx) * 100 : 0;
 		double hue;
 
 		if (mx == red)
