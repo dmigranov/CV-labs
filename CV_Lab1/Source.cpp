@@ -37,14 +37,28 @@ void mouseCallback(int event, int x, int y, int flags, void * userdata)
 
 		std::cout << "HSV: " << hue << " " << saturation << " " << value << std::endl;
 		
+		//LAB
+		//std::cout << "L*a*b*: " << L* << " " << a* << " " << b* << std::endl;
 	}
 	
 }
 
-static void hueFunction(int, void *)
+void hueFunction(int, void *)
 {
 
 }
+
+void saturationFunction(int, void *)
+{
+
+}
+
+void valueFunction(int, void *)
+{
+
+}
+
+//restore original picture
 
 int main(int argc, char **argv)
 {
@@ -55,9 +69,14 @@ int main(int argc, char **argv)
 	img = imread(imgname, CV_LOAD_IMAGE_COLOR);
 	Mat img_original = img.clone();
 	namedWindow(wName, WINDOW_AUTOSIZE);
-	
-	createTrackbar("Hue", wName, &hueSlider, 360, hueFunction);
 
+
+	//namedWindow("HSV", WINDOW_AUTOSIZE);
+
+	createTrackbar("Hue", wName, &hueSlider, 360, hueFunction);
+	createTrackbar("Saturation", wName, &hueSlider, 100, saturationFunction);
+	createTrackbar("Value", wName, &hueSlider, 100, valueFunction);
+	//restore original picture button?
 
 	imshow(wName, img);
 
