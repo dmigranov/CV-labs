@@ -3,14 +3,10 @@
 using namespace cv;
 
 Mat img;
+int hueSlider;
 
 void mouseCallback(int event, int x, int y, int flags, void * userdata)
 {
-	/*if (event == EVENT_LBUTTONDOWN)
-	{
-		int xy[2] = { x, y };
-		userdata = xy;
-	}*/
 	if (event == EVENT_LBUTTONDOWN)
 	{
 		std::cout << x << " " << y << std::endl;
@@ -45,7 +41,10 @@ void mouseCallback(int event, int x, int y, int flags, void * userdata)
 	
 }
 
+static void hueFunction(int, void *)
+{
 
+}
 
 int main(int argc, char **argv)
 {
@@ -54,7 +53,11 @@ int main(int argc, char **argv)
 	const char * imgname = (argc >= 2 ? argv[1] : "image.jpg");
 
 	img = imread(imgname, CV_LOAD_IMAGE_COLOR);
+	Mat img_original = img.clone();
 	namedWindow(wName, WINDOW_AUTOSIZE);
+	
+	createTrackbar("Hue", wName, &hueSlider, 360, hueFunction);
+
 
 	imshow(wName, img);
 
