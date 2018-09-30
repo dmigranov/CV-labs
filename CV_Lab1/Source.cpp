@@ -6,11 +6,12 @@
 
 using namespace cv;
 
+Mat img_original;
 Mat img;
 
-int hueSlider = 180;
-int saturationSlider = 50;
-int valueSlider = 50;
+int hueSlider = 180, hsprev = 180;
+int saturationSlider = 50, ssprev = 50;
+int valueSlider = 50, vsprev = 50;
 
 
 
@@ -90,13 +91,13 @@ void hueFunction(int, void *)
 	
 	cvtColor(img, hsvimg, COLOR_BGR2HSV);
 	split(hsvimg, hsvplains);
-	hsvplains[0] += hueSlider - 180;
+	hsvplains[0] += hueSlider - hsprev;
 
 	merge(hsvplains, hsvimg);
 	Mat newimg;
 	cvtColor(hsvimg, img, COLOR_HSV2BGR);
+	hsprev = hueSlider;
 	imshow(wName, img);
-	
 }
 
 void saturationFunction(int, void *)
@@ -106,11 +107,12 @@ void saturationFunction(int, void *)
 
 	cvtColor(img, hsvimg, COLOR_BGR2HSV);
 	split(hsvimg, hsvplains);
-	hsvplains[1] += 2*saturationSlider - 100;
+	hsvplains[1] += 2*(saturationSlider - ssprev);
 
 	merge(hsvplains, hsvimg);
 	Mat newimg; //
 	cvtColor(hsvimg, img, COLOR_HSV2BGR);
+	ssprev = saturationSlider;
 	imshow(wName, img);
 }
 
@@ -121,15 +123,31 @@ void valueFunction(int, void *)
 
 	cvtColor(img, hsvimg, COLOR_BGR2HSV);
 	split(hsvimg, hsvplains);
-	hsvplains[2] += 2 * valueSlider - 100;
+	hsvplains[2] += 2 * (valueSlider - vsprev); //коэффициенты?
 
 	merge(hsvplains, hsvimg);
 	Mat newimg;
 	cvtColor(hsvimg, img, COLOR_HSV2BGR);
+	vsprev = valueSlider;
 	imshow(wName, img);
+	
 }
 
 //restore original picture
+
+void redraw()
+{
+	img = img_original.clone();
+	hsprev = 180;
+	ssprev = 50;
+	vsprev = 50;
+	setTrackbarPos("Hue", wName, 180);
+	setTrackbarPos("Saturation", wName, 50);
+	setTrackbarPos("Value", wName, 50);
+
+	
+	imshow(wName, img);
+}
 
 int main(int argc, char **argv)
 {
@@ -138,7 +156,7 @@ int main(int argc, char **argv)
 	const char * imgname = (argc >= 2 ? argv[1] : "image.jpg");
 
 	img = imread(imgname, CV_LOAD_IMAGE_COLOR);
-	Mat img_original = img.clone();
+	img_original = img.clone();
 	namedWindow(wName, WINDOW_AUTOSIZE);
 
 
@@ -147,21 +165,21 @@ int main(int argc, char **argv)
 	createTrackbar("Hue", wName, &hueSlider, 360, hueFunction);
 	createTrackbar("Saturation", wName, &saturationSlider, 100, saturationFunction);
 	createTrackbar("Value", wName, &valueSlider, 100, valueFunction);
-	//restore original picture button?
 	
 	
-	//h;
-
-
-
-
 
 	imshow(wName, img);
 
 	setMouseCallback(wName, mouseCallback, NULL);
 
-
-	waitKey(0);
+	while(1)
+	{
+		int k = waitKey(20);
+		if (k == 'r')
+			redraw();
+		else if (k == '0')
+			break;
+	}
 
 	return 0;
 
