@@ -6,8 +6,18 @@
 
 using namespace cv;
 
-Mat img;
-int hueSlider;
+Mat img, r, g, b;
+
+int hueSlider = 180;
+int saturationSlider = 50;
+int valueSlider = 50;
+
+Mat h;
+Mat s;
+Mat v;
+
+
+const char * wName = "Lab1";
 
 
 double labfunction(double x)
@@ -78,7 +88,10 @@ void mouseCallback(int event, int x, int y, int flags, void * userdata)
 
 void hueFunction(int, void *)
 {
-
+	
+	//cvtColor(img, hsvimg, COLOR_BGR2HSV);
+	//hsvimg += Vec3d(0, 0, 0);
+	
 }
 
 void saturationFunction(int, void *)
@@ -88,14 +101,22 @@ void saturationFunction(int, void *)
 
 void valueFunction(int, void *)
 {
+	
+	
 
+	Mat newV = v + Vec3d(0, 50 - valueSlider, 0);
+	//value % 100;
+	std::vector<Mat> hsv(h, s, v);
+	Mat hsvimg;
+	//merge(bgr, hsvimg);
+	imshow(wName, hsvimg);
 }
 
 //restore original picture
 
 int main(int argc, char **argv)
 {
-	const char * wName = "Lab1";
+	
 
 	const char * imgname = (argc >= 2 ? argv[1] : "image.jpg");
 
@@ -107,9 +128,29 @@ int main(int argc, char **argv)
 	//namedWindow("HSV", WINDOW_AUTOSIZE);
 
 	createTrackbar("Hue", wName, &hueSlider, 360, hueFunction);
-	createTrackbar("Saturation", wName, &hueSlider, 100, saturationFunction);
-	createTrackbar("Value", wName, &hueSlider, 100, valueFunction);
+	createTrackbar("Saturation", wName, &saturationSlider, 100, saturationFunction);
+	createTrackbar("Value", wName, &valueSlider, 100, valueFunction);
 	//restore original picture button?
+	std::vector<Mat> bgr;
+	split(img, bgr);
+	Mat r = bgr[2];
+	Mat b = bgr[0];
+	Mat g = bgr[1];
+
+	Mat mx, mn;
+
+	cv::max(r, b, mx);
+	cv::max(mx, g, mx);
+
+	cv::min(r, b, mn);
+	cv::min(mx, g, mn);
+	v = mx / 255 * 100;
+	s = (1 - mn / mx) * 100;
+	//h;
+
+
+
+
 
 	imshow(wName, img);
 
