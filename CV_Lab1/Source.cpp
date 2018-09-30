@@ -6,15 +6,12 @@
 
 using namespace cv;
 
-Mat img, r, g, b;
+Mat img;
 
 int hueSlider = 180;
 int saturationSlider = 50;
 int valueSlider = 50;
 
-Mat h;
-Mat s;
-Mat v;
 
 
 const char * wName = "Lab1";
@@ -88,28 +85,48 @@ void mouseCallback(int event, int x, int y, int flags, void * userdata)
 
 void hueFunction(int, void *)
 {
+	Mat hsvimg;
+	std::vector<Mat> hsvplains;
 	
-	//cvtColor(img, hsvimg, COLOR_BGR2HSV);
-	//hsvimg += Vec3d(0, 0, 0);
+	cvtColor(img, hsvimg, COLOR_BGR2HSV);
+	split(hsvimg, hsvplains);
+	hsvplains[0] += hueSlider - 180;
+
+	merge(hsvplains, hsvimg);
+	Mat newimg;
+	cvtColor(hsvimg, img, COLOR_HSV2BGR);
+	imshow(wName, img);
 	
 }
 
 void saturationFunction(int, void *)
 {
+	Mat hsvimg;
+	std::vector<Mat> hsvplains;
 
+	cvtColor(img, hsvimg, COLOR_BGR2HSV);
+	split(hsvimg, hsvplains);
+	hsvplains[1] += 2*saturationSlider - 100;
+
+	merge(hsvplains, hsvimg);
+	Mat newimg; //
+	cvtColor(hsvimg, img, COLOR_HSV2BGR);
+	imshow(wName, img);
 }
 
 void valueFunction(int, void *)
 {
-	
-	
-
-	Mat newV = v + Vec3d(0, 50 - valueSlider, 0);
-	//value % 100;
-	std::vector<Mat> hsv(h, s, v);
 	Mat hsvimg;
-	//merge(bgr, hsvimg);
-	imshow(wName, hsvimg);
+	std::vector<Mat> hsvplains;
+
+	cvtColor(img, hsvimg, COLOR_BGR2HSV);
+	split(hsvimg, hsvplains);
+	hsvplains[2] += 2 * valueSlider - 100;
+
+	merge(hsvplains, hsvimg);
+	Mat newimg;
+	cvtColor(hsvimg, img, COLOR_HSV2BGR);
+	imshow(wName, img);
 }
 
 //restore original picture
@@ -131,21 +148,8 @@ int main(int argc, char **argv)
 	createTrackbar("Saturation", wName, &saturationSlider, 100, saturationFunction);
 	createTrackbar("Value", wName, &valueSlider, 100, valueFunction);
 	//restore original picture button?
-	std::vector<Mat> bgr;
-	split(img, bgr);
-	Mat r = bgr[2];
-	Mat b = bgr[0];
-	Mat g = bgr[1];
-
-	Mat mx, mn;
-
-	cv::max(r, b, mx);
-	cv::max(mx, g, mx);
-
-	cv::min(r, b, mn);
-	cv::min(mx, g, mn);
-	v = mx / 255 * 100;
-	s = (1 - mn / mx) * 100;
+	
+	
 	//h;
 
 
