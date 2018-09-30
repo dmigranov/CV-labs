@@ -1,8 +1,12 @@
 #include <opencv2/opencv.hpp>
 
+/*#define Xn 0.9504
+#define Yn 1.0
+#define Zn 1.0888 //если не умножать rgb/255 на 100*/
 #define Xn 95.04
 #define Yn 100.0
 #define Zn 108.88
+
 
 using namespace cv;
 
@@ -16,6 +20,16 @@ int valueSlider = 50, vsprev = 50;
 
 
 const char * wName = "Lab1";
+
+void L_histogram()
+{
+	Mat labimg, hist;
+	cvtColor(img, labimg, COLOR_BGR2Lab);
+	//int histSize = ;
+	float range[] = {34.3};
+
+	//calcHist(labimg, 1, 0, Mat(), hist, 1,)
+}
 
 
 double labfunction(double x)
@@ -66,11 +80,10 @@ void mouseCallback(int event, int x, int y, int flags, void * userdata)
 		Mat xyzmatrix = (Mat_<double>(3, 3) << 2.768892, 1.751748, 1.13016, 1.0, 4.5907, 0.0601, 0.0, 0.056508, 5.594292);
 		
 		Vec3d rgb(red, green, blue);
-		rgb /= 255; //rgb *= 100; //right??? //???????????
-		std::cout << xyzmatrix << std::endl;
+		rgb /= 255; rgb *= 100; //right??? //???????????
 		Mat xyz = xyzmatrix * Mat(rgb);
 
-		//std::cout << xyz << std::endl;
+		std::cout << xyz << std::endl;
 		//std::cout << xyz.at<double>(2, 0) << std::endl;
 		double x = xyz.at<double>(0, 0);
 		double y = xyz.at<double>(1, 0);
@@ -177,8 +190,11 @@ int main(int argc, char **argv)
 		int k = waitKey(20);
 		if (k == 'r')
 			redraw();
+		else if (k == 'h')
+			L_histogram();
 		else if (k == '0')
 			break;
+
 	}
 
 	return 0;
