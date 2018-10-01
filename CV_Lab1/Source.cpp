@@ -1,11 +1,11 @@
 #include <opencv2/opencv.hpp>
 
-/*#define Xn 0.9504
+#define Xn 0.9504
 #define Yn 1.0
-#define Zn 1.0888 //если не умножать rgb/255 на 100*/
-#define Xn 95.04
+#define Zn 1.0888 //если не умножать rgb/255 на 100
+/*#define Xn 95.04
 #define Yn 100.0
-#define Zn 108.88
+#define Zn 108.88*/
 
 
 using namespace cv;
@@ -77,22 +77,30 @@ void mouseCallback(int event, int x, int y, int flags, void * userdata)
 		std::cout << "HSV: " << hue << " " << saturation << " " << value << std::endl;
 		
 		//XYZ
-		Mat xyzmatrix = (Mat_<double>(3, 3) << 2.768892, 1.751748, 1.13016, 1.0, 4.5907, 0.0601, 0.0, 0.056508, 5.594292);
-		
-		Vec3d rgb(red, green, blue);
-		rgb /= 255; rgb *= 100; //right??? //???????????
-		Mat xyz = xyzmatrix * Mat(rgb);
 
-		std::cout << xyz << std::endl;
+		Mat xyzmatrix = (Mat_<double>(3, 3) << 2.768892, 1.751748, 1.13016, 1.0, 4.5907, 0.0601, 0.0, 0.056508, 5.594292);
+		Vec3d rgb(red, green, blue);
+		rgb /= 255;
+		//std::cout << rgb << std::endl;
+		Mat xyz = xyzmatrix * Mat(rgb);
+		xyz /= 5.6508;
+		//проверить правильность перевода в X Y Z
 		//std::cout << xyz.at<double>(2, 0) << std::endl;
 		double x = xyz.at<double>(0, 0);
 		double y = xyz.at<double>(1, 0);
 		double z = xyz.at<double>(2, 0);
+		/*double r = red / 255;
+		double g = green / 255;
+		double b = blue / 255;
+		double x = 2.768892 * r + 1.751748 * g + 1.13016 * b;
+		double y = r + 4.5907 * g + 0.0601 * b;
+		double z = 0.056508 * g + 5.594292 * b;*/
+		std::cout << xyz << std::endl;
 		//LAB
 		double L = 116 * labfunction(y / Yn) - 16; //rgb[1] = y
-		double a = 500 * (labfunction(x / Xn) - labfunction(y / Yn));
-		double b = 200 * (labfunction(y / Yn) - labfunction(z / Zn));
-		std::cout << "L*a*b*: " << L << " " << a << " " << b << std::endl;
+		double a_ast = 500 * (labfunction(x / Xn) - labfunction(y / Yn));
+		double b_ast = 200 * (labfunction(y / Yn) - labfunction(z / Zn));
+		std::cout << "L*a*b*: " << L << " " << a_ast << " " << b_ast << std::endl;
 	}
 	
 }
