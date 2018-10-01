@@ -24,13 +24,24 @@ const char * wName = "Lab1";
 void L_histogram()
 {
 	Mat labimg, hist;
+
 	cvtColor(img, labimg, COLOR_BGR2Lab);
+	std::vector<Mat> labv;
+	split(labimg, labv);
 	//int histSize = ;
-	float range[] = {34.3};
+	float range[] = {0, 100};
+	const float * histRange = { range };
+	int histSize = 100;
+	int chanels[] = { 0 };
 
-	//calcHist(labimg, 1, 0, Mat(), hist, 1,)
+	//calcHist(&labimg, 1, chanels, Mat(), hist, 1, &histSize, &range, true, false);
+	calcHist(&labv[0], 1, 0, Mat(), hist, 1, &histSize, &histRange, true, false);
+	//ВЫВОД 
+
+
+
+	imshow("Histogram", hist);
 }
-
 
 double labfunction(double x)
 {
@@ -81,28 +92,19 @@ void mouseCallback(int event, int x, int y, int flags, void * userdata)
 		Mat xyzmatrix = (Mat_<double>(3, 3) << 2.768892, 1.751748, 1.13016, 1.0, 4.5907, 0.0601, 0.0, 0.056508, 5.594292);
 		Vec3d rgb(red, green, blue);
 		rgb /= 255;
-		//std::cout << rgb << std::endl;
 		Mat xyz = xyzmatrix * Mat(rgb);
 		xyz /= 5.6508;
-		//проверить правильность перевода в X Y Z
-		//std::cout << xyz.at<double>(2, 0) << std::endl;
+		//проверить правильность перевода в X Y Z!!!
 		double x = xyz.at<double>(0, 0);
 		double y = xyz.at<double>(1, 0);
 		double z = xyz.at<double>(2, 0);
-		/*double r = red / 255;
-		double g = green / 255;
-		double b = blue / 255;
-		double x = 2.768892 * r + 1.751748 * g + 1.13016 * b;
-		double y = r + 4.5907 * g + 0.0601 * b;
-		double z = 0.056508 * g + 5.594292 * b;*/
 		std::cout << xyz << std::endl;
 		//LAB
-		double L = 116 * labfunction(y / Yn) - 16; //rgb[1] = y
+		double L = 116 * labfunction(y / Yn) - 16; 
 		double a_ast = 500 * (labfunction(x / Xn) - labfunction(y / Yn));
 		double b_ast = 200 * (labfunction(y / Yn) - labfunction(z / Zn));
 		std::cout << "L*a*b*: " << L << " " << a_ast << " " << b_ast << std::endl;
 	}
-	
 }
 
 void hueFunction(int, void *)
@@ -119,7 +121,7 @@ void hueFunction(int, void *)
 	cvtColor(hsvimg, img, COLOR_HSV2BGR);
 	hsprev = hueSlider;
 	imshow(wName, img);
-}
+} //проверить пределы
 
 void saturationFunction(int, void *)
 {
@@ -135,7 +137,7 @@ void saturationFunction(int, void *)
 	cvtColor(hsvimg, img, COLOR_HSV2BGR);
 	ssprev = saturationSlider;
 	imshow(wName, img);
-}
+}//проверить пределы
 
 void valueFunction(int, void *)
 {
@@ -152,7 +154,7 @@ void valueFunction(int, void *)
 	vsprev = valueSlider;
 	imshow(wName, img);
 	
-}
+}//проверить пределы
 
 //restore original picture
 
