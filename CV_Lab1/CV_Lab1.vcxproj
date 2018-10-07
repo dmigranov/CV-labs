@@ -137,6 +137,9 @@
     <Image Include="image.jpg" />
     <Image Include="image2.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="filtration.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
