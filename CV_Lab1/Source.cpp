@@ -1,5 +1,6 @@
 #include <opencv2/opencv.hpp>
 #include "filtration.h"
+#include "lab.h"
 
 #define Xn 0.9504
 #define Yn 1.0
@@ -100,15 +101,19 @@ void mouseCallback(int event, int x, int y, int flags, void * userdata)
 		
 		//XYZ
 
-		Mat xyzmatrix = (Mat_<double>(3, 3) << 2.768892, 1.751748, 1.13016, 1.0, 4.5907, 0.0601, 0.0, 0.056508, 5.594292);
-		Vec3d rgb(red, green, blue);
-		rgb /= 255;
-		Mat xyz = xyzmatrix * Mat(rgb);
-		xyz /= 5.6508;
+		//Mat xyzmatrix = (Mat_<double>(3, 3) << 2.768892, 1.751748, 1.13016, 1.0, 4.5907, 0.0601, 0.0, 0.056508, 5.594292);
+		//Vec3d rgb(red, green, blue);
+		//rgb /= 255;
+		//Mat xyz = xyzmatrix * Mat(rgb);
+		//xyz /= 5.6508;
 		//проверить правильность перевода в X Y Z!!!
-		double x = xyz.at<double>(0, 0);
+		/*double x = xyz.at<double>(0, 0);
 		double y = xyz.at<double>(1, 0);
-		double z = xyz.at<double>(2, 0);
+		double z = xyz.at<double>(2, 0);*/
+		Vec3d xyz = getXYZ(red, green, blue);
+		double x = xyz[0];
+		double y = xyz[1];
+		double z = xyz[2];
 		std::cout << xyz << std::endl;
 		//LAB
 		double L = 116 * labfunction(y / Yn) - 16; 

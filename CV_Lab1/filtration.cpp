@@ -46,3 +46,9 @@ void gauss_filter(Mat orig, double sigma)
 	//get submatrix
 
 }
+
+
+void sobel_filter(Mat orig)
+{
+
+}
