@@ -8,3 +8,5 @@
 using namespace cv;
 
 void gauss_filter(Mat orig, double sigma);
+
+void sobel_filter(Mat orig);

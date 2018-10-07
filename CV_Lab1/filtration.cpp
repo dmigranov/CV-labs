@@ -36,7 +36,7 @@ void gauss_filter(Mat orig, double sigma)
 					if (i + x >= 0 && i + x < orig.rows && j + y >= 0 && j + y < orig.cols)
 					{
 						//for(int k = 0; k < 3; k++)
-						newimg.at<Vec3b>(i + x, j + y) += orig.at<Vec3b>(i + x, j + y) * gauss.at<double>(x + 2, y + 2);
+						newimg.at<Vec3b>(i, j) += orig.at<Vec3b>(i + x, j + y) * gauss.at<double>(x + 2, y + 2);
 					}
 				}
 		}
@@ -50,5 +50,45 @@ void gauss_filter(Mat orig, double sigma)
 
 void sobel_filter(Mat orig)
 {
+	Mat Gx = (Mat_<int>(3, 3) << -1, 0, 1, -2, 0, 2, -1, 0, 1);
+	Mat Gy = (Mat_<int>(3, 3) << -1, -2, -1, 0, 0, 0, 1, 2, 1);
+	
+
+	Mat labimg;
+
+	cvtColor(orig, labimg, COLOR_BGR2Lab);
+	std::vector<Mat> labv;
+	split(labimg, labv);
+	Mat L = labv[0];
+
+	double gxv, gyv;
+	Mat newimg(orig.rows, orig.cols, L.type());
+
+	for (int i = 0; i < orig.rows; i++)
+		for (int j = 0; j < orig.cols; j++)
+		{
+			gxv = 0;
+			gyv = 0;
+			for (int x = -1; x < 2; x++)
+				for (int y = -1; y < 2; y++)
+				{
+					//std::cout << i + x << " " << j + y << std::endl;
+					if (i + x >= 0 && i + x < orig.rows && j + y >= 0 && j + y < orig.cols)
+					{
+						gxv +=
+							L.at<char>(i + x, j + y) * Gx.at<int>(x + 1, y + 1);
+						gyv += 
+							L.at<char>(i + x, j + y) * Gy.at<int>(x + 1, y + 1);
+					}
+				}
+			newimg.at<char>(i, j) = sqrt(gxv * gxv + gyv * gyv);
+		}
+
+		
+
+	//newimg.at<char>(0, 0) = 0;
+
+
+	imshow("Sobel", newimg);
 
 }

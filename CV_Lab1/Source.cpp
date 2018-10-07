@@ -197,6 +197,8 @@ int main(int argc, char **argv)
 			L_histogram();
 		else if (k == 'g')
 			gauss_filter(img, 1.0);
+		else if (k == 's')
+			sobel_filter(img);
 		else if (k == '0')
 			break;
 
