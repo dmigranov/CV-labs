@@ -11,3 +11,20 @@ Vec3d getXYZ(double red, double green, double blue)
 	Vec3d xyzv{ xyz.at<double>(0, 0), xyz.at<double>(1, 0), xyz.at<double>(2, 0) };
 	return xyzv;
 }
+
+double labfunction(double x)
+{
+	if (x > pow(6.0 / 29, 3))
+	{
+		return pow(x, 1.0 / 3);
+	}
+	else
+	{
+		return pow(29.0 / 6, 2) / 3 + 4.0 / 29;
+	}
+}
+
+double getL(double y)
+{
+	return (116.0 * labfunction(y / Yn) - 16);
+}

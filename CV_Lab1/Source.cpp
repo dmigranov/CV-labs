@@ -2,9 +2,7 @@
 #include "filtration.h"
 #include "lab.h"
 
-#define Xn 0.9504
-#define Yn 1.0
-#define Zn 1.0888 //если не умножать rgb/255 на 100
+
 /*#define Xn 95.04
 #define Yn 100.0
 #define Zn 108.88*/
@@ -55,17 +53,6 @@ void L_histogram()
 	imshow("Histogram", histImg);
 }
 
-double labfunction(double x)
-{
-	if (x > pow(6.0 / 29, 3))
-	{
-		return pow(x, 1.0 / 3);
-	}
-	else
-	{
-		return pow(29.0 / 6, 2) / 3 + 4.0 / 29;
-	}
-}
 
 void mouseCallback(int event, int x, int y, int flags, void * userdata)
 {
@@ -99,24 +86,14 @@ void mouseCallback(int event, int x, int y, int flags, void * userdata)
 
 		std::cout << "HSV: " << hue << " " << saturation << " " << value << std::endl;
 		
-		//XYZ
-
-		//Mat xyzmatrix = (Mat_<double>(3, 3) << 2.768892, 1.751748, 1.13016, 1.0, 4.5907, 0.0601, 0.0, 0.056508, 5.594292);
-		//Vec3d rgb(red, green, blue);
-		//rgb /= 255;
-		//Mat xyz = xyzmatrix * Mat(rgb);
-		//xyz /= 5.6508;
-		//проверить правильность перевода в X Y Z!!!
-		/*double x = xyz.at<double>(0, 0);
-		double y = xyz.at<double>(1, 0);
-		double z = xyz.at<double>(2, 0);*/
+		
 		Vec3d xyz = getXYZ(red, green, blue);
 		double x = xyz[0];
 		double y = xyz[1];
 		double z = xyz[2];
 		std::cout << xyz << std::endl;
 		//LAB
-		double L = 116 * labfunction(y / Yn) - 16; 
+		double L = (116.0 * labfunction(y / Yn) - 16);
 		double a_ast = 500 * (labfunction(x / Xn) - labfunction(y / Yn));
 		double b_ast = 200 * (labfunction(y / Yn) - labfunction(z / Zn));
 		std::cout << "L*a*b*: " << L << " " << a_ast << " " << b_ast << std::endl;
