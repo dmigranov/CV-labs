@@ -15,8 +15,8 @@ Mat img_original;
 Mat img;
 
 int hueSlider = 180, hsprev = 180;
-int saturationSlider = 50, ssprev = 50;
-int valueSlider = 50, vsprev = 50;
+int saturationSlider = 100, ssprev = 100;
+int valueSlider = 100, vsprev = 200;
 
 
 
@@ -32,16 +32,26 @@ void L_histogram()
 	//int histSize = ;
 	float range[] = {0, 100};
 	const float * histRange = { range };
-	int histSize = 100;
+	int histSize = 100; //number of bins
 	int chanels[] = { 0 };
 
 	//calcHist(&labimg, 1, chanels, Mat(), hist, 1, &histSize, &range, true, false);
 	calcHist(&labv[0], 1, 0, Mat(), hist, 1, &histSize, &histRange, true, false);
 	//ÂÛÂÎÄ 
 
+	int hist_w = 200, hist_h = 400;
+	int bin_w = hist_w / histSize;
+	Mat histImg(hist_h, hist_w, CV_32FC1);
+	normalize(hist, hist, 0, histImg.rows, NORM_MINMAX, -1, Mat());
 
+	for (int i = 1; i < histSize; i++)
+	{
+		line(histImg, Point(bin_w*(i - 1), hist_h - cvRound(hist.at<float>(i - 1))),
+			Point(bin_w*(i), hist_h - cvRound(hist.at<float>(i))),
+			Scalar(100, 0, 0), 2, 8, 0);
+	}
 
-	imshow("Histogram", hist);
+	imshow("Histogram", histImg);
 }
 
 double labfunction(double x)
@@ -163,11 +173,11 @@ void redraw()
 {
 	img = img_original.clone();
 	hsprev = 180;
-	ssprev = 50;
-	vsprev = 50;
+	ssprev = 100;
+	vsprev = 100;
 	setTrackbarPos("Hue", wName, 180);
-	setTrackbarPos("Saturation", wName, 50);
-	setTrackbarPos("Value", wName, 50);
+	setTrackbarPos("Saturation", wName, 100);
+	setTrackbarPos("Value", wName, 100);
 
 	
 	imshow(wName, img);
@@ -187,8 +197,8 @@ int main(int argc, char **argv)
 	//namedWindow("HSV", WINDOW_AUTOSIZE);
 
 	createTrackbar("Hue", wName, &hueSlider, 360, hueFunction);
-	createTrackbar("Saturation", wName, &saturationSlider, 100, saturationFunction);
-	createTrackbar("Value", wName, &valueSlider, 100, valueFunction);
+	createTrackbar("Saturation", wName, &saturationSlider, 200, saturationFunction);
+	createTrackbar("Value", wName, &valueSlider, 200, valueFunction);
 	
 	
 
