@@ -35,9 +35,8 @@ void gauss_filter(Mat orig, double sigma)
 					//std::cout << i + x << " " << j + y << std::endl;
 					if (i + x >= 0 && i + x < orig.rows && j + y >= 0 && j + y < orig.cols)
 					{
-						Vec3b bgr = orig.at<Vec3b>(i + x, j + y);
 						//for(int k = 0; k < 3; k++)
-						newimg.at<Vec3b>(i + x, j + y) += bgr * gauss.at<double>(x + 2, y + 2);
+						newimg.at<Vec3b>(i + x, j + y) += orig.at<Vec3b>(i + x, j + y) * gauss.at<double>(x + 2, y + 2);
 					}
 				}
 		}
