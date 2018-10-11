@@ -9,11 +9,13 @@
 
 
 
-void gauss_filter(Mat orig, double sigma)
+Mat gauss_filter(Mat original, double sigma)
 {
 
 	//5x5
 
+	Mat orig;
+	original.convertTo(orig, CV_64FC3);
 	Mat gauss(5, 5, CV_64FC1);
 	Mat newimg(orig.rows, orig.cols, orig.type());
 	newimg = 0;
@@ -32,18 +34,19 @@ void gauss_filter(Mat orig, double sigma)
 			for (int x = -2; x < 3; x++)
 				for (int y = -2; y < 3; y++)
 				{
-					//std::cout << i + x << " " << j + y << std::endl;
+					
 					if (i + x >= 0 && i + x < orig.rows && j + y >= 0 && j + y < orig.cols)
 					{
 						//for(int k = 0; k < 3; k++)
-						newimg.at<Vec3b>(i, j) += orig.at<Vec3b>(i + x, j + y) * gauss.at<double>(x + 2, y + 2);
+						newimg.at<Vec3d>(i, j) += orig.at<Vec3d>(i + x, j + y) * gauss.at<double>(x + 2, y + 2);
 					}
 				}
 		}
 	//std::cout << orig.at<Vec3b>(0,0) << std::endl;
-
-	imshow("Gauss", newimg);
+	newimg.convertTo(newimg, original.type());
+	//imshow("Gauss", newimg);
 	//get submatrix
+	return newimg;
 
 }
 
@@ -84,11 +87,14 @@ void sobel_filter(Mat orig)
 			newimg.at<char>(i, j) = sqrt(gxv * gxv + gyv * gyv);
 		}
 
-		
-
-	//newimg.at<char>(0, 0) = 0;
 
 
-	imshow("Sobel", newimg);
+	imshow("Sobel filter", newimg);
+
+}
+
+void canny(Mat orig)
+{
+
 
 }

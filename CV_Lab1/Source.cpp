@@ -107,7 +107,7 @@ void hueFunction(int, void *)
 	
 	cvtColor(img, hsvimg, COLOR_BGR2HSV);
 	split(hsvimg, hsvplains);
-	hsvplains[0] += hueSlider - hsprev;
+	hsvplains[0] += (hueSlider - hsprev);
 
 	merge(hsvplains, hsvimg);
 	Mat newimg;
@@ -139,7 +139,7 @@ void valueFunction(int, void *)
 
 	cvtColor(img, hsvimg, COLOR_BGR2HSV);
 	split(hsvimg, hsvplains);
-	hsvplains[2] += 2 * (valueSlider - vsprev); //коэффициенты?
+	hsvplains[2] +=  2*(valueSlider - vsprev); //коэффициенты?
 
 	merge(hsvplains, hsvimg);
 	Mat newimg;
@@ -196,9 +196,12 @@ int main(int argc, char **argv)
 		else if (k == 'h')
 			L_histogram();
 		else if (k == 'g')
-			gauss_filter(img, 1.0);
+		{
+			img = gauss_filter(img, 1.0);
+		}
 		else if (k == 's')
 			sobel_filter(img);
+
 		else if (k == '0')
 			break;
 
