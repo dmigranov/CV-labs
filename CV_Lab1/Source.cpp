@@ -198,6 +198,8 @@ int main(int argc, char **argv)
 		else if (k == 'g')
 		{
 			img = gauss_filter(img, 1.0);
+			imshow("Gauss", img);
+			std::cout << "Gauss completed" << std::endl;
 		}
 		else if (k == 's')
 			sobel_filter(img);
