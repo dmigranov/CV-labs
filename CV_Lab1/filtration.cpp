@@ -53,7 +53,7 @@ Mat gauss_filter(Mat original, double sigma)
 }
 
 
-void sobel_filter(Mat orig) //Mat
+Mat sobel_filter(Mat orig) //Mat
 {
 	Mat Gx = (Mat_<int>(3, 3) << -1, 0, 1, -2, 0, 2, -1, 0, 1);
 	Mat Gy = (Mat_<int>(3, 3) << -1, -2, -1, 0, 0, 0, 1, 2, 1);
@@ -89,10 +89,10 @@ void sobel_filter(Mat orig) //Mat
 			newimg.at<char>(i, j) = sqrt(gxv * gxv + gyv * gyv);
 		}
 
-
+	return newimg;
 
 	//imshow("Sobel filter", gauss_filter(newimg, 1));
-	imshow("Sobel filter", newimg);
+	//imshow("Sobel filter", newimg);
 }
 
 void canny(Mat orig)

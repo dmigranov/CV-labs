@@ -9,4 +9,4 @@ using namespace cv;
 
 Mat gauss_filter(Mat orig, double sigma);
 
-void sobel_filter(Mat orig);
+Mat sobel_filter(Mat orig); //right now it returns singe-channel matrix. Should it be converted to three-channel one?

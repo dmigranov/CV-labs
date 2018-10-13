@@ -181,7 +181,7 @@ int main(int argc, char **argv)
 	createTrackbar("Hue", wName, &hueSlider, 360, hueFunction);
 	createTrackbar("Saturation", wName, &saturationSlider, 200, saturationFunction);
 	createTrackbar("Value", wName, &valueSlider, 200, valueFunction);
-	
+	createTrackbar("Sigma", wName, &sigmaSlider, 100, sigmaFUnction);
 	
 
 	imshow(wName, img);
@@ -197,13 +197,15 @@ int main(int argc, char **argv)
 			L_histogram();
 		else if (k == 'g')
 		{
-			img = gauss_filter(img, 1.0);
-			imshow("Gauss", img);
-			std::cout << "Gauss completed" << std::endl;
+			//img = gauss_filter(img, 1.0); //sigma trackbar
+			imshow("Gauss", gauss_filter(img, 1.0));
+			//std::cout << "Gauss completed" << std::endl;
 		}
 		else if (k == 's')
-			sobel_filter(img);
-
+		{
+			
+			imshow("Sobel", sobel_filter((gauss_filter(img, 10))));
+		}
 		else if (k == '0')
 			break;
 
