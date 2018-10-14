@@ -16,6 +16,7 @@ Mat img;
 int hueSlider = 180, hsprev = 180;
 int saturationSlider = 100, ssprev = 100;
 int valueSlider = 100, vsprev = 200;
+int sigmaSlider = 0;
 
 
 
@@ -149,7 +150,12 @@ void valueFunction(int, void *)
 	
 }//проверить пределы
 
-//restore original picture
+void sigmaFunction(int, void *)
+{
+
+}
+
+
 
 void redraw()
 {
@@ -181,7 +187,7 @@ int main(int argc, char **argv)
 	createTrackbar("Hue", wName, &hueSlider, 360, hueFunction);
 	createTrackbar("Saturation", wName, &saturationSlider, 200, saturationFunction);
 	createTrackbar("Value", wName, &valueSlider, 200, valueFunction);
-	createTrackbar("Sigma", wName, &sigmaSlider, 100, sigmaFUnction);
+	createTrackbar("Sigma", wName, &sigmaSlider, 25, sigmaFunction);
 	
 
 	imshow(wName, img);
@@ -198,13 +204,20 @@ int main(int argc, char **argv)
 		else if (k == 'g')
 		{
 			//img = gauss_filter(img, 1.0); //sigma trackbar
-			imshow("Gauss", gauss_filter(img, 1.0));
+			if(sigmaSlider != 0)
+				imshow("Gauss", gauss_filter(img, sigmaSlider));
 			//std::cout << "Gauss completed" << std::endl;
 		}
 		else if (k == 's')
 		{
-			
-			imshow("Sobel", sobel_filter((gauss_filter(img, 10))));
+			//imshow("Sobel", sobel_filter((gauss_filter(img, 10))));
+			imshow("Sobel", sobel_filter(img));
+		}
+		else if (k == 'l')
+		{
+			Mat L = getLMatrix(img);
+			std::cout << L << std::endl;
+			imshow("Luminance", L);
 		}
 		else if (k == '0')
 			break;

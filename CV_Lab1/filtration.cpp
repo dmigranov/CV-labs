@@ -64,7 +64,7 @@ Mat sobel_filter(Mat orig) //Mat
 	cvtColor(orig, labimg, COLOR_BGR2Lab);
 	std::vector<Mat> labv;
 	split(labimg, labv);
-	Mat L = labv[0];
+	Mat L = labv[0] / 255 * 100;
 
 	double gxv, gyv;
 	Mat newimg(orig.rows, orig.cols, L.type());
@@ -95,8 +95,8 @@ Mat sobel_filter(Mat orig) //Mat
 	//imshow("Sobel filter", newimg);
 }
 
-void canny(Mat orig)
+/*Mat canny(Mat orig)
 {
 
 
-}
+}*/

@@ -14,3 +14,5 @@ Vec3d getXYZ(double red, double green, double blue);
 
 double labfunction(double x);
 double getL(double y);
+
+Mat getLMatrix(Mat RGB);
