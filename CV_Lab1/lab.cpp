@@ -49,7 +49,7 @@ Mat getLMatrix(Mat BGR) //MAt at(row, col)
 			//std::cout << row[j] << std::endl;
 			double y = (row[j][2] + row[j][1] * 4.5907 + row[j][0] * 0.0601) / 5.6508;;
 			
-			L.at<double>(i, j) = getL(y);
+			L.at<double>(i, j) = getL(y) / 100.0;
 			//std::cout << getL(y) << std::endl;
 		}
 	}

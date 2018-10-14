@@ -216,8 +216,8 @@ int main(int argc, char **argv)
 		else if (k == 'l')
 		{
 			Mat L = getLMatrix(img);
-			std::cout << L << std::endl;
-			imshow("Luminance", L);
+			//std::cout << L << std::endl;
+			imshow("My luminance", L);
 		}
 		else if (k == '0')
 			break;

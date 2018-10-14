@@ -1,5 +1,5 @@
 #include "filtration.h"
-
+#include "lab.h"
 
 
 
@@ -61,10 +61,14 @@ Mat sobel_filter(Mat orig) //Mat
 
 	Mat labimg;
 
-	cvtColor(orig, labimg, COLOR_BGR2Lab);
+	/*cvtColor(orig, labimg, COLOR_BGR2Lab);
 	std::vector<Mat> labv;
 	split(labimg, labv);
-	Mat L = labv[0] / 255 * 100;
+	Mat L;
+	labv[0].convertTo(L, CV_64FC1);
+	L /= 255.0;*/ //the commented segment uses OpenCV's convertion
+
+	Mat L = getLMatrix(orig); //my convertion
 
 	double gxv, gyv;
 	Mat newimg(orig.rows, orig.cols, L.type());
@@ -81,12 +85,12 @@ Mat sobel_filter(Mat orig) //Mat
 					if (i + x >= 0 && i + x < orig.rows && j + y >= 0 && j + y < orig.cols)
 					{
 						gxv +=
-							L.at<char>(i + x, j + y) * Gx.at<int>(x + 1, y + 1);
+							L.at<double>(i + x, j + y) * Gx.at<int>(x + 1, y + 1);
 						gyv += 
-							L.at<char>(i + x, j + y) * Gy.at<int>(x + 1, y + 1);
+							L.at<double>(i + x, j + y) * Gy.at<int>(x + 1, y + 1);
 					}
 				}
-			newimg.at<char>(i, j) = sqrt(gxv * gxv + gyv * gyv);
+			newimg.at<double>(i, j) = sqrt(gxv * gxv + gyv * gyv);
 		}
 
 	return newimg;
