@@ -211,7 +211,7 @@ int main(int argc, char **argv)
 		else if (k == 's')
 		{
 			//imshow("Sobel", sobel_filter((gauss_filter(img, 10))));
-			imshow("Sobel", sobel_filter(img));
+			imshow("Sobel", sobel_filter(img, NULL));
 		}
 		else if (k == 'l')
 		{

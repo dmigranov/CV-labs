@@ -53,7 +53,7 @@ Mat gauss_filter(Mat original, double sigma)
 }
 
 
-Mat sobel_filter(Mat orig) //Mat
+Mat sobel_filter(Mat orig, Mat * grad) //Mat
 {
 	Mat Gx = (Mat_<int>(3, 3) << -1, 0, 1, -2, 0, 2, -1, 0, 1);
 	Mat Gy = (Mat_<int>(3, 3) << -1, -2, -1, 0, 0, 0, 1, 2, 1);
@@ -91,6 +91,8 @@ Mat sobel_filter(Mat orig) //Mat
 					}
 				}
 			newimg.at<double>(i, j) = sqrt(gxv * gxv + gyv * gyv);
+			if (grad != NULL)
+				newimg.at<double>(i, j) = atan(gyv / gxv);
 		}
 
 	return newimg;
@@ -99,8 +101,10 @@ Mat sobel_filter(Mat orig) //Mat
 	//imshow("Sobel filter", newimg);
 }
 
-/*Mat canny(Mat orig)
+Mat canny(Mat orig)
 {
-
-
-}*/
+	//Mat res = ;
+	Mat grad(orig.rows, orig.cols, CV_64FC1);
+	Mat res = sobel_filter(gauss_filter(orig, 1.0), &grad);
+	return res;
+}
