@@ -1,5 +1,4 @@
 #include "lab.h"
-#include <iostream>
 
 Mat xyzmatrix = (Mat_<double>(3, 3) << 2.768892, 1.751748, 1.13016, 1.0, 4.5907, 0.0601, 0.0, 0.056508, 5.594292);
 
@@ -35,9 +34,7 @@ Mat getLMatrix(Mat BGR) //MAt at(row, col)
 	Mat normBGR(BGR.rows, BGR.cols, CV_64FC3);
 	BGR.convertTo(normBGR, CV_64FC3);
 	normBGR /= 255;
-	//std::cout << normBGR << std::endl;
 	
-	//Mat Y(RGB.rows, RGB.cols, CV_64FC1);
 	Mat L(BGR.rows, BGR.cols, CV_64FC1);
 	
 	for (int i = 0; i < BGR.rows; i++)
@@ -46,11 +43,8 @@ Mat getLMatrix(Mat BGR) //MAt at(row, col)
 		
 		for (int j = 0; j < BGR.cols; j++)
 		{
-			//std::cout << row[j] << std::endl;
 			double y = (row[j][2] + row[j][1] * 4.5907 + row[j][0] * 0.0601) / 5.6508;;
-			
 			L.at<double>(i, j) = getL(y) / 100.0;
-			//std::cout << getL(y) << std::endl;
 		}
 	}
 	return L;		

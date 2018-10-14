@@ -167,14 +167,11 @@ void redraw()
 	setTrackbarPos("Saturation", wName, 100);
 	setTrackbarPos("Value", wName, 100);
 
-	
 	imshow(wName, img);
 }
 
 int main(int argc, char **argv)
 {
-	
-
 	const char * imgname = (argc >= 2 ? argv[1] : "image.jpg");
 
 	img = imread(imgname, CV_LOAD_IMAGE_COLOR);
@@ -206,17 +203,14 @@ int main(int argc, char **argv)
 			//img = gauss_filter(img, 1.0); //sigma trackbar
 			if(sigmaSlider != 0)
 				imshow("Gauss", gauss_filter(img, sigmaSlider));
-			//std::cout << "Gauss completed" << std::endl;
 		}
 		else if (k == 's')
 		{
-			//imshow("Sobel", sobel_filter((gauss_filter(img, 10))));
 			imshow("Sobel", sobel_filter(img, NULL));
 		}
 		else if (k == 'l')
 		{
 			Mat L = getLMatrix(img);
-			//std::cout << L << std::endl;
 			imshow("My luminance", L);
 		}
 		else if (k == '0')
