@@ -3,16 +3,9 @@
 
 
 
-//Mat window(Mat orig)
-//{}
-
-
-
-
 Mat gauss_filter(Mat original, double sigma)
 {
-
-	//5x5
+	//5x5 filter
 
 	Mat orig;
 	original.convertTo(orig, CV_64F);
@@ -27,18 +20,16 @@ Mat gauss_filter(Mat original, double sigma)
 			div += gauss.at<double>(i + 2, j + 2);
 		}
 	gauss /= div;
-	//std::cout << gauss << std::endl << div << std::endl;
+
 	for (int i = 0; i < orig.rows; i++)
 		for (int j = 0; j < orig.cols; j++)
 		{
 			for (int x = -2; x < 3; x++)
 				for (int y = -2; y < 3; y++)
 				{
-					
 					if (i + x >= 0 && i + x < orig.rows && j + y >= 0 && j + y < orig.cols)
 					{
-						//for(int k = 0; k < 3; k++)
-						if(orig.channels() == 3) //is it optimal?
+						if(orig.channels() == 3)
 							newimg.at<Vec3d>(i, j) += orig.at<Vec3d>(i + x, j + y) * gauss.at<double>(x + 2, y + 2);
 						else if (orig.channels() == 1)
 							newimg.at<double>(i, j) += orig.at<double>(i + x, j + y) * gauss.at<double>(x + 2, y + 2);
@@ -46,14 +37,12 @@ Mat gauss_filter(Mat original, double sigma)
 				}
 		}
 	newimg.convertTo(newimg, original.type());
-	//imshow("Gauss", newimg);
-
 	return newimg;
 
 }
 
 
-Mat sobel_filter(Mat orig, Mat * grad) //Mat
+Mat sobel_filter(Mat orig, Mat * grad)
 {
 	Mat Gx = (Mat_<int>(3, 3) << -1, 0, 1, -2, 0, 2, -1, 0, 1);
 	Mat Gy = (Mat_<int>(3, 3) << -1, -2, -1, 0, 0, 0, 1, 2, 1);
@@ -81,7 +70,6 @@ Mat sobel_filter(Mat orig, Mat * grad) //Mat
 			for (int x = -1; x < 2; x++)
 				for (int y = -1; y < 2; y++)
 				{
-					//std::cout << i + x << " " << j + y << std::endl;
 					if (i + x >= 0 && i + x < orig.rows && j + y >= 0 && j + y < orig.cols)
 					{
 						gxv +=
@@ -96,7 +84,6 @@ Mat sobel_filter(Mat orig, Mat * grad) //Mat
 				double tan = atan2(gyv, gxv); //atan: -pi/2; +pi/2 //atan2: -pi, pi
 				if (tan < 0) tan += M_PI;
 
-				//grad->at<double>(i, j) = (int)(tan / (M_PI / 4)) * (M_PI / 4);
 				if (tan <= M_PI / 8 || tan > 7 * M_PI / 8)
 					tan = 0;
 				if (tan > M_PI / 8 && tan <= 3 * M_PI / 8)
@@ -110,9 +97,6 @@ Mat sobel_filter(Mat orig, Mat * grad) //Mat
 		}
 
 	return newimg;
-
-	//imshow("Sobel filter", gauss_filter(newimg, 1));
-	//imshow("Sobel filter", newimg);
 }
 
 double doubleTreshold(double resV, float lower, float upper)
@@ -133,7 +117,6 @@ Mat canny(Mat orig)
 	Mat res = sobel_filter(gauss_filter(orig, 1.0), &grad);
 	Mat newres;
 	res.copyTo(newres);
-
 
 	//non-maximum suppression
 	float lower = 0.06;
@@ -247,8 +230,6 @@ Mat canny(Mat orig)
 			}
 		}
 	}
-
-	
 
 
 	return newres;
