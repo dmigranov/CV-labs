@@ -120,6 +120,8 @@ Mat canny(Mat orig)
 	//Mat res = ;
 	Mat grad(orig.rows, orig.cols, CV_64FC1);
 	Mat res = sobel_filter(gauss_filter(orig, 1.0), &grad);
+	Mat newres;
+	res.copyTo(newres);
 	//std::cout << grad << std::endl;
 
 	//non-maximum suppression
@@ -128,13 +130,39 @@ Mat canny(Mat orig)
 		for (int j = 0; j < grad.cols; j++)
 		{
 			double gradV = grad.at<double>(i, j);
-			if (gradV == M_PI / 2)
-				;
-			else if (gradV == 0)
-				;
+			double resV = res.at<double>(i, j);
+			if (gradV == M_PI / 2 && i > 0 && i < grad.rows - 1)
+			{
+				if (!(resV >= res.at<double>(i - 1, j) && resV >= res.at<double>(i + 1, j)))
+				{
+					newres.at<double>(i, j) = 0;
+				}
+			}
+			else if (gradV == 0 && j > 0 && j < grad.cols - 1)
+			{
+				if (!(resV >= res.at<double>(i, j - 1) && resV >= res.at<double>(i, j + 1)))
+				{
+					newres.at<double>(i, j) = 0;
+				}
+			}
+			else if (gradV == M_PI / 4 && i > 0 && j < grad.cols - 1 && i < grad.rows - 1 && j > 0)
+			{
+				if (!(resV >= res.at<double>(i - 1, j - 1) && resV >= res.at<double>(i + 1, j + 1)))
+				{
+					newres.at<double>(i, j) = 0;
+				}
+			}
+
+			else if (gradV == 3 * M_PI / 4 && i > 0 && j < grad.cols - 1 && i < grad.rows - 1 && j > 0)
+			{
+				if (!(resV >= res.at<double>(i + 1, j - 1) && resV >= res.at<double>(i - 1, j + 1)))
+				{
+					newres.at<double>(i, j) = 0;
+				}
+			}
 		}
 	}
 
 
-	return grad;
+	return newres;
 }
