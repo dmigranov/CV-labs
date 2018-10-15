@@ -210,8 +210,11 @@ int main(int argc, char **argv)
 		}
 		else if (k == 'l')
 		{
-			Mat L = getLMatrix(img);
-			imshow("My luminance", L);
+			imshow("My luminance", getLMatrix(img));
+		}
+		else if (k == 'c')
+		{
+			imshow("Canny", canny(img));
 		}
 		else if (k == '0')
 			break;

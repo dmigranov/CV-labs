@@ -1,4 +1,4 @@
-#include "filtration.h"
+﻿#include "filtration.h"
 #include "lab.h"
 
 
@@ -92,7 +92,21 @@ Mat sobel_filter(Mat orig, Mat * grad) //Mat
 				}
 			newimg.at<double>(i, j) = sqrt(gxv * gxv + gyv * gyv);
 			if (grad != NULL)
-				newimg.at<double>(i, j) = atan(gyv / gxv);
+			{
+				double tan = atan2(gyv, gxv); //atan: -pi/2; +pi/2 //atan2: -pi, pi
+				if (tan < 0) tan += M_PI;
+
+				//grad->at<double>(i, j) = (int)(tan / (M_PI / 4)) * (M_PI / 4);
+				if (tan <= M_PI / 8 || tan > 7 * M_PI / 8)
+					tan = 0;
+				if (tan > M_PI / 8 && tan <= 3 * M_PI / 8)
+					tan = M_PI / 4;
+				if (tan > 3 * M_PI / 8 && tan <= 5 * M_PI / 8)
+					tan = M_PI / 2;
+				if (tan > 5 * M_PI / 8 && tan <= 7 * M_PI / 8)
+					tan = 3 * M_PI / 4;
+				grad->at<double>(i, j) = tan;
+			}
 		}
 
 	return newimg;
@@ -106,5 +120,21 @@ Mat canny(Mat orig)
 	//Mat res = ;
 	Mat grad(orig.rows, orig.cols, CV_64FC1);
 	Mat res = sobel_filter(gauss_filter(orig, 1.0), &grad);
-	return res;
+	//std::cout << grad << std::endl;
+
+	//non-maximum suppression
+	for (int i = 0; i < grad.rows; i++)
+	{
+		for (int j = 0; j < grad.cols; j++)
+		{
+			double gradV = grad.at<double>(i, j);
+			if (gradV == M_PI / 2)
+				;
+			else if (gradV == 0)
+				;
+		}
+	}
+
+
+	return grad;
 }
