@@ -136,8 +136,8 @@ Mat canny(Mat orig)
 
 
 	//non-maximum suppression
-	float lower = 0.1;
-	float upper = 0.3;
+	float lower = 0.06;
+	float upper = 0.26;
 	//+ двойная пороговая фильтрация
 	for (int i = 0; i < grad.rows; i++)
 	{
@@ -193,7 +193,62 @@ Mat canny(Mat orig)
 		}
 	}
 
-	//трассировка?
+
+	//продолжение кривых
+	for (int i = 0; i < grad.rows; i++)
+	{
+		for (int j = 0; j < grad.cols; j++)
+		{
+			if (newres.at<double>(i, j) == 0.5)
+			{
+				if (i > 0 && newres.at<double>(i - 1, j) == 1)
+				{
+					newres.at<double>(i, j) = 1;
+					continue;
+				}
+				if (j > 0 && newres.at<double>(i, j - 1) == 1)
+				{
+					newres.at<double>(i, j) = 1;
+					continue;
+				}
+				if (j > 0 && i > 0 && newres.at<double>(i - 1, j - 1) == 1)
+				{
+					newres.at<double>(i, j) = 1;
+					continue;
+				}
+				if (i < grad.rows - 1 && newres.at<double>(i + 1, j) == 1)
+				{
+					newres.at<double>(i, j) = 1;
+					continue;
+				}
+				if (j < grad.cols - 1 && newres.at<double>(i, j + 1) == 1)
+				{
+					newres.at<double>(i, j) = 1;
+					continue;
+				}
+				if (i > 0 && j < grad.cols - 1 && newres.at<double>(i - 1, j + 1) == 1)
+				{
+					newres.at<double>(i, j) = 1;
+					continue;
+				}
+				if (j > 0 && i < grad.rows - 1 && newres.at<double>(i + 1, j - 1) == 1)
+				{
+					newres.at<double>(i, j) = 1;
+					continue;
+				}
+				if (j < grad.cols && i < grad.rows - 1 && newres.at<double>(i + 1, j + 1) == 1)
+				{
+					newres.at<double>(i, j) = 1;
+					continue;
+				}
+				newres.at<double>(i, j) = 0;
+
+
+			}
+		}
+	}
+
+	
 
 
 	return newres;
