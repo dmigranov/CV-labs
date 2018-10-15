@@ -11,6 +11,6 @@ Mat sobel_filter(Mat orig, Mat * grad = NULL); //right now it returns single-cha
 
 Mat gabor_filter(Mat orig);
 
-Mat canny(Mat orig);
+Mat canny(Mat orig, double lower, double upper);
 
 Mat otsu(Mat orig);

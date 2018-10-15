@@ -18,6 +18,8 @@ int saturationSlider = 100, ssprev = 100;
 int valueSlider = 100, vsprev = 200;
 int sigmaSlider = 0;
 
+int lowerSlider = 10;
+int upperSlider = 20;
 
 
 const char * wName = "Lab1";
@@ -155,6 +157,11 @@ void sigmaFunction(int, void *)
 
 }
 
+void ulFunction(int, void *)
+{
+	imshow("Canny", canny(img, lowerSlider / 100.0, upperSlider / 100.0));
+}
+
 
 
 void redraw()
@@ -214,7 +221,10 @@ int main(int argc, char **argv)
 		}
 		else if (k == 'c')
 		{
-			imshow("Canny", canny(img));
+			namedWindow("Canny", WINDOW_AUTOSIZE);
+			createTrackbar("Lower edge", "Canny", &lowerSlider, 100, ulFunction);
+			createTrackbar("Upper edge", "Canny", &upperSlider, 100, ulFunction);
+			imshow("Canny", canny(img, lowerSlider/100.0, upperSlider/100.0));
 		}
 		else if (k == '0')
 			break;

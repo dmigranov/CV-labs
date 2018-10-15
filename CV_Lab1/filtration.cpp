@@ -44,6 +44,8 @@ Mat gauss_filter(Mat original, double sigma)
 
 Mat sobel_filter(Mat orig, Mat * grad)
 {
+	//
+
 	Mat Gx = (Mat_<int>(3, 3) << -1, 0, 1, -2, 0, 2, -1, 0, 1);
 	Mat Gy = (Mat_<int>(3, 3) << -1, -2, -1, 0, 0, 0, 1, 2, 1);
 	
@@ -99,7 +101,7 @@ Mat sobel_filter(Mat orig, Mat * grad)
 	return newimg;
 }
 
-double doubleTreshold(double resV, float lower, float upper)
+double doubleTreshold(double resV, double lower, double upper)
 {
 	if (resV > upper)
 		return 1;
@@ -110,17 +112,17 @@ double doubleTreshold(double resV, float lower, float upper)
 }
 
 
-Mat canny(Mat orig)
+Mat canny(Mat orig, double lower, double upper)
 {
 	//Mat res = ;
 	Mat grad(orig.rows, orig.cols, CV_64FC1);
-	Mat res = sobel_filter(gauss_filter(orig, 1.0), &grad);
+	Mat res = sobel_filter(gauss_filter(orig, 0.5), &grad);
 	Mat newres;
 	res.copyTo(newres);
 
 	//non-maximum suppression
-	float lower = 0.06;
-	float upper = 0.26;
+	/*double lower = 0.05;
+	double upper = 0.30;*/
 	//+ двойная пороговая фильтрация
 	for (int i = 0; i < grad.rows; i++)
 	{
@@ -134,7 +136,7 @@ Mat canny(Mat orig)
 				{
 					newres.at<double>(i, j) = 0;
 				}
-				else //это и есть двойная пороговая фильтрация
+				else 
 				{
 					newres.at<double>(i, j) = doubleTreshold(resV, lower, upper);
 				}
@@ -225,8 +227,6 @@ Mat canny(Mat orig)
 					continue;
 				}
 				newres.at<double>(i, j) = 0;
-
-
 			}
 		}
 	}
