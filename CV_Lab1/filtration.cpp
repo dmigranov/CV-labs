@@ -115,6 +115,17 @@ Mat sobel_filter(Mat orig, Mat * grad) //Mat
 	//imshow("Sobel filter", newimg);
 }
 
+double doubleTreshold(double resV, float lower, float upper)
+{
+	if (resV > upper)
+		return 1;
+	else if (resV < lower)
+		return 0;
+	else
+		return 0.5;
+}
+
+
 Mat canny(Mat orig)
 {
 	//Mat res = ;
@@ -124,7 +135,12 @@ Mat canny(Mat orig)
 	res.copyTo(newres);
 	//std::cout << grad << std::endl;
 
+
+
 	//non-maximum suppression
+	float lower = 0.15;
+	float upper = 0.35;
+	//+ двойная пороговая фильтрация
 	for (int i = 0; i < grad.rows; i++)
 	{
 		for (int j = 0; j < grad.cols; j++)
@@ -137,6 +153,10 @@ Mat canny(Mat orig)
 				{
 					newres.at<double>(i, j) = 0;
 				}
+				else //это и есть двойная пороговая фильтрация
+				{
+					newres.at<double>(i, j) = doubleTreshold(resV, lower, upper);
+				}
 			}
 			else if (gradV == 0 && j > 0 && j < grad.cols - 1)
 			{
@@ -144,12 +164,20 @@ Mat canny(Mat orig)
 				{
 					newres.at<double>(i, j) = 0;
 				}
+				else
+				{
+					newres.at<double>(i, j) = doubleTreshold(resV, lower, upper);
+				}
 			}
 			else if (gradV == M_PI / 4 && i > 0 && j < grad.cols - 1 && i < grad.rows - 1 && j > 0)
 			{
 				if (!(resV >= res.at<double>(i - 1, j - 1) && resV >= res.at<double>(i + 1, j + 1)))
 				{
 					newres.at<double>(i, j) = 0;
+				}
+				else
+				{
+					newres.at<double>(i, j) = doubleTreshold(resV, lower, upper);
 				}
 			}
 
@@ -159,9 +187,20 @@ Mat canny(Mat orig)
 				{
 					newres.at<double>(i, j) = 0;
 				}
+				else
+				{
+					newres.at<double>(i, j) = doubleTreshold(resV, lower, upper);
+				}
 			}
 		}
 	}
+
+	//трассировка?
+
+
+	
+	
+
 
 
 	return newres;
