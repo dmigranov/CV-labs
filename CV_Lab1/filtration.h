@@ -9,4 +9,8 @@ Mat gauss_filter(Mat orig, double sigma);
 
 Mat sobel_filter(Mat orig, Mat * grad = NULL); //right now it returns single-channel matrix. Should it be converted to three-channel one?
 
+Mat gabor_filter(Mat orig);
+
 Mat canny(Mat orig);
+
+Mat otsu(Mat orig);

@@ -133,13 +133,11 @@ Mat canny(Mat orig)
 	Mat res = sobel_filter(gauss_filter(orig, 1.0), &grad);
 	Mat newres;
 	res.copyTo(newres);
-	//std::cout << grad << std::endl;
-
 
 
 	//non-maximum suppression
-	float lower = 0.15;
-	float upper = 0.35;
+	float lower = 0.1;
+	float upper = 0.3;
 	//+ двойная пороговая фильтрация
 	for (int i = 0; i < grad.rows; i++)
 	{
@@ -198,10 +196,27 @@ Mat canny(Mat orig)
 	//трассировка?
 
 
-	
-	
-
-
-
 	return newres;
 }
+
+Mat gabor_filter(Mat orig)
+{
+	//5x5?
+	Mat gabor(5, 5, CV_64FC1);
+	Mat res;
+	double div = 0;
+	for (int i = -2; i < 3; i++)
+		for (int j = -2; j < 3; j++)
+		{
+			gabor.at<double>(i + 2, j + 2) = 0;
+				//exp(-(i * i + j * j) / (2.0 * sigma * sigma)) / (2.0 * M_PI * sigma * sigma); //not simmetric! 5
+			div += gabor.at<double>(i + 2, j + 2);
+		}
+	return res;
+}
+
+
+/*Mat otsu(Mat orig)
+{
+
+}*/
