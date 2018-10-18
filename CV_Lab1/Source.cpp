@@ -6,6 +6,7 @@ using namespace cv;
 
 Mat img_original;
 Mat img;
+Mat img_2;
 
 int hueSlider = 180, hsprev = 180;
 int saturationSlider = 100, ssprev = 100;
@@ -19,6 +20,7 @@ int thetaSlider = 0;
 
 
 const char * wName = "Lab1";
+const char * wName_2 = "Lab2";
 
 void L_histogram()
 {
@@ -155,15 +157,13 @@ void sigmaFunction(int, void *)
 
 void ulFunction(int, void *)
 {
-	imshow("Canny", canny(img, lowerSlider / 100.0, upperSlider / 100.0));
+	//imshow("Canny", canny(img, lowerSlider / 100.0, upperSlider / 100.0));
 }
 
 void gaborFunction(int, void *)
 {
-	imshow("Gabor", gabor_filter(canny(img, 0.2, 0.25), thetaSlider * M_PI / 180, 0, 0.5, 0.2, 2));
+	//imshow("Gabor", gabor_filter(canny(img, 0.2, 0.25), thetaSlider * M_PI / 180, 0, 0.5, 0.2, 2));
 }
-
-
 
 void redraw()
 {
@@ -185,6 +185,7 @@ int main(int argc, char **argv)
 	img = imread(imgname, CV_LOAD_IMAGE_COLOR);
 	img_original = img.clone();
 	namedWindow(wName, WINDOW_AUTOSIZE);
+	namedWindow(wName_2, WINDOW_AUTOSIZE);
 
 	createTrackbar("Hue", wName, &hueSlider, 360, hueFunction);
 	createTrackbar("Saturation", wName, &saturationSlider, 200, saturationFunction);
@@ -204,8 +205,11 @@ int main(int argc, char **argv)
 			L_histogram();
 		else if (k == 'g')
 		{
-			if(sigmaSlider != 0)
-				imshow("Gauss", gauss_filter(img, sigmaSlider));
+			if (sigmaSlider != 0)
+			{
+				img = gauss_filter(img, sigmaSlider);
+				imshow(wName, img);
+			}
 		}
 		else if (k == 'G')
 		{
@@ -223,7 +227,7 @@ int main(int argc, char **argv)
 		}
 		else if (k == 'c')
 		{
-			namedWindow("Canny", WINDOW_AUTOSIZE);
+
 			createTrackbar("Lower edge", "Canny", &lowerSlider, 100, ulFunction);
 			createTrackbar("Upper edge", "Canny", &upperSlider, 100, ulFunction);
 			imshow("Canny", canny(img, lowerSlider/100.0, upperSlider/100.0));
