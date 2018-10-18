@@ -217,6 +217,7 @@ int main(int argc, char **argv)
 		else if (k == 'G')
 		{
 			imshow(wName_2, gabor_filter(img_2, thetaSlider * M_PI / 180, 0, 0.5, 0.2, 2));
+
 		}
 		else if (k == 's')
 		{
@@ -230,6 +231,10 @@ int main(int argc, char **argv)
 		{
 			img_2 = canny(img, lowerSlider / 100.0, upperSlider / 100.0);
 			imshow(wName_2, img_2);
+		}
+		else if (k == 'o')
+		{
+			imshow("Otsu", otsu(img));
 		}
 		else if (k == '0')
 			break;

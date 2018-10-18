@@ -275,7 +275,26 @@ Mat gabor_filter(Mat orig, double theta, double phi, double sigma, double gamma,
 }
 
 
-/*Mat otsu(Mat orig)
+Mat otsu(Mat orig)
 {
+	Mat L;
+	if (orig.channels() == 1)
+		L = orig;
+	else
+		L = getLMatrix(orig);
+	
+	double hist[101] = { 0 };
+	int all = 0;
+	//гистограмма
+	//самый тупой способ
+	for (int i = 0; i < orig.rows; i++)
+		for (int j = 0; j < orig.cols; j++)
+		{
+			//std::cout << L.at<double>(i, j) * 100 << std::endl;
+			hist[(int)(L.at<double>(i, j) * 100)]++;
+		}
 
-}*/
+	std::cout << L.rows * L.cols << std::endl;
+	return L;
+
+}

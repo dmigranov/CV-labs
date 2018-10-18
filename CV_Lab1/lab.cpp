@@ -20,7 +20,7 @@ double labfunction(double x)
 	}
 	else
 	{
-		return pow(29.0 / 6, 2) / 3 + 4.0 / 29;
+		return x * pow(29.0 / 6, 2) / 3 + 4.0 / 29;
 	}
 }
 
