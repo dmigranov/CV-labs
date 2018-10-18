@@ -235,7 +235,11 @@ Mat canny(Mat orig, double lower, double upper)
 Mat gabor_filter(Mat orig, double theta, double phi, double sigma, double gamma, double lambda) //тета - угол; sigma / lambda примерно равно 0.56 (почему?)
 {
 	Mat gabor(5, 5, CV_64FC1);
-	Mat L = getLMatrix(orig);
+	Mat L;
+	if (orig.channels() == 1)
+		L = orig;
+	else
+		L = getLMatrix(orig);
 	Mat newimg(orig.rows, orig.cols, L.type());
 	newimg = 0;
 	double div = 0;

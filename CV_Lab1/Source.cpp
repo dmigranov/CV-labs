@@ -15,6 +15,8 @@ int sigmaSlider = 0;
 int lowerSlider = 10;
 int upperSlider = 25;
 
+int thetaSlider = 0;
+
 
 const char * wName = "Lab1";
 
@@ -156,6 +158,11 @@ void ulFunction(int, void *)
 	imshow("Canny", canny(img, lowerSlider / 100.0, upperSlider / 100.0));
 }
 
+void gaborFunction(int, void *)
+{
+	imshow("Gabor", gabor_filter(canny(img, 0.2, 0.25), thetaSlider * M_PI / 180, 0, 0.5, 0.2, 2));
+}
+
 
 
 void redraw()
@@ -202,7 +209,9 @@ int main(int argc, char **argv)
 		}
 		else if (k == 'G')
 		{
-			imshow("Gabor", gabor_filter(img, M_PI / 2, 0, 0.5, 0.2, 2));
+			namedWindow("Gabor", WINDOW_AUTOSIZE);
+			createTrackbar("Theta", "Gabor", &thetaSlider, 180, gaborFunction); //360?
+			imshow("Gabor", gabor_filter(canny(img, 0.2, 0.25), thetaSlider * M_PI / 180, 0, 0.5, 0.2, 2));
 		}
 		else if (k == 's')
 		{
