@@ -19,7 +19,7 @@ int valueSlider = 100, vsprev = 200;
 int sigmaSlider = 0;
 
 int lowerSlider = 10;
-int upperSlider = 20;
+int upperSlider = 25;
 
 
 const char * wName = "Lab1";
@@ -210,6 +210,10 @@ int main(int argc, char **argv)
 			//img = gauss_filter(img, 1.0); //sigma trackbar
 			if(sigmaSlider != 0)
 				imshow("Gauss", gauss_filter(img, sigmaSlider));
+		}
+		else if (k == 'G')
+		{
+			imshow("Gabor", gabor_filter(img), M_PI/2);
 		}
 		else if (k == 's')
 		{

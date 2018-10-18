@@ -13,11 +13,11 @@ Mat gauss_filter(Mat original, double sigma)
 	Mat newimg(orig.rows, orig.cols, orig.type());
 	newimg = 0;
 	double div = 0;
-	for (int i = -2; i < 3; i++)
-		for (int j = -2; j < 3; j++)
+	for (int x = -2; x < 3; x++)
+		for (int y = -2; y < 3; y++)
 		{
-			gauss.at<double>(i + 2, j + 2) = exp(-(i * i + j * j) / (2.0 * sigma * sigma)) / (2.0 * M_PI * sigma * sigma); //not simmetric! 5
-			div += gauss.at<double>(i + 2, j + 2);
+			gauss.at<double>(x + 2, y + 2) = exp(-(x * x + y * y) / (2.0 * sigma * sigma)) / (2.0 * M_PI * sigma * sigma); //not simmetric! 5
+			div += gauss.at<double>(x + 2, y + 2);
 		}
 	gauss /= div;
 
@@ -120,10 +120,7 @@ Mat canny(Mat orig, double lower, double upper)
 	Mat newres;
 	res.copyTo(newres);
 
-	//non-maximum suppression
-	/*double lower = 0.05;
-	double upper = 0.30;*/
-	//+ двойная пороговая фильтрация
+	//non-maximum suppression + двойная пороговая фильтрация
 	for (int i = 0; i < grad.rows; i++)
 	{
 		for (int j = 0; j < grad.cols; j++)
@@ -179,7 +176,7 @@ Mat canny(Mat orig, double lower, double upper)
 	}
 
 
-	//продолжение кривых
+	//продолжение кривых (да, оно не идеально по определению алгоритма; идём стандартной змейкой)
 	for (int i = 0; i < grad.rows; i++)
 	{
 		for (int j = 0; j < grad.cols; j++)
@@ -235,18 +232,20 @@ Mat canny(Mat orig, double lower, double upper)
 	return newres;
 }
 
-Mat gabor_filter(Mat orig)
+Mat gabor_filter(Mat orig, double theta) //тета - угол 
 {
-	//5x5?
 	Mat gabor(5, 5, CV_64FC1);
 	Mat res;
 	double div = 0;
-	for (int i = -2; i < 3; i++)
-		for (int j = -2; j < 3; j++)
+	for (int x = -2; x < 3; x++)
+		for (int y = -2; y < 3; y++)
 		{
-			gabor.at<double>(i + 2, j + 2) = 0;
+			double x_ =  x * cos(theta) + y * sin(theta);
+			double y_ = -x * sin(theta) + y * cos(theta);
+
+			gabor.at<double>(x + 2, y + 2) = 0;
 				//exp(-(i * i + j * j) / (2.0 * sigma * sigma)) / (2.0 * M_PI * sigma * sigma); //not simmetric! 5
-			div += gabor.at<double>(i + 2, j + 2);
+			div += gabor.at<double>(x + 2, y + 2);
 		}
 	return res;
 }
