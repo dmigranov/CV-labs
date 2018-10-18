@@ -168,6 +168,7 @@ void gaborFunction(int, void *)
 void redraw()
 {
 	img = img_original.clone();
+	img_2 = img.clone();
 	hsprev = 180;
 	ssprev = 100;
 	vsprev = 100;
@@ -183,6 +184,7 @@ int main(int argc, char **argv)
 	const char * imgname = (argc >= 2 ? argv[1] : "image.jpg");
 
 	img = imread(imgname, CV_LOAD_IMAGE_COLOR);
+	img_2 = img.clone();
 	img_original = img.clone();
 	namedWindow(wName, WINDOW_AUTOSIZE);
 	createTrackbar("Hue", wName, &hueSlider, 360, hueFunction);

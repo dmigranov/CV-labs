@@ -294,7 +294,8 @@ Mat otsu(Mat orig)
 			hist[(int)(L.at<double>(i, j) * 100)]++;
 		}
 
-	std::cout << L.rows * L.cols << std::endl;
+
+	//частота?
 	return L;
 
 }
