@@ -2,12 +2,6 @@
 #include "filtration.h"
 #include "lab.h"
 
-
-/*#define Xn 95.04
-#define Yn 100.0
-#define Zn 108.88*/
-
-
 using namespace cv;
 
 Mat img_original;
@@ -185,14 +179,10 @@ int main(int argc, char **argv)
 	img_original = img.clone();
 	namedWindow(wName, WINDOW_AUTOSIZE);
 
-
-	//namedWindow("HSV", WINDOW_AUTOSIZE);
-
 	createTrackbar("Hue", wName, &hueSlider, 360, hueFunction);
 	createTrackbar("Saturation", wName, &saturationSlider, 200, saturationFunction);
 	createTrackbar("Value", wName, &valueSlider, 200, valueFunction);
 	createTrackbar("Sigma", wName, &sigmaSlider, 25, sigmaFunction);
-	
 
 	imshow(wName, img);
 
@@ -207,13 +197,12 @@ int main(int argc, char **argv)
 			L_histogram();
 		else if (k == 'g')
 		{
-			//img = gauss_filter(img, 1.0); //sigma trackbar
 			if(sigmaSlider != 0)
 				imshow("Gauss", gauss_filter(img, sigmaSlider));
 		}
 		else if (k == 'G')
 		{
-			imshow("Gabor", gabor_filter(img), M_PI/2);
+			imshow("Gabor", gabor_filter(img, M_PI / 2, 0, 0.5, 0.2, 2));
 		}
 		else if (k == 's')
 		{

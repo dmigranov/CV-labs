@@ -232,10 +232,12 @@ Mat canny(Mat orig, double lower, double upper)
 	return newres;
 }
 
-Mat gabor_filter(Mat orig, double theta) //тета - угол 
+Mat gabor_filter(Mat orig, double theta, double phi, double sigma, double gamma, double lambda) //тета - угол; sigma / lambda примерно равно 0.56 (почему?)
 {
 	Mat gabor(5, 5, CV_64FC1);
-	Mat res;
+	Mat L = getLMatrix(orig);
+	Mat newimg(orig.rows, orig.cols, L.type());
+	newimg = 0;
 	double div = 0;
 	for (int x = -2; x < 3; x++)
 		for (int y = -2; y < 3; y++)
@@ -243,11 +245,29 @@ Mat gabor_filter(Mat orig, double theta) //тета - угол
 			double x_ =  x * cos(theta) + y * sin(theta);
 			double y_ = -x * sin(theta) + y * cos(theta);
 
-			gabor.at<double>(x + 2, y + 2) = 0;
-				//exp(-(i * i + j * j) / (2.0 * sigma * sigma)) / (2.0 * M_PI * sigma * sigma); //not simmetric! 5
+			gabor.at<double>(x + 2, y + 2) = exp(-(x_ * x_ + gamma * gamma * y_ * y_) / (2.0 * sigma * sigma)) * cos(2 * M_PI * x_ / lambda + phi);//not simmetric! 5
 			div += gabor.at<double>(x + 2, y + 2);
 		}
-	return res;
+	gabor /= div;
+
+	for (int i = 0; i < orig.rows; i++)
+		for (int j = 0; j < orig.cols; j++)
+		{
+			for (int x = -2; x < 3; x++)
+				for (int y = -2; y < 3; y++)
+				{
+					if (i + x >= 0 && i + x < orig.rows && j + y >= 0 && j + y < orig.cols)
+					{
+						newimg.at<double>(i, j) += L.at<double>(i + x, j + y) * gabor.at<double>(x + 2, y + 2);
+					}
+				}
+		}
+
+	//std::cout << newimg << std::endl;
+
+
+
+	return newimg;
 }
 
 
