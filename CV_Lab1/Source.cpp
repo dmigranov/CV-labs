@@ -185,12 +185,15 @@ int main(int argc, char **argv)
 	img = imread(imgname, CV_LOAD_IMAGE_COLOR);
 	img_original = img.clone();
 	namedWindow(wName, WINDOW_AUTOSIZE);
-	namedWindow(wName_2, WINDOW_AUTOSIZE);
-
 	createTrackbar("Hue", wName, &hueSlider, 360, hueFunction);
 	createTrackbar("Saturation", wName, &saturationSlider, 200, saturationFunction);
 	createTrackbar("Value", wName, &valueSlider, 200, valueFunction);
 	createTrackbar("Sigma", wName, &sigmaSlider, 25, sigmaFunction);
+
+	namedWindow(wName_2, WINDOW_AUTOSIZE);
+	createTrackbar("Lower edge", wName_2, &lowerSlider, 100, ulFunction);
+	createTrackbar("Upper edge", wName_2, &upperSlider, 100, ulFunction);
+	createTrackbar("Theta", wName_2, &thetaSlider, 180, gaborFunction); //360?
 
 	imshow(wName, img);
 
@@ -213,9 +216,7 @@ int main(int argc, char **argv)
 		}
 		else if (k == 'G')
 		{
-			namedWindow("Gabor", WINDOW_AUTOSIZE);
-			createTrackbar("Theta", "Gabor", &thetaSlider, 180, gaborFunction); //360?
-			imshow("Gabor", gabor_filter(canny(img, 0.2, 0.25), thetaSlider * M_PI / 180, 0, 0.5, 0.2, 2));
+			imshow(wName_2, gabor_filter(img_2, thetaSlider * M_PI / 180, 0, 0.5, 0.2, 2));
 		}
 		else if (k == 's')
 		{
@@ -227,10 +228,8 @@ int main(int argc, char **argv)
 		}
 		else if (k == 'c')
 		{
-
-			createTrackbar("Lower edge", "Canny", &lowerSlider, 100, ulFunction);
-			createTrackbar("Upper edge", "Canny", &upperSlider, 100, ulFunction);
-			imshow("Canny", canny(img, lowerSlider/100.0, upperSlider/100.0));
+			img_2 = canny(img, lowerSlider / 100.0, upperSlider / 100.0);
+			imshow(wName_2, img_2);
 		}
 		else if (k == '0')
 			break;
