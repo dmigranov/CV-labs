@@ -283,11 +283,9 @@ Mat otsu(Mat orig)
 	else
 		L = getLMatrix(orig);
 	
-	double p[101] = { 0 }, N[101];
+	double p[101] = { 0 }, N[101]; //p = histogram
 	double Nt = L.cols * L.rows;
 	int all = 0;
-	//гистограмма
-	//самый тупой способ
 	for (int i = 0; i < orig.rows; i++)
 		for (int j = 0; j < orig.cols; j++)
 		{
@@ -304,7 +302,7 @@ Mat otsu(Mat orig)
 		uT += i * N[i];
 	}
 	double w1 = 0, w2, uSum = 0, u1, u2, max = 0;
-	int maxT;
+	double maxT;
 	//w1(0), ... ?
 	for (int t = 1; t < 101; t++) //1?
 	{
@@ -322,7 +320,7 @@ Mat otsu(Mat orig)
 			maxT = t;
 		}
 	}
-
+	maxT /= 100;
 	for (int i = 0; i < orig.rows; i++)
 		for (int j = 0; j < orig.cols; j++)
 		{
@@ -334,7 +332,7 @@ Mat otsu(Mat orig)
 		}
 
 
-	//std::cout << all << " " << L.rows * L.cols << std::endl;
+	std::cout << maxT << std::endl;
 
 	return L;
 
