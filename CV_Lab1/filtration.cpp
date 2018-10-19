@@ -283,7 +283,8 @@ Mat otsu(Mat orig)
 	else
 		L = getLMatrix(orig);
 	
-	double hist[101] = { 0 };
+	double p[101] = { 0 }, N[101];
+	double Nt = L.cols * L.rows;
 	int all = 0;
 	//гистограмма
 	//самый тупой способ
@@ -291,11 +292,50 @@ Mat otsu(Mat orig)
 		for (int j = 0; j < orig.cols; j++)
 		{
 			//std::cout << L.at<double>(i, j) * 100 << std::endl;
-			hist[(int)(L.at<double>(i, j) * 100)]++;
+			p[(int)(L.at<double>(i, j) * 100)]++;
+		}
+	//summ(p[i]) = all = L.rows * L.cols!
+
+
+	double uT = 0;
+	for (int i = 0; i < 101; i++)
+	{
+		N[i] = p[i] / Nt;
+		uT += i * N[i];
+	}
+	double w1 = 0, w2, uSum = 0, u1, u2, max = 0;
+	int maxT;
+	//w1(0), ... ?
+	for (int t = 1; t < 101; t++) //1?
+	{
+		
+		w1 += N[t];
+		w2 = 1 - w1;
+
+		uSum += t * N[t];
+		u1 = uSum / w1;
+		u2 = (uT - u1 * w1) / w2;
+		double disp = w1 * w2 * pow(u1 - u2, 2);
+		if (disp > max)
+		{
+			max = disp;
+			maxT = t;
+		}
+	}
+
+	for (int i = 0; i < orig.rows; i++)
+		for (int j = 0; j < orig.cols; j++)
+		{
+			//std::cout << L.at<double>(i, j) * 100 << std::endl;
+			if (L.at<double>(i, j) > maxT)
+				L.at<double>(i, j) = 1;
+			else
+				L.at<double>(i, j) = 0;
 		}
 
 
-	//частота?
+	//std::cout << all << " " << L.rows * L.cols << std::endl;
+
 	return L;
 
 }
