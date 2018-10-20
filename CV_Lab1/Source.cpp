@@ -241,7 +241,6 @@ int main(int argc, char **argv)
 		}
 		else if (k == 'd')
 		{
-			//split(img, )
 			Mat orig;
 			getLMatrix(img).convertTo(orig, CV_8UC1);
 			//по хорошему, сначала ќцу, потом морфологи€

@@ -267,10 +267,6 @@ Mat gabor_filter(Mat orig, double theta, double phi, double sigma, double gamma,
 				}
 		}
 
-	//std::cout << newimg << std::endl;
-
-
-
 	return newimg;
 }
 
