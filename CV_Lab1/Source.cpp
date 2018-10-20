@@ -246,6 +246,13 @@ int main(int argc, char **argv)
 			//по хорошему, сначала ќцу, потом морфологи€
 			imshow("Dilation", dilation(orig, square5x5));
 		}
+		else if (k == 'e')
+		{
+			Mat orig;
+			getLMatrix(img).convertTo(orig, CV_8UC1);
+			//по хорошему, сначала ќцу, потом морфологи€
+			imshow("Erosion", erosion(orig, square3x3));
+		}
 		else if (k == '0')
 			break;
 		
