@@ -1,6 +1,7 @@
 #include <opencv2/opencv.hpp>
 #include "filtration.h"
 #include "lab.h"
+#include "morphology.h"
 
 using namespace cv;
 
@@ -201,7 +202,7 @@ int main(int argc, char **argv)
 
 	setMouseCallback(wName, mouseCallback, NULL);
 
-	while(1)
+	while (1)
 	{
 		int k = waitKey(20);
 		if (k == 'r')
@@ -238,8 +239,17 @@ int main(int argc, char **argv)
 		{
 			imshow("Otsu", otsu(img));
 		}
+		else if (k == 'd')
+		{
+			//split(img, )
+			Mat orig;
+			getLMatrix(img).convertTo(orig, CV_8UC1);
+			//по хорошему, сначала ќцу, потом морфологи€
+			imshow("Dilation", dilation(orig, square5x5));
+		}
 		else if (k == '0')
 			break;
+		
 
 	}
 

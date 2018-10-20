@@ -132,6 +132,7 @@
   <ItemGroup>
     <ClCompile Include="filtration.cpp" />
     <ClCompile Include="lab.cpp" />
+    <ClCompile Include="morphology.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +142,7 @@
   <ItemGroup>
     <ClInclude Include="filtration.h" />
     <ClInclude Include="lab.h" />
+    <ClInclude Include="morphology.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

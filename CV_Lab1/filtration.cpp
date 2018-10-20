@@ -304,6 +304,7 @@ Mat otsu(Mat orig)
 	double w1 = 0, w2, uSum = 0, u1, u2, max = 0;
 	double maxT;
 	//w1(0), ... ?
+	//это важно в случае, если на изображении есть абсолютно черное пятно
 	for (int t = 1; t < 101; t++) //1?
 	{
 		
@@ -326,14 +327,15 @@ Mat otsu(Mat orig)
 		{
 			//std::cout << L.at<double>(i, j) * 100 << std::endl;
 			if (L.at<double>(i, j) > maxT)
-				L.at<double>(i, j) = 1;
+				L.at<double>(i, j) = 255;
 			else
 				L.at<double>(i, j) = 0;
 		}
 
-
+	Mat res;
+	L.convertTo(res, CV_8UC1);
 	std::cout << maxT << std::endl;
 
-	return L;
+	return res;
 
 }
