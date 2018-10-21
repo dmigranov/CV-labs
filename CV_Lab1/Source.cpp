@@ -253,8 +253,8 @@ int main(int argc, char **argv)
 			Mat orig;
 			getLMatrix(img).convertTo(orig, CV_8UC1);
 			//по хорошему, сначала ќцу, потом морфологи€
-			imshow("Erosion", erosion(255*orig, square3x3));
-			imshow("Dilation", dilation(255 * orig, square3x3));
+			imshow("Erosion", erosion(255*orig, cross3x3));
+			imshow("Dilation", dilation(255 * orig, cross3x3));
 		}
 		else if (k == '0')
 			break;

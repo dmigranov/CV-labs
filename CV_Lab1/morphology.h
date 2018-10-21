@@ -4,6 +4,7 @@
 using namespace cv;
 
 const Mat square3x3 = (Mat_<uchar>(3, 3) << 255, 255, 255, 255, 255, 255, 255, 255, 255);
+const Mat cross3x3 = (Mat_<uchar>(3, 3) << 0, 255, 0, 255, 255, 255, 0, 255, 0);
 const Mat square5x5 = (Mat_<uchar>(5, 5) << 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255);
 
 //mathematical morphology operators
