@@ -298,7 +298,7 @@ Mat otsu(Mat orig)
 		uT += i * N[i];
 	}
 	double w1 = 0, w2, uSum = 0, u1, u2, max = 0;
-	double maxT;
+	double maxT = 0;
 	//w1(0), ... ?
 	//это важно в случае, если на изображении есть абсолютно черное пятно
 	for (int t = 1; t < 101; t++) //1?
@@ -330,7 +330,7 @@ Mat otsu(Mat orig)
 
 	Mat res;
 	L.convertTo(res, CV_8UC1);
-	std::cout << maxT << std::endl;
+	//std::cout << maxT << std::endl;
 
 	return res;
 
