@@ -74,3 +74,13 @@ Mat erosion(Mat orig, Mat oper)
 
 	return res;
 }
+
+Mat closing(Mat orig, Mat oper)
+{
+	return erosion(dilation(orig, oper), oper);
+}
+
+Mat opening(Mat orig, Mat oper)
+{
+	return dilation(erosion(orig, oper), oper);
+}

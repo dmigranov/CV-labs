@@ -239,22 +239,29 @@ int main(int argc, char **argv)
 		{
 			imshow("Otsu", otsu(img));
 		}
-		else if (k == 'd')
+		/*else if (k == 'd')
 		{
 
-			std::cout << "hello" << std::endl;
 			//getLMatrix(img).convertTo(orig, CV_8UC1);
 			//по хорошему, сначала ќцу, потом морфологи€
-			imshow("Dilation", dilation(invertion(otsu(img)), square5x5)); //наращивание не подходит: клетки объедин€ютс€ в одну...
-			//imshow("Dilation", dilation(invertion(otsu(img)), square5x5));
+			//imshow("Dilation", dilation(invertion(otsu(img)), square5x5)); //наращивание не подходит: клетки объедин€ютс€ в одну...
+			imshow("Dilation", dilation(otsu(img), cross3x3));
 		}
 		else if (k == 'e')
 		{
-			Mat orig;
-			getLMatrix(img).convertTo(orig, CV_8UC1);
-			//по хорошему, сначала ќцу, потом морфологи€
-			imshow("Erosion", erosion(255*orig, cross3x3));
-			imshow("Dilation", dilation(255 * orig, cross3x3));
+			//Mat orig;
+			//getLMatrix(img).convertTo(orig, CV_8UC1);
+			//imshow("Erosion", erosion(255*orig, cross3x3));
+			//imshow("Dilation", dilation(255 * orig, cross3x3));
+			//imshow("Erosion", erosion(invertion(otsu(img)), cross3x3));
+			imshow("Erosion", erosion(otsu(img), cross3x3));
+		}*/
+		else if (k == 'm')
+		{
+			imshow("Dilation", dilation(otsu(img), cross3x3));
+			imshow("Erosion", erosion(otsu(img), cross3x3));
+			imshow("Closing", closing(otsu(img), cross3x3));
+			imshow("Opening", opening(otsu(img), cross3x3));
 		}
 		else if (k == '0')
 			break;

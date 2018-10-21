@@ -13,4 +13,6 @@ const Mat square5x5 = (Mat_<uchar>(5, 5) << 255, 255, 255, 255, 255, 255, 255, 2
 
 Mat dilation(Mat original, Mat oper);
 Mat erosion(Mat orig, Mat oper);
+Mat closing(Mat orig, Mat oper);
+Mat opening(Mat orig, Mat oper);
 Mat invertion(Mat orig);
