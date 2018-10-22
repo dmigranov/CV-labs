@@ -260,10 +260,12 @@ int main(int argc, char **argv)
 		}*/
 		else if (k == 'm')
 		{
-			imshow("Dilation", dilation(otsu(img), cross3x3));
-			imshow("Erosion", erosion(otsu(img), cross3x3));
-			imshow("Closing", closing(otsu(img), cross3x3));
-			imshow("Opening", opening(otsu(img), cross3x3));
+			Mat morphimg = invertion(otsu(gauss_filter(img, 0.5)));
+			//Mat morphimg = invertion(canny(img, 0.3, 0.4));
+			imshow("Dilation", dilation(morphimg, circle7x7));
+			imshow("Erosion", erosion(morphimg, circle7x7));
+			imshow("Closing", closing(morphimg, circle7x7));
+			imshow("Opening", opening(morphimg, circle7x7));
 		}
 		else if (k == '0')
 			break;

@@ -133,7 +133,8 @@
     <ClCompile Include="filtration.cpp" />
     <ClCompile Include="lab.cpp" />
     <ClCompile Include="morphology.cpp" />
-    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="segmentation.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="image.jpg" />
@@ -143,6 +144,7 @@
     <ClInclude Include="filtration.h" />
     <ClInclude Include="lab.h" />
     <ClInclude Include="morphology.h" />
+    <ClInclude Include="segmentation.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

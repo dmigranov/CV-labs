@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="filtration.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -25,6 +22,12 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="morphology.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="segmentation.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,6 +47,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="morphology.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="segmentation.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
