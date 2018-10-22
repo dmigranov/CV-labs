@@ -260,12 +260,16 @@ int main(int argc, char **argv)
 		}*/
 		else if (k == 'm')
 		{
-			Mat morphimg = invertion(otsu(gauss_filter(img, 0.5)));
+			//препод сказал dilation затем closing
+			//Mat morphimg = invertion(otsu(gauss_filter(img, 0.5))); //sigma = 0.5 - not bad!
+			//i can change hsv - that can help me change otsu's output!
+			Mat morphimg = invertion(otsu(img));
 			//Mat morphimg = invertion(canny(img, 0.3, 0.4));
 			imshow("Dilation", dilation(morphimg, circle7x7));
 			imshow("Erosion", erosion(morphimg, circle7x7));
 			imshow("Closing", closing(morphimg, circle7x7));
 			imshow("Opening", opening(morphimg, circle7x7));
+			imshow("Dilation + Closing", closing(dilation(morphimg, cross3x3), circle7x7));
 		}
 		else if (k == '0')
 			break;
