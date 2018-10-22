@@ -300,6 +300,11 @@ Mat otsu(Mat orig)
 	double w1 = 0, w2, uSum = 0, u1, u2, max = 0;
 	double maxT = 0;
 	//w1(0), ... ?
+	/*w1 = 0;
+	w2 = 1;
+	u1 = 0;
+	u2 = uT;
+	double disp = w1 * w2 * pow(u1 - u2, 2);*/ //it would be just 0, not good
 	//это важно в случае, если на изображении есть абсолютно черное пятно
 	for (int t = 1; t < 101; t++) //1?
 	{
