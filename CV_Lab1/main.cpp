@@ -2,6 +2,7 @@
 #include "filtration.h"
 #include "lab.h"
 #include "morphology.h"
+#include "segmentation.h"
 
 using namespace cv;
 
@@ -226,6 +227,10 @@ int main(int argc, char **argv)
 		{
 			imshow("Sobel", sobel_filter(img, NULL));
 		}
+		else if (k == 'S')
+		{
+			std::cout << "Mean: " << mean(getLMatrix(img)) << std::endl << "Homogeneity: " << homogeneity(getLMatrix(img)) << std::endl;
+		}
 		else if (k == 'l')
 		{
 			imshow("My luminance", getLMatrix(img));
@@ -239,28 +244,8 @@ int main(int argc, char **argv)
 		{
 			imshow("Otsu", otsu(img));
 		}
-		/*else if (k == 'd')
-		{
-			Mat orig;
-			getLMatrix(img).convertTo(orig, CV_8UC1);
-			imshow("Dilation", dilation(255 * orig, cross3x3));
-			//getLMatrix(img).convertTo(orig, CV_8UC1);
-			//по хорошему, сначала ќцу, потом морфологи€
-			//imshow("Dilation", dilation(invertion(otsu(img)), square5x5)); //наращивание не подходит: клетки объедин€ютс€ в одну...
-			//imshow("Dilation", dilation(otsu(img), cross3x3));
-		}
-		else if (k == 'e')
-		{
-			Mat orig;
-			getLMatrix(img).convertTo(orig, CV_8UC1);
-			imshow("Erosion", erosion(255*orig, cross3x3));
-			//imshow("Dilation", dilation(255 * orig, cross3x3));
-			//imshow("Erosion", erosion(invertion(otsu(img)), cross3x3));
-			//imshow("Erosion", erosion(otsu(img), cross3x3));
-		}*/
 		else if (k == 'm')
 		{
-			//препод сказал dilation затем closing
 			//Mat morphimg = invertion(otsu(gauss_filter(img, 0.5))); //sigma = 0.5 - not bad!
 			//i can change hsv - that can help me change otsu's output!
 			Mat morphimg = invertion(otsu(img));
@@ -271,21 +256,16 @@ int main(int argc, char **argv)
 			imshow("Closing", closing(morphimg, oper));
 			imshow("Opening", opening(morphimg, oper));
 			imshow("Dilation + Closing", closing(dilation(morphimg, cross3x3), oper)); //different operators?
-			imshow("Closing + Dilation", dilation(closing(morphimg, oper), cross3x3)); //here too?*/
-
-			
-
-			Mat newimg = erosion(dilation(morphimg, circle5x5), circle7x7);
-			/*imshow("Dilation + Erosion", erosion(dilation(morphimg, circle5x5), circle5x5)); //not bad!
+			imshow("Closing + Dilation", dilation(closing(morphimg, oper), cross3x3)); //here too?
+			imshow("Dilation + Erosion", erosion(dilation(morphimg, circle5x5), circle5x5)); //not bad!
 			imshow("Dilation5x5 + Erosion7x7", newimg); //not bad!
 			imshow("Erosed Dilation5x5 + Erosion7x7", erosion(newimg, circle3x3));
 			imshow("DOUBLE Dilation5x5 + Erosion7x7", erosion(dilation(newimg, circle3x3), circle5x5)); //not bad!
-			imshow("Closed3x3 Dilation5x5 + Erosion7x7", closing(newimg, circle3x3));*/
-			//imshow("Opened3x3 Dilation5x5 + Erosion7x7", erosion(erosion(dilation(opening(newimg, circle3x3), circle3x3), circle3x3), circle3x3));
-			//imshow("Opened3x3 Dilation5x5 + Erosion7x7", closing(opening(newimg, circle3x3), circle5x5));
+			imshow("Closed3x3 Dilation5x5 + Erosion7x7", closing(newimg, circle3x3));
+			imshow("Opened3x3 Dilation5x5 + Erosion7x7", erosion(erosion(dilation(opening(newimg, circle3x3), circle3x3), circle3x3), circle3x3));
+			imshow("Opened3x3 Dilation5x5 + Erosion7x7", closing(opening(newimg, circle3x3), circle5x5));*/
 			
-
-
+			Mat newimg = erosion(dilation(morphimg, circle5x5), circle7x7);
 
 			//std::cout << "Cell count: " << countObjects(opening(newimg, circle3x3)) << std::endl;
 			std::cout << "Cell count: " << countObjects(dilation(opening(newimg, circle3x3), circle3x3)) << std::endl;

@@ -18,7 +18,7 @@ const Mat square7x7 = (Mat_<uchar>(7, 7) << 255, 255, 255, 255, 255, 255, 255, 2
 
 Mat dilation(Mat original, Mat oper);
 Mat erosion(Mat orig, Mat oper);
-Mat closing(Mat orig, Mat oper);
+Mat closing(Mat orig, Mat oper); //убирает внутренние дырки. Понятно, что если два объекта близки, он считает их за один с дыркой
 Mat opening(Mat orig, Mat oper);
 Mat invertion(Mat orig);
 uint countObjects(Mat orig);
