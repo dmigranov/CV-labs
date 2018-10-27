@@ -276,31 +276,19 @@ int main(int argc, char **argv)
 			
 
 			Mat newimg = erosion(dilation(morphimg, circle5x5), circle7x7);
-			imshow("Dilation + Erosion", erosion(dilation(morphimg, circle5x5), circle5x5)); //not bad!
+			/*imshow("Dilation + Erosion", erosion(dilation(morphimg, circle5x5), circle5x5)); //not bad!
 			imshow("Dilation5x5 + Erosion7x7", newimg); //not bad!
 			imshow("Erosed Dilation5x5 + Erosion7x7", erosion(newimg, circle3x3));
 			imshow("DOUBLE Dilation5x5 + Erosion7x7", erosion(dilation(newimg, circle3x3), circle5x5)); //not bad!
-			imshow("Closed3x3 Dilation5x5 + Erosion7x7", closing(newimg, circle3x3));
-			imshow("Opened3x3 Dilation5x5 + Erosion7x7", dilation(opening(newimg, circle3x3), circle3x3));
-
-			//imshow("Double Opened Dilation5x5 + Erosion7x7", opening(opening(newimg, circle3x3), circle5x5)); //не катит
-			//imshow("Opened5x5 Dilation5x5 + Erosion7x7", opening(newimg, circle5x5)); //beautiful, but it erodes the cell in the rights
-			//imshow("erosion dilation", newimg);
-			/*
-			imshow("Dilation + Closing", newimg);
-			imshow("opened Dilation + Closing", opening(newimg, circle3x3));*/
+			imshow("Closed3x3 Dilation5x5 + Erosion7x7", closing(newimg, circle3x3));*/
+			//imshow("Opened3x3 Dilation5x5 + Erosion7x7", erosion(erosion(dilation(opening(newimg, circle3x3), circle3x3), circle3x3), circle3x3));
+			//imshow("Opened3x3 Dilation5x5 + Erosion7x7", closing(opening(newimg, circle3x3), circle5x5));
 			
-			
-			/*imshow("Orig", morphimg);
-			Mat newimg = closing(dilation(morphimg, circle3x3), circle7x7);
-			Mat newimg2 = closing(newimg, circle7x7);
-			imshow("Closed", newimg2);*/
-
 
 
 
 			//std::cout << "Cell count: " << countObjects(opening(newimg, circle3x3)) << std::endl;
-			//std::cout << "Cell count: " << countObjects(dilation(opening(newimg, circle3x3), circle3x3)) << std::endl;
+			std::cout << "Cell count: " << countObjects(dilation(opening(newimg, circle3x3), circle3x3)) << std::endl;
 
 		}
 		else if (k == '0')
