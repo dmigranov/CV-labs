@@ -84,3 +84,39 @@ Mat opening(Mat orig, Mat oper)
 {
 	return dilation(erosion(orig, oper), oper);
 }
+
+uint countObjects(Mat orig)
+{
+	
+	uint count = 1;
+	Mat labels(orig.rows, orig.cols, orig.type());
+	labels = 0;
+
+	for (int i = 0; i < orig.rows; i++)
+		for (int j = 0; j < orig.cols; j++)
+		{
+			fillWithMark(orig, labels, count++, i, j);
+		}
+	
+
+
+	return count - 1;
+}
+
+void fillWithMark(Mat &orig, Mat &labels, uint label, uint x, uint y)
+{
+	
+	if (labels.at<uchar>(x, y) == 0 && orig.at<uchar>(x, y) == 255)
+	{
+		std::cout << x << " " << y << std::endl;
+		labels.at<uchar>(x, y) = label;
+		if (x > 0)
+			fillWithMark(orig, labels, label, x - 1, y);
+		if (y > 0)
+			fillWithMark(orig, labels, label, x, y - 1);
+		if (x < orig.rows - 1)
+			fillWithMark(orig, labels, label, x + 1, y);
+		if (y < orig.cols - 1)
+			fillWithMark(orig, labels, label, x, y + 1);
+	}
+}
