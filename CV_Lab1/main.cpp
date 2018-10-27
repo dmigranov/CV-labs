@@ -275,7 +275,7 @@ int main(int argc, char **argv)
 
 			
 
-			Mat newimg = erosion(dilation(morphimg, circle5x5), circle7x7);
+			//Mat newimg = erosion(dilation(morphimg, circle5x5), circle7x7);
 			/*imshow("Dilation + Erosion", erosion(dilation(morphimg, circle5x5), circle5x5)); //not bad!
 			imshow("Dilation5x5 + Erosion7x7", newimg); //not bad!
 			imshow("Erosed Dilation5x5 + Erosion7x7", erosion(newimg, circle3x3));
@@ -285,7 +285,10 @@ int main(int argc, char **argv)
 
 			//imshow("Double Opened Dilation5x5 + Erosion7x7", opening(opening(newimg, circle3x3), circle5x5)); //не катит
 			//imshow("Opened5x5 Dilation5x5 + Erosion7x7", opening(newimg, circle5x5)); //beautiful, but it erodes the cell in the rights
-			
+			//imshow("erosion dilation", newimg);
+			/*Mat newimg = closing(dilation(morphimg, circle3x3), circle7x7);
+			imshow("Dilation + Closing", newimg);
+			imshow("opened Dilation + Closing", opening(newimg, circle3x3));*/
 
 
 
