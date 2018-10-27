@@ -102,44 +102,33 @@ uint countObjects(Mat orig)
 		for (int y = 0; y < orig.cols; y++)
 			fillWithMark(orig, labels, count++, x, y);
 
-	//39 106
+	std::set<uint> objects;
+	for (int x = 0; x < labels.rows; x++)
+		for (int y = 0; y < labels.cols; y++)
+			objects.insert(labels.at<uchar>(x, y));
+	objects.erase(0);
 
-	/*while (all > ones)
+	for (uint o : objects)
 	{
-		bool marked = false;
-		count++;
-		for (int x = 0; x < orig.rows; x++)
-			for (int y = 0; y < orig.cols; y++)
-			{
-				if (labels.at<uchar>(x, y) == 0 && orig.at<uchar>(x, y) == 255)
-				{
-					labels.at<uchar>(x, y) = count;
-					all--;
-					if (x > 0)
-						labels.at<uchar>(x - 1, y) = 255;
-					if (y > 0)
-						labels.at<uchar>(x, y - 1) = 255;
-					if (x < orig.rows - 1)
-						labels.at<uchar>(x + 1, y) = 255;
-					if (y < orig.cols - 1)
-						labels.at<uchar>(x, y + 1) = 255;
-				}
-			}
-	}*/
+		Mat object(orig.rows, orig.cols, orig.type());
+		object = 0;
+		for (int x = 0; x < labels.rows; x++)
+			for (int y = 0; y < labels.cols; y++)
+				if (labels.at<uchar>(x, y) == o)
+					object.at< uchar >(x, y) = 255;
+		std::string wName = "Object " + std::to_string(o);
+		imshow(wName, object);
+	}
 
-
-	
-
-
-	return count - 1;
+	return objects.size(); //потому что ноль тоже считает
 }
 
-void fillWithMark(Mat &orig, Mat &labels, uchar label, uint x, uint y)
+void fillWithMark(Mat &orig, Mat &labels, uint label, uint x, uint y)
 {
 	
 	if (labels.at<uchar>(x, y) == 0 && orig.at<uchar>(x, y) == 255)
 	{
-		//std::cout << x << " " << y << std::endl;
+		//std::cout << label << std::endl;
 		labels.at<uchar>(x, y) = label;
 		if (x > 0)
 			fillWithMark(orig, labels, label, x - 1, y);

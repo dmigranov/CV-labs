@@ -265,17 +265,32 @@ int main(int argc, char **argv)
 			//i can change hsv - that can help me change otsu's output!
 			Mat morphimg = invertion(otsu(img));
 			//Mat morphimg = invertion(canny(img, 0.3, 0.4));
-			Mat oper = circle7x7;
+			/*Mat oper = circle7x7;
 			imshow("Dilation", dilation(morphimg, oper));
-			Mat newimg = erosion(morphimg, cross3x3);
-			//imshow("Erosion", erosion(morphimg, oper));
-			imshow("Erosion", newimg);
+			imshow("Erosion", erosion(morphimg, oper));
 			imshow("Closing", closing(morphimg, oper));
 			imshow("Opening", opening(morphimg, oper));
 			imshow("Dilation + Closing", closing(dilation(morphimg, cross3x3), oper)); //different operators?
-			imshow("Closing + Dilation", dilation(closing(morphimg, oper), cross3x3)); //here too?
+			imshow("Closing + Dilation", dilation(closing(morphimg, oper), cross3x3)); //here too?*/
 
-			//std::cout << "Количество клеток: " << countObjects(closing(morphimg, oper)) << std::endl;
+			
+
+			Mat newimg = erosion(dilation(morphimg, circle5x5), circle7x7);
+			/*imshow("Dilation + Erosion", erosion(dilation(morphimg, circle5x5), circle5x5)); //not bad!
+			imshow("Dilation5x5 + Erosion7x7", newimg); //not bad!
+			imshow("Erosed Dilation5x5 + Erosion7x7", erosion(newimg, circle3x3));
+			imshow("DOUBLE Dilation5x5 + Erosion7x7", erosion(dilation(newimg, circle3x3), circle5x5)); //not bad!
+			imshow("Closed3x3 Dilation5x5 + Erosion7x7", closing(newimg, circle3x3));
+			imshow("Opened3x3 Dilation5x5 + Erosion7x7", dilation(opening(newimg, circle3x3), circle3x3));*/
+
+			//imshow("Double Opened Dilation5x5 + Erosion7x7", opening(opening(newimg, circle3x3), circle5x5)); //не катит
+			//imshow("Opened5x5 Dilation5x5 + Erosion7x7", opening(newimg, circle5x5)); //beautiful, but it erodes the cell in the rights
+			
+
+
+
+			//std::cout << "Cell count: " << countObjects(opening(newimg, circle3x3)) << std::endl;
+			//std::cout << "Cell count: " << countObjects(dilation(opening(newimg, circle3x3), circle3x3)) << std::endl;
 
 		}
 		else if (k == '0')
