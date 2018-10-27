@@ -21,4 +21,4 @@ Mat closing(Mat orig, Mat oper);
 Mat opening(Mat orig, Mat oper);
 Mat invertion(Mat orig);
 uint countObjects(Mat orig);
-void fillWithMark(Mat &orig, Mat &labels, uint label, uint x, uint y);
+void fillWithMark(Mat &orig, Mat &labels, uchar label, uint x, uint y);

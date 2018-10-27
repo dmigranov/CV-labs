@@ -266,16 +266,16 @@ int main(int argc, char **argv)
 			Mat morphimg = invertion(otsu(img));
 			//Mat morphimg = invertion(canny(img, 0.3, 0.4));
 			Mat oper = circle7x7;
-			/*imshow("Dilation", dilation(morphimg, oper));
+			imshow("Dilation", dilation(morphimg, oper));
 			Mat newimg = erosion(morphimg, cross3x3);
 			//imshow("Erosion", erosion(morphimg, oper));
 			imshow("Erosion", newimg);
 			imshow("Closing", closing(morphimg, oper));
 			imshow("Opening", opening(morphimg, oper));
 			imshow("Dilation + Closing", closing(dilation(morphimg, cross3x3), oper)); //different operators?
-			imshow("Closing + Dilation", dilation(closing(morphimg, oper), cross3x3)); //here too?*/
+			imshow("Closing + Dilation", dilation(closing(morphimg, oper), cross3x3)); //here too?
 
-			std::cout << "Количество клеток: " << countObjects(closing(morphimg, oper)) << std::endl;
+			//std::cout << "Количество клеток: " << countObjects(closing(morphimg, oper)) << std::endl;
 
 		}
 		else if (k == '0')
