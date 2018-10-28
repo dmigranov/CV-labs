@@ -230,7 +230,9 @@ int main(int argc, char **argv)
 		}
 		else if (k == 'S')
 		{
-			std::cout << "Mean: " << mean(getLMatrix(img)) << std::endl << "Homogeneity: " << homogeneity(getLMatrix(img)) << std::endl;
+			//std::cout << "Mean: " << mean(getLMatrix(img)) << std::endl << "Homogeneity: " << homogeneity(getLMatrix(img)) << std::endl;
+			
+			imshow("Split", splitmerge(img));
 		}
 		else if (k == 'l')
 		{

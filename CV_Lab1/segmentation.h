@@ -4,8 +4,9 @@
 
 using namespace cv;
 
-Mat splitmerge(Mat orig);
+Mat splitmerge(Mat region);
 Mat normalizedCut(Mat orig);
+void split(Mat &region, Mat &res);
 
 double homogeneity(Mat region);
 double mean(Mat region);
