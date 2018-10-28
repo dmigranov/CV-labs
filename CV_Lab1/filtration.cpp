@@ -80,6 +80,7 @@ Mat sobel_filter(Mat orig, Mat * grad)
 							L.at<double>(i + x, j + y) * Gy.at<int>(x + 1, y + 1);
 					}
 				}
+			//std::cout << gxv << " " << gyv << std::endl;
 			newimg.at<double>(i, j) = sqrt(gxv * gxv + gyv * gyv);
 			if (grad != NULL)
 			{

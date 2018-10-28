@@ -238,7 +238,7 @@ int main(int argc, char **argv)
 		}
 		else if (k == 'L')
 		{
-			imshow("Harris", harris_detector(img));
+			imshow("Forstner", forstner_detector(img));
 		}
 		else if (k == 'c')
 		{

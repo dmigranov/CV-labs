@@ -5,4 +5,5 @@
 using namespace cv;
 
 Mat harris_detector(Mat orig);
-Mat _detector(Mat orig);
+Mat forstner_detector(Mat orig);
+Mat SIFT(Mat orig);
