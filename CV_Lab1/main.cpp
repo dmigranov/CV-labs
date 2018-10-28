@@ -3,6 +3,7 @@
 #include "lab.h"
 #include "morphology.h"
 #include "segmentation.h"
+#include "local_features.h"
 
 using namespace cv;
 
@@ -234,6 +235,10 @@ int main(int argc, char **argv)
 		else if (k == 'l')
 		{
 			imshow("My luminance", getLMatrix(img));
+		}
+		else if (k == 'L')
+		{
+			imshow("Harris", harris_detector(img));
 		}
 		else if (k == 'c')
 		{

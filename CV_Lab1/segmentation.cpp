@@ -48,5 +48,5 @@ Mat splitmerge(Mat orig)
 
 Mat normalizedCut(Mat orig)
 {
-
+	return orig;
 }

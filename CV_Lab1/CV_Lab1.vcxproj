@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClCompile Include="filtration.cpp" />
     <ClCompile Include="lab.cpp" />
+    <ClCompile Include="local_features.cpp" />
     <ClCompile Include="morphology.cpp" />
     <ClCompile Include="segmentation.cpp" />
     <ClCompile Include="main.cpp" />
@@ -144,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="filtration.h" />
     <ClInclude Include="lab.h" />
+    <ClInclude Include="local_features.h" />
     <ClInclude Include="morphology.h" />
     <ClInclude Include="segmentation.h" />
   </ItemGroup>
