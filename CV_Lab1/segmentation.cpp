@@ -49,22 +49,28 @@ void split(Region &region)
 
 	if (homogeneity(regmat) > k)
 	{
-		Region r1(regmat(Rect(0, 0, cols / 2, rows / 2))); //11; 11/2 = 5
-		region.addChild(r1);
-		Region r2(regmat(Rect(cols / 2, 0, cols - cols / 2, rows / 2)));
-		region.addChild(r2);
-		Region r3(regmat(Rect(0, rows / 2, cols / 2, rows - rows / 2)));
-		region.addChild(r3);
-		Region r4(regmat(Rect(cols / 2, rows / 2, cols - cols / 2, rows - rows / 2)));
-		region.addChild(r4);
+		; //11; 11/2 = 5
+		region.addChild(Region(regmat(Rect(0, 0, cols / 2, rows / 2))));
+		;
+		region.addChild(Region(regmat(Rect(cols / 2, 0, cols - cols / 2, rows / 2))));
+		;
+		region.addChild(Region(regmat(Rect(0, rows / 2, cols / 2, rows - rows / 2))));
+		;
+		region.addChild(Region(regmat(Rect(cols / 2, rows / 2, cols - cols / 2, rows - rows / 2))));
+
+		/*
+		1	2
+		3	4
+		*/
+
 		//мёрджим что можем
-		for (uint i = 0; i < 4; i++)
+		/*for (uint i = 0; i < 4; i++)
 		{
 			if (mean(region.children[i].mat) - mean(region.children[(i + 1) % 4].mat))
 			{
 				//merge
 			}
-		}
+		}*/ //looks like merge should be after полной прогонки split
 		for (Region r : region.children)
 		{
 			split(r);
