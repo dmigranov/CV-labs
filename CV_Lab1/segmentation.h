@@ -11,17 +11,13 @@ public:
 	Mat mat;
 	Region(Mat m)
 	{
-		mat = getLMatrix(m);
+		mat = m;
 	}
-
-	
-
-
 };
 
 Mat splitmerge(Mat orig);
 Mat normalizedCut(Mat orig);
-void split(Region &region, Mat &res);
+void split(Region &region);
 
 double homogeneity(Mat region);
 double mean(Mat region);
