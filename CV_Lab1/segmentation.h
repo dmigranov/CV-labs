@@ -21,7 +21,7 @@ public:
 
 Mat splitmerge(Mat orig);
 void split(Region &region);
-void mrege(Region &region);
+void merge(Region &region);
 
 
 

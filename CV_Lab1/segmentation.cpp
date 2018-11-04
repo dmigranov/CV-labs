@@ -31,10 +31,8 @@ Mat splitmerge(Mat orig)
 	Mat res(r.mat.rows, r.mat.cols, r.mat.type());
 	//const = 0.001? та, с которой сравниваем с deviation. по мне, норм
 
-	/*if (homogeneity(orig) > k)
-		split(L);*/
-	split(r); //no merge but it definitely slits
-	//now merge!
+	split(r);
+	merge(r);
 
 	return r.mat; //
 }
@@ -43,8 +41,8 @@ void split(Region &region)
 {
 	Mat regmat = region.mat;
 
-	//const double k = 0.001;
-	const double k = 0.004;
+	const double k = 0.0004;
+
 	int rows = regmat.rows;
 	int cols = regmat.cols;
 
