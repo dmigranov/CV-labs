@@ -53,6 +53,8 @@ void split(Region &region)
 		region.addChild(Region(regmat(Rect(0, rows / 2, cols / 2, rows - rows / 2))));
 		region.addChild(Region(regmat(Rect(cols / 2, rows / 2, cols - cols / 2, rows - rows / 2))));
 
+		//или всё-таки тут?
+
 		for (Region r : region.children)
 		{
 			split(r);
@@ -67,7 +69,7 @@ void split(Region &region)
 
 void merge(Region &region)
 {
-
+	//
 }
 
 /*
