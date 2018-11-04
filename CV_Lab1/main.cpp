@@ -253,39 +253,9 @@ int main(int argc, char **argv)
 		}
 		else if (k == 'm')
 		{
-			//Mat morphimg = invertion(otsu(gauss_filter(img, 0.5))); //sigma = 0.5 - not bad!
-			//i can change hsv - that can help me change otsu's output!
 			Mat morphimg = invertion(otsu(img));
-			//Mat morphimg = invertion(canny(img, 0.3, 0.4));
-			/*Mat oper = circle7x7;
-			imshow("Dilation", dilation(morphimg, oper));
-			imshow("Erosion", erosion(morphimg, oper));
-			imshow("Closing", closing(morphimg, oper));
-			imshow("Opening", opening(morphimg, oper));
-			imshow("Dilation + Closing", closing(dilation(morphimg, cross3x3), oper)); //different operators?
-			imshow("Closing + Dilation", dilation(closing(morphimg, oper), cross3x3)); //here too?
-			imshow("Dilation + Erosion", erosion(dilation(morphimg, circle5x5), circle5x5)); //not bad!
-			imshow("Dilation5x5 + Erosion7x7", newimg); //not bad!
-			imshow("Erosed Dilation5x5 + Erosion7x7", erosion(newimg, circle3x3));
-			imshow("DOUBLE Dilation5x5 + Erosion7x7", erosion(dilation(newimg, circle3x3), circle5x5)); //not bad!
-			imshow("Closed3x3 Dilation5x5 + Erosion7x7", closing(newimg, circle3x3));
-			imshow("Opened3x3 Dilation5x5 + Erosion7x7", erosion(erosion(dilation(opening(newimg, circle3x3), circle3x3), circle3x3), circle3x3));
-			imshow("Opened3x3 Dilation5x5 + Erosion7x7", closing(opening(newimg, circle3x3), circle5x5));*/
-			
 			Mat newimg = erosion(dilation(morphimg, circle5x5), circle7x7); //по сути closing с разными матрицами
-			//newimg = closing(newimg, circle7x7);
 			std::cout << "Cell count: " << countObjects(dilation(opening(newimg, circle3x3), circle3x3)) << std::endl; ///final
-
-			//Mat newimg = closing(dilation(morphimg, circle7x7), circle7x7);
-
-			/*morphimg = dilation(morphimg, circle3x3);
-			morphimg = closing(morphimg, circle7x7);
-			morphimg = erosion(morphimg, circle7x7);
-			morphimg = closing(morphimg, circle7x7);
-			morphimg = erosion(morphimg, circle7x7);
-			morphimg = erosion(morphimg, circle7x7);
-			morphimg = erosion(morphimg, circle7x7);
-			std::cout << "Cell count: " << countObjects(morphimg);*/
 		}
 		else if (k == '0')
 			break;
