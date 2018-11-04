@@ -74,25 +74,37 @@ void merge(Region &region)
 	//изначально их всегда четыре
 	Mat		hmerged1, hmerged2, vmerged1, vmerged2;
 	bool	hb1, hb2, vb1, vb2;
+
+	
+
+	if (region.children.size() == 0)
+		return;
 	hconcat(region.children[0].mat, region.children[1].mat, hmerged1);
 	hb1 = homogeneity(hmerged1) < k;
+	hmerged1 = (mean(region.children[0].mat) + mean(region.children[1].mat)) / 2;
 	hconcat(region.children[2].mat, region.children[3].mat, hmerged2);
 	hb2 = homogeneity(hmerged2) < k;
+	hmerged2 = (mean(region.children[2].mat) + mean(region.children[3].mat)) / 2;
 	if (hb1)
 	{
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
-	}
-	if (hb2)
-	{
-
+		region.children.push_back(hmerged1);
 	}
 
-	//верт
-
-	for (uint i = 0; i < region.children.size(); i++)
+	if (hb2 && hb1) //то есь до этого уже объединили
 	{
-		
+		region.children.erase(region.children.begin()); //not good
+		region.children.erase(region.children.begin());
+		region.children.push_back(hmerged2);
+	}
+	//а если hb2 без hb1?
+
+	//верт!
+
+	for (Region r : region.children)
+	{
+		merge(r);
 	}
 }
 
