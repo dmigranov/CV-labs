@@ -3,7 +3,7 @@
 
 Mat harris_detector(Mat orig)
 {
-	Mat L = getLMatrix(orig) * 100;
+	Mat L = getLMatrix(orig);
 	double k = 0.05; //k  [0.04, 0.06] //получать аргументом
 	Mat Gx = (Mat_<int>(3, 3) << -1, 0, 1, -2, 0, 2, -1, 0, 1);
 	Mat Gy = (Mat_<int>(3, 3) << -1, -2, -1, 0, 0, 0, 1, 2, 1);
@@ -51,7 +51,7 @@ Mat harris_detector(Mat orig)
 				std::cout << R << std::endl;
 		}
 	}
-	L /= 100;
+	//L /= 100;
 	return L;
 }
 

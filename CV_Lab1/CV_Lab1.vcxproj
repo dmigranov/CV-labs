@@ -99,7 +99,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>opencv_world343d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <StackReserveSize>8388608</StackReserveSize>
+      <StackReserveSize>12388608</StackReserveSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

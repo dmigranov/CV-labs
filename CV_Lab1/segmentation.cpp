@@ -26,19 +26,21 @@ double mean(Mat region)
 Mat splitmerge(Mat orig)
 {
 
-	Mat L = getLMatrix(orig);
-	Mat res(L.rows, L.cols, L.type());
+	//Mat L = getLMatrix(orig);
+	Region r(orig);
+	Mat res(r.mat.rows, r.mat.cols, r.mat.type());
 	//const = 0.001? та, с которой сравниваем с deviation. по мне, норм
 
 	/*if (homogeneity(orig) > k)
 		split(L);*/
-	split(L, res); //no merge but it definitely slits
+	split(r, res); //no merge but it definitely slits
 
-	return L; //
+	return r.mat; //
 }
 
-void split(Mat &region, Mat &res)
+void split(Region &region_, Mat &res)
 {
+	Mat region = region_.mat;
 	//const double k = 0.001;
 	const double k = 0.008;
 	int rows = region.rows;
@@ -57,7 +59,8 @@ void split(Mat &region, Mat &res)
 		//imshow("r3", r3);
 		r4 = region(Rect(cols / 2, rows / 2, cols - cols / 2, rows - rows / 2));
 		split(r4, res);
-		//merge: сначала создаём r1 r2 r3 r4, потом мёрджаем если можно, остальные - сплиттим?
+		//merge: сначала создаём r1 r2 r3 r4, потом мёрджим
+		//даже нсли замёрджили всё равно сплитим
 		//imshow("r4", r4);
 	}
 	else

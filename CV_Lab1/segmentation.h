@@ -4,9 +4,24 @@
 
 using namespace cv;
 
-Mat splitmerge(Mat region);
+class Region
+{
+public:
+	std::vector <Region> children;
+	Mat mat;
+	Region(Mat m)
+	{
+		mat = getLMatrix(m);
+	}
+
+	
+
+
+};
+
+Mat splitmerge(Mat orig);
 Mat normalizedCut(Mat orig);
-void split(Mat &region, Mat &res);
+void split(Region &region, Mat &res);
 
 double homogeneity(Mat region);
 double mean(Mat region);

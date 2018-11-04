@@ -272,11 +272,20 @@ int main(int argc, char **argv)
 			imshow("Opened3x3 Dilation5x5 + Erosion7x7", erosion(erosion(dilation(opening(newimg, circle3x3), circle3x3), circle3x3), circle3x3));
 			imshow("Opened3x3 Dilation5x5 + Erosion7x7", closing(opening(newimg, circle3x3), circle5x5));*/
 			
-			Mat newimg = erosion(dilation(morphimg, circle5x5), circle7x7);
+			Mat newimg = erosion(dilation(morphimg, circle5x5), circle7x7); //по сути closing с разными матрицами
+			//newimg = closing(newimg, circle7x7);
+			std::cout << "Cell count: " << countObjects(dilation(opening(newimg, circle3x3), circle3x3)) << std::endl; ///final
 
-			//std::cout << "Cell count: " << countObjects(opening(newimg, circle3x3)) << std::endl;
-			std::cout << "Cell count: " << countObjects(dilation(opening(newimg, circle3x3), circle3x3)) << std::endl;
+			//Mat newimg = closing(dilation(morphimg, circle7x7), circle7x7);
 
+			/*morphimg = dilation(morphimg, circle3x3);
+			morphimg = closing(morphimg, circle7x7);
+			morphimg = erosion(morphimg, circle7x7);
+			morphimg = closing(morphimg, circle7x7);
+			morphimg = erosion(morphimg, circle7x7);
+			morphimg = erosion(morphimg, circle7x7);
+			morphimg = erosion(morphimg, circle7x7);
+			std::cout << "Cell count: " << countObjects(morphimg);*/
 		}
 		else if (k == '0')
 			break;
