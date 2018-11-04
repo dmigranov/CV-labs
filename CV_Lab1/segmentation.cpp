@@ -60,7 +60,14 @@ void split(Region &region)
 		//мёрджим что можем
 		for (uint i = 0; i < 4; i++)
 		{
-			if(region.children[i] <сравниваем разницу. как?> region.children[(i+1)%4])
+			if (mean(region.children[i].mat) - mean(region.children[(i + 1) % 4].mat))
+			{
+				//merge
+			}
+		}
+		for (Region r : region.children)
+		{
+			split(r);
 		}
 		//сплитим по вектору
 
