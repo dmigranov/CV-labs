@@ -13,6 +13,10 @@ public:
 	{
 		mat = m;
 	}
+	void addChild(Region child)
+	{
+		children.push_back(child);
+	}
 };
 
 Mat splitmerge(Mat orig);
