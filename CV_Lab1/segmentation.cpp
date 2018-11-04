@@ -1,5 +1,7 @@
 #include "segmentation.h"
 
+const double k = 0.0004;
+
 double homogeneity(Mat region)
 {
 	double dev = 0;
@@ -41,7 +43,7 @@ void split(Region &region)
 {
 	Mat regmat = region.mat;
 
-	const double k = 0.0004;
+
 
 	int rows = regmat.rows;
 	int cols = regmat.cols;
@@ -69,7 +71,29 @@ void split(Region &region)
 
 void merge(Region &region)
 {
-	//
+	//изначально их всегда четыре
+	Mat		hmerged1, hmerged2, vmerged1, vmerged2;
+	bool	hb1, hb2, vb1, vb2;
+	hconcat(region.children[0].mat, region.children[1].mat, hmerged1);
+	hb1 = homogeneity(hmerged1) < k;
+	hconcat(region.children[2].mat, region.children[3].mat, hmerged2);
+	hb2 = homogeneity(hmerged2) < k;
+	if (hb1)
+	{
+		region.children.erase(region.children.begin());
+		region.children.erase(region.children.begin());
+	}
+	if (hb2)
+	{
+
+	}
+
+	//верт
+
+	for (uint i = 0; i < region.children.size(); i++)
+	{
+		
+	}
 }
 
 /*
@@ -79,13 +103,7 @@ void merge(Region &region)
 
 
 //мёрджим что можем
-/*for (uint i = 0; i < 4; i++)
-{
-	if (mean(region.children[i].mat) - mean(region.children[(i + 1) % 4].mat))
-	{
-		//merge
-	}
-}*/ //looks like merge should be after полной прогонки split
+/**/ //looks like merge should be after полной прогонки split
 //даже нсли замёрджили всё равно сплитим
 /*
 -------------------------
