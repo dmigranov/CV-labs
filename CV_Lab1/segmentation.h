@@ -20,8 +20,13 @@ public:
 };
 
 Mat splitmerge(Mat orig);
-Mat normalizedCut(Mat orig);
 void split(Region &region);
+void mrege(Region &region);
+
+
+
+Mat normalizedCut(Mat orig);
+
 
 double homogeneity(Mat region);
 double mean(Mat region);
