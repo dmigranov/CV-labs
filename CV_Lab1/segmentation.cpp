@@ -92,7 +92,7 @@ void merge(Region &region)
 		region.children.push_back(hmerged1);
 	}
 
-	if (hb2 && hb1) //то есь до этого уже объединили
+	if (hb2 && hb1) //то есть до этого уже объединили
 	{
 		region.children.erase(region.children.begin()); //not good
 		region.children.erase(region.children.begin());
@@ -101,6 +101,7 @@ void merge(Region &region)
 	//а если hb2 без hb1?
 
 	//верт!
+	//TODO: ДОДЕЛАТЬ!
 
 	for (Region r : region.children)
 	{
@@ -108,29 +109,17 @@ void merge(Region &region)
 	}
 }
 
-/*
-1	2
-3	4
-*/
+
 
 
 //мёрджим что можем
 /**/ //looks like merge should be after полной прогонки split
 //даже нсли замёрджили всё равно сплитим
-/*
--------------------------
-|			|			|
-|			|			|
-|			|			|
-------------|------------
-|			|			|
-|			|			|
-|			|			|
--------------------------
-*/
+
 
 
 Mat normalizedCut(Mat orig)
 {
+	//Mat W
 	return orig;
 }

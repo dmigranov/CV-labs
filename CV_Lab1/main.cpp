@@ -240,7 +240,8 @@ int main(int argc, char **argv)
 		}
 		else if (k == 'L')
 		{
-			imshow("Forstner", forstner_detector(img));
+			//imshow("Forstner", forstner_detector(img));
+			imshow("Harris", harris_detector(img));
 		}
 		else if (k == 'c')
 		{
