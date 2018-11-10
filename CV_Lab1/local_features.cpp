@@ -4,8 +4,10 @@
 Mat harris_detector(Mat orig)
 {
 	Mat L = getLMatrix(orig);
+	/*Mat res(L.rows, L.cols, L.type());
+	res = L;*/
 	Mat res(L.rows, L.cols, L.type());
-	res = 0;
+	L.copyTo(res);
 	double k = 0.05; //k  [0.04, 0.06] //получать аргументом
 	Mat Gx = (Mat_<int>(3, 3) << -1, 0, 1, -2, 0, 2, -1, 0, 1);
 	Mat Gy = (Mat_<int>(3, 3) << -1, -2, -1, 0, 0, 0, 1, 2, 1);
@@ -38,7 +40,7 @@ Mat harris_detector(Mat orig)
 					{
 						M += IMat; //w(x,y) = 1 в окне и 0 за пределами
 					}*/
-
+			//int count = 0;
 			for (int x = -2; x < 3; x++)
 				for (int y = -2; y < 3; y++)
 					if (i + x >= 0 && i + x < L.rows && j + y >= 0 && j + y < L.cols)
@@ -63,14 +65,12 @@ Mat harris_detector(Mat orig)
 			//std::cout << M << std::endl << std::endl;
 			double det = (M.at<double>(0, 0) * M.at<double>(1, 1)) - (M.at<double>(1, 0) * M.at<double>(0, 1));
 			double tr = M.at<double>(0, 0) + M.at<double>(1, 1);
-			double R = det - k * pow(tr, 2);
-			//double R =  det / tr; //firstner
-			//if(i == 5 && j == 100)(
-			//std::cout << det << std::endl << tr << std::endl << std::endl;
-			/*if (R > 0)
-				std::cout << R << std::endl;*/
+			double R = det - k * pow(tr, 2); 
+			if (i == 0 && j == 0)
+				std::cout << M << std::endl;
 			if (R > 100)
-				res.at<double>(i, j) = 1;
+				//res.at<double>(i, j) = 1;
+				res.at<double>(i, j) = 0;
 		}
 	}
 	//L /= 100;
