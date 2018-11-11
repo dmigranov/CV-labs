@@ -4,6 +4,10 @@
 
 using namespace cv;
 
+const Mat Gx = (Mat_<int>(3, 3) << -1, 0, 1, -2, 0, 2, -1, 0, 1);
+const Mat Gy = (Mat_<int>(3, 3) << -1, -2, -1, 0, 0, 0, 1, 2, 1);
+
 Mat harris_detector(Mat orig);
 Mat forstner_detector(Mat orig);
 Mat SIFT(Mat orig);
+void local_features(Mat orig);

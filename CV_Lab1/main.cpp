@@ -241,7 +241,8 @@ int main(int argc, char **argv)
 		else if (k == 'L')
 		{
 			//imshow("Forstner", forstner_detector(img));
-			imshow("Harris", harris_detector(img));
+			//imshow("Harris", harris_detector(img));
+			local_features(img);
 		}
 		else if (k == 'c')
 		{
