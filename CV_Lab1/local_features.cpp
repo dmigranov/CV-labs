@@ -160,10 +160,16 @@ void local_features(Mat orig)
 Mat SIFT(Mat orig, double sigma)
 {
 	
-	Mat res1, res2, res;
+	Mat res1, res2, res3, res;
 	res1 = gauss_filter(orig, sigma);
 	res2 = gauss_filter(orig, sigma*2);
+	res3 = gauss_filter(orig, sigma * 3);
 	//std::cout << res2 - res1;
-	res = res1 - res2;
+	res = res1 - res3;
 	return res;
+}
+
+Mat gauss_DOG(Mat orig, double sigma, int k)
+{
+	return Mat();
 }

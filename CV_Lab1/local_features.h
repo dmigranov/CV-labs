@@ -7,7 +7,8 @@ using namespace cv;
 const Mat Gx = (Mat_<int>(3, 3) << -1, 0, 1, -2, 0, 2, -1, 0, 1);
 const Mat Gy = (Mat_<int>(3, 3) << -1, -2, -1, 0, 0, 0, 1, 2, 1);
 
+void local_features(Mat orig);
 Mat harris_detector(Mat orig);
 Mat forstner_detector(Mat orig);
 Mat SIFT(Mat orig, double sigma);
-void local_features(Mat orig);
+Mat gauss_DOG(Mat orig, double sigma, int k);
