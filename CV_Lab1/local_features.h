@@ -9,5 +9,5 @@ const Mat Gy = (Mat_<int>(3, 3) << -1, -2, -1, 0, 0, 0, 1, 2, 1);
 
 Mat harris_detector(Mat orig);
 Mat forstner_detector(Mat orig);
-Mat SIFT(Mat orig);
+Mat SIFT(Mat orig, double sigma);
 void local_features(Mat orig);

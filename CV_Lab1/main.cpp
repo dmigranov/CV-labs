@@ -240,9 +240,8 @@ int main(int argc, char **argv)
 		}
 		else if (k == 'L')
 		{
-			//imshow("Forstner", forstner_detector(img));
-			//imshow("Harris", harris_detector(img));
-			local_features(img);
+			//local_features(img); //раскомментить
+			imshow("SIFT", SIFT(img, 0.5));
 		}
 		else if (k == 'c')
 		{

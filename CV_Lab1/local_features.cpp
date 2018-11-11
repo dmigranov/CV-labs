@@ -1,5 +1,5 @@
 #include "local_features.h"
-
+#include "filtration.h"
 
 Mat harris_detector(Mat orig)
 {
@@ -154,4 +154,16 @@ void local_features(Mat orig)
 	imshow("Harris", harris);
 	imshow("Forstner", forstner);
 
+}
+
+
+Mat SIFT(Mat orig, double sigma)
+{
+	
+	Mat res1, res2, res;
+	res1 = gauss_filter(orig, sigma);
+	res2 = gauss_filter(orig, sigma*2);
+	//std::cout << res2 - res1;
+	res = res1 - res2;
+	return res;
 }
