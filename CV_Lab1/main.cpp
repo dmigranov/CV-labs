@@ -240,8 +240,8 @@ int main(int argc, char **argv)
 		}
 		else if (k == 'L')
 		{
-			//local_features(img); //раскомментить
-			imshow("SIFT", SIFT(img, 0.5));
+			local_features(img); //раскомментить
+			//imshow("SIFT", SIFT(img, 0.5));
 		}
 		else if (k == 'c')
 		{

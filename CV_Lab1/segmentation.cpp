@@ -112,10 +112,7 @@ void merge(Region &region)
 
 
 
-//мёрджим что можем
-/**/ //looks like merge should be after полной прогонки split
-//даже нсли замёрджили всё равно сплитим
-
+//ИТОГО: первые пять шагов просто сплитим, дальше  - на каждой итерации сплитим и мёрджим! TODO
 
 
 Mat normalizedCut(Mat orig)

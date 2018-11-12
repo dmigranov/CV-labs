@@ -159,7 +159,8 @@ void local_features(Mat orig)
 
 Mat SIFT(Mat orig, double sigma)
 {
-	
+	//5x5, 9x9, ...
+	//для каждого размера строим пирамиду, считаем => объединяем результаты
 	Mat res1, res2, res3, res;
 	res1 = gauss_filter(orig, sigma);
 	res2 = gauss_filter(orig, sigma*2);
@@ -169,7 +170,7 @@ Mat SIFT(Mat orig, double sigma)
 	return res;
 }
 
-Mat gauss_DOG(Mat orig, double sigma, int k)
+Mat gauss_DOG(Mat orig, double sigma, int k, unsigned int filter_size)
 {
 	return Mat();
 }
