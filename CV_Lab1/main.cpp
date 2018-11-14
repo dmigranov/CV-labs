@@ -232,7 +232,7 @@ int main(int argc, char **argv)
 		{
 			//std::cout << "Mean: " << mean(getLMatrix(img)) << std::endl << "Homogeneity: " << homogeneity(getLMatrix(img)) << std::endl;
 			
-			imshow("Split", splitmerge(img));
+			imshow("Split and Merge", splitmerge(img));
 		}
 		else if (k == 'l')
 		{

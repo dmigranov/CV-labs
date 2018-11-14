@@ -1,6 +1,8 @@
 #include "segmentation.h"
 
-const double k = 0.0004;
+//const double k = 0.0004;
+
+const double k = 0.004;
 
 double homogeneity(Mat region)
 {
@@ -33,13 +35,14 @@ Mat splitmerge(Mat orig)
 	Mat res(r.mat.rows, r.mat.cols, r.mat.type());
 	//const = 0.001? та, с которой сравниваем с deviation. по мне, норм
 
-	split(r);
-	merge(r);
+	uint iterNum = 0;
 
-	return r.mat; //
+	split(r, 0);
+
+	return r.mat; 
 }
 
-void split(Region &region)
+void split(Region &region, uint iterNum)
 {
 	Mat regmat = region.mat;
 
@@ -55,11 +58,14 @@ void split(Region &region)
 		region.addChild(Region(regmat(Rect(0, rows / 2, cols / 2, rows - rows / 2))));
 		region.addChild(Region(regmat(Rect(cols / 2, rows / 2, cols - cols / 2, rows - rows / 2))));
 
-		//или всё-таки тут?
+		if (iterNum > 5)
+		{
+			merge(region);
+		}
 
 		for (Region r : region.children)
 		{
-			split(r);
+			split(r, ++iterNum);
 		}
 	}
 	else
@@ -75,7 +81,6 @@ void merge(Region &region)
 	Mat		hmerged1, hmerged2, vmerged1, vmerged2;
 	bool	hb1, hb2, vb1, vb2;
 
-	
 
 	if (region.children.size() == 0)
 		return;
@@ -85,28 +90,65 @@ void merge(Region &region)
 	hconcat(region.children[2].mat, region.children[3].mat, hmerged2);
 	hb2 = homogeneity(hmerged2) < k;
 	hmerged2 = (mean(region.children[2].mat) + mean(region.children[3].mat)) / 2;
-	if (hb1)
+	if (hb1 && !hb2)
 	{
+		//std::cout << "here1" << std::endl;
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
 		region.children.push_back(hmerged1);
 	}
-
-	if (hb2 && hb1) //то есть до этого уже объединили
+	else if (!hb1 && hb2)
 	{
-		region.children.erase(region.children.begin()); //not good
-		region.children.erase(region.children.begin());
+		//std::cout << "here2" << std::endl;
+		region.children.erase(region.children.end() - 1);
+		region.children.erase(region.children.end() - 1);
 		region.children.push_back(hmerged2);
 	}
-	//а если hb2 без hb1?
-
-	//верт!
-	//TODO: ДОДЕЛАТЬ!
-
-	for (Region r : region.children)
+	else if (hb2 && hb1)
 	{
-		merge(r);
+		//std::cout << "here3" << std::endl;
+		region.children.erase(region.children.begin());
+		region.children.erase(region.children.begin());
+		region.children.erase(region.children.begin());
+		region.children.erase(region.children.begin());
+		region.children.push_back(hmerged1);
+		region.children.push_back(hmerged2);
 	}
+	else //!hb1 && !hb2
+	{
+		vconcat(region.children[0].mat, region.children[2].mat, vmerged1);
+		vb1 = homogeneity(vmerged1) < k;
+		vmerged1 = (mean(region.children[0].mat) + mean(region.children[2].mat)) / 2;
+		vconcat(region.children[1].mat, region.children[3].mat, vmerged2);
+		vb2 = homogeneity(vmerged2) < k;
+		vmerged2 = (mean(region.children[1].mat) + mean(region.children[3].mat)) / 2;
+
+		if (vb1 && !vb2)
+		{
+			//std::cout << "here1" << std::endl;
+			region.children.erase(region.children.begin());
+			region.children.erase(region.children.begin() + 1);
+			region.children.push_back(vmerged1);
+		}
+		else if (!hb1 && hb2)
+		{
+			//std::cout << "here2" << std::endl; //ИСПРАВИТЬ!!!!
+			region.children.erase(region.children.end() - 1);
+			region.children.erase(region.children.end() - 1);
+			region.children.push_back(hmerged2);
+		}
+		else // if (hb2 && hb1)
+		{
+			//std::cout << "here3" << std::endl; ////ИСПРАВИТЬ!!!!
+			region.children.erase(region.children.begin()); //not good
+			region.children.erase(region.children.begin());
+			region.children.erase(region.children.begin());
+			region.children.erase(region.children.begin());
+			region.children.push_back(hmerged1);
+			region.children.push_back(hmerged2);
+		}
+	}
+
 }
 
 

@@ -22,7 +22,7 @@ public:
 };
 
 Mat splitmerge(Mat orig);
-void split(Region &region);
+void split(Region &region, uint iterNum);
 void merge(Region &region);
 
 
