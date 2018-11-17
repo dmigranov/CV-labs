@@ -5,9 +5,22 @@
 
 const double k = 0.0018;
 
-double CIE76(double L1, double a1, double b1, double L2, double a2, double b2)
+double CIE76(Vec3d Lab1, Vec3d Lab2)
 {
+	double L2, L1, a2, a1, b2, b1;
+	L2 = Lab2[0];
+	L1 = Lab1[0];
+	a2 = Lab2[1];
+	a1 = Lab1[1];
+	b2 = Lab2[2];
+	b1 = Lab1[2];
+
 	return sqrt(pow(L2 - L1, 2) + pow(a2 - a1, 2) + pow(b2 - b1, 2));
+}
+
+double CIEDE(Vec3d Lab1, Vec3d Lab2)
+{
+	return CIE76(Lab1, Lab2);
 }
 
 double homogeneity(Mat region)
@@ -162,13 +175,51 @@ void merge(Region &region)
 Mat normalizedCut(Mat orig)
 {
 	Mat W(orig.rows + orig.cols, orig.rows + orig.cols, CV_64FC1);
-	
+	uint rows = orig.rows;
+	Mat D(W.rows, W.cols, W.type());
+	W = 0;
+	D = 0;
+
 	for (int i = 0; i < orig.rows; i++)
 	{
 		for (int j = 0; j < orig.cols; j++)
 		{
 			Vec3b bgr = orig.at<Vec3b>(i, j);
-			Vec3d lab = getLab(bgr[2], bgr[1], bgr[0]);
+			Vec3d lab1 = getLab(bgr[2], bgr[1], bgr[0]);
+			double sum = 0;
+			if (i >= 1)
+			{
+				bgr = orig.at<Vec3b>(i-1, j);
+				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+				double ciede = CIEDE(lab1, lab2);
+				W.at<double>(i * rows + j, (i-1) * rows + j) = ciede;
+				sum += ciede;
+				//может, стоит как-то сразу для (j,i) и сократить цикл?
+			if (j >= 1)
+			{
+				bgr = orig.at<Vec3b>(i, j - 1);
+				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+				double ciede = CIEDE(lab1, lab2);
+				W.at<double>(i * rows + j, i * rows + j - 1) = ciede;
+				sum += ciede;
+			}
+			if (i < orig.rows - 1)
+			{
+				bgr = orig.at<Vec3b>(i + 1);
+				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+				double ciede = CIEDE(lab1, lab2);
+				W.at<double>(i * rows + j, (i + 1) * rows + j) = ciede;
+				sum += ciede;
+			}
+			if (j < orig.cols - 1)
+			{
+				bgr = orig.at<Vec3b>(j + 1);
+				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+				double ciede = CIEDE(lab1, lab2);
+				W.at<double>(i * rows + j, i * rows + j + 1) = ciede;
+				sum += ciede;
+			}
+			D.at<double>(i * rows + i, i * rows + i) = sum;
 		}
 	}
 
