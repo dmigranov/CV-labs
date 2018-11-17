@@ -230,9 +230,9 @@ int main(int argc, char **argv)
 		}
 		else if (k == 'S')
 		{
-			//std::cout << "Mean: " << mean(getLMatrix(img)) << std::endl << "Homogeneity: " << homogeneity(getLMatrix(img)) << std::endl;
 			
 			imshow("Split and Merge", splitmerge(img));
+			imshow("Norm cut", normalizedCut(img));
 		}
 		else if (k == 'l')
 		{

@@ -7,7 +7,7 @@ const double k = 0.0018;
 
 double CIE76(double L1, double a1, double b1, double L2, double a2, double b2)
 {
-	return 0;//sqrt(pow()+ pow() + pow)
+	return sqrt(pow(L2 - L1, 2) + pow(a2 - a1, 2) + pow(b2 - b1, 2));
 }
 
 double homogeneity(Mat region)
@@ -39,7 +39,6 @@ Mat splitmerge(Mat orig)
 	Mat L = getLMatrix(orig);
 	Region r(L);
 	Mat res(r.mat.rows, r.mat.cols, r.mat.type());
-	//const = 0.001? та, с которой сравниваем с deviation. по мне, норм
 
 	uint iterNum = 0;
 
@@ -51,8 +50,6 @@ Mat splitmerge(Mat orig)
 void split(Region &region, uint iterNum)
 {
 	Mat regmat = region.mat;
-
-
 
 	int rows = regmat.rows;
 	int cols = regmat.cols;
@@ -90,16 +87,14 @@ void merge(Region &region)
 
 	if (region.children.size() == 0)
 		return;
-	//if(region.children[0].mat.rows == region.children[1].mat.rows)
-		hconcat(region.children[0].mat, region.children[1].mat, hmerged1);
+
+	hconcat(region.children[0].mat, region.children[1].mat, hmerged1);
 	hb1 = homogeneity(hmerged1) < k;
-	//if (region.children[2].mat.rows == region.children[3].mat.rows)
-		hconcat(region.children[2].mat, region.children[3].mat, hmerged2);
+	hconcat(region.children[2].mat, region.children[3].mat, hmerged2);
 	hb2 = homogeneity(hmerged2) < k;
 	
 	if (hb1 && !hb2)
 	{
-		//std::cout << "here1" << std::endl;
 		//hmerged1 = (mean(region.children[0].mat) + mean(region.children[1].mat)) / 2;
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
@@ -107,7 +102,6 @@ void merge(Region &region)
 	}
 	else if (!hb1 && hb2)
 	{
-		//std::cout << "here2" << std::endl;
 		//hmerged2 = (mean(region.children[2].mat) + mean(region.children[3].mat)) / 2;
 		region.children.erase(region.children.end() - 1);
 		region.children.erase(region.children.end() - 1);
@@ -127,10 +121,8 @@ void merge(Region &region)
 	}
 	else //!hb1 && !hb2
 	{
-		//std::cout << "here1" << std::endl;
 		vconcat(region.children[0].mat, region.children[2].mat, vmerged1);
 		vb1 = homogeneity(vmerged1) < k;
-		//std::cout << "here2" << std::endl;
 		vconcat(region.children[1].mat, region.children[3].mat, vmerged2);
 		vb2 = homogeneity(vmerged2) < k;
 		
@@ -164,14 +156,21 @@ void merge(Region &region)
 
 }
 
-
-
-
 //ИТОГО: первые пять шагов просто сплитим, дальше  - на каждой итерации сплитим и мёрджим! TODO
 
 
 Mat normalizedCut(Mat orig)
 {
-	//Mat W
+	Mat W(orig.rows + orig.cols, orig.rows + orig.cols, CV_64FC1);
+	
+	for (int i = 0; i < orig.rows; i++)
+	{
+		for (int j = 0; j < orig.cols; j++)
+		{
+			Vec3b bgr = orig.at<Vec3b>(i, j);
+			Vec3d lab = getLab(bgr[2], bgr[1], bgr[0]);
+		}
+	}
+
 	return orig;
 }

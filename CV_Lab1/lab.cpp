@@ -12,6 +12,17 @@ Vec3d getXYZ(double red, double green, double blue)
 	return xyzv;
 }
 
+
+Vec3d getLab(double red, double green, double blue)
+{
+	Vec3d xyz = getXYZ(red, green, blue);
+	double x = xyz[0], y = xyz[1], z = xyz[2];
+	double L = (116.0 * labfunction(y / Yn) - 16);
+	double a = 500 * (labfunction(x / Xn) - labfunction(y / Yn));
+	double b = 200 * (labfunction(y / Yn) - labfunction(z / Zn));
+	return Vec3d{L, a, b};
+}
+
 double labfunction(double x)
 {
 	if (x > pow(6.0 / 29, 3))
