@@ -1,8 +1,14 @@
 #include "segmentation.h"
 
+
 //const double k = 0.0004;
 
-const double k = 0.004;
+const double k = 0.0018;
+
+double CIE76(double L1, double a1, double b1, double L2, double a2, double b2)
+{
+	return 0;//sqrt(pow()+ pow() + pow)
+}
 
 double homogeneity(Mat region)
 {
@@ -84,15 +90,17 @@ void merge(Region &region)
 
 	if (region.children.size() == 0)
 		return;
-	hconcat(region.children[0].mat, region.children[1].mat, hmerged1);
+	//if(region.children[0].mat.rows == region.children[1].mat.rows)
+		hconcat(region.children[0].mat, region.children[1].mat, hmerged1);
 	hb1 = homogeneity(hmerged1) < k;
-	hmerged1 = (mean(region.children[0].mat) + mean(region.children[1].mat)) / 2;
-	hconcat(region.children[2].mat, region.children[3].mat, hmerged2);
+	//if (region.children[2].mat.rows == region.children[3].mat.rows)
+		hconcat(region.children[2].mat, region.children[3].mat, hmerged2);
 	hb2 = homogeneity(hmerged2) < k;
-	hmerged2 = (mean(region.children[2].mat) + mean(region.children[3].mat)) / 2;
+	
 	if (hb1 && !hb2)
 	{
 		//std::cout << "here1" << std::endl;
+		//hmerged1 = (mean(region.children[0].mat) + mean(region.children[1].mat)) / 2;
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
 		region.children.push_back(hmerged1);
@@ -100,6 +108,7 @@ void merge(Region &region)
 	else if (!hb1 && hb2)
 	{
 		//std::cout << "here2" << std::endl;
+		//hmerged2 = (mean(region.children[2].mat) + mean(region.children[3].mat)) / 2;
 		region.children.erase(region.children.end() - 1);
 		region.children.erase(region.children.end() - 1);
 		region.children.push_back(hmerged2);
@@ -107,6 +116,8 @@ void merge(Region &region)
 	else if (hb2 && hb1)
 	{
 		//std::cout << "here3" << std::endl;
+		//hmerged1 = (mean(region.children[0].mat) + mean(region.children[1].mat)) / 2;
+		//hmerged2 = (mean(region.children[2].mat) + mean(region.children[3].mat)) / 2;
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
@@ -116,36 +127,38 @@ void merge(Region &region)
 	}
 	else //!hb1 && !hb2
 	{
+		//std::cout << "here1" << std::endl;
 		vconcat(region.children[0].mat, region.children[2].mat, vmerged1);
 		vb1 = homogeneity(vmerged1) < k;
-		vmerged1 = (mean(region.children[0].mat) + mean(region.children[2].mat)) / 2;
+		//std::cout << "here2" << std::endl;
 		vconcat(region.children[1].mat, region.children[3].mat, vmerged2);
 		vb2 = homogeneity(vmerged2) < k;
-		vmerged2 = (mean(region.children[1].mat) + mean(region.children[3].mat)) / 2;
+		
 
 		if (vb1 && !vb2)
 		{
-			//std::cout << "here1" << std::endl;
+			//vmerged1 = (mean(region.children[0].mat) + mean(region.children[2].mat)) / 2;
 			region.children.erase(region.children.begin());
 			region.children.erase(region.children.begin() + 1);
 			region.children.push_back(vmerged1);
 		}
-		else if (!hb1 && hb2)
+		else if (!vb1 && vb2)
 		{
-			//std::cout << "here2" << std::endl; //ÈÑÏÐÀÂÈÒÜ!!!!
-			region.children.erase(region.children.end() - 1);
-			region.children.erase(region.children.end() - 1);
-			region.children.push_back(hmerged2);
+			//vmerged2 = (mean(region.children[1].mat) + mean(region.children[3].mat)) / 2;
+			region.children.erase(region.children.begin() + 1);		//ft
+			region.children.erase(region.children.end() - 1);		//ft	//ftft - > fft
+			region.children.push_back(vmerged2);
 		}
-		else // if (hb2 && hb1)
+		else if (vb2 && vb1)
 		{
-			//std::cout << "here3" << std::endl; ////ÈÑÏÐÀÂÈÒÜ!!!!
-			region.children.erase(region.children.begin()); //not good
+			//vmerged1 = (mean(region.children[0].mat) + mean(region.children[2].mat)) / 2;
+			//vmerged2 = (mean(region.children[1].mat) + mean(region.children[3].mat)) / 2;
+			region.children.erase(region.children.begin()); 
 			region.children.erase(region.children.begin());
 			region.children.erase(region.children.begin());
 			region.children.erase(region.children.begin());
-			region.children.push_back(hmerged1);
-			region.children.push_back(hmerged2);
+			region.children.push_back(vmerged1);
+			region.children.push_back(vmerged2);
 		}
 	}
 
