@@ -189,39 +189,40 @@ Mat normalizedCut(Mat orig)
 			double sum = 0;
 			if (i >= 1)
 			{
-				bgr = orig.at<Vec3b>(i-1, j);
+				bgr = orig.at<Vec3b>(i - 1, j);
 				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 				double ciede = CIEDE(lab1, lab2);
-				W.at<double>(i * rows + j, (i-1) * rows + j) = ciede;
+				W.at<double>(i * rows + j, (i - 1) * rows + j) = ciede;
 				sum += ciede;
 				//может, стоит как-то сразу для (j,i) и сократить цикл?
-			if (j >= 1)
-			{
-				bgr = orig.at<Vec3b>(i, j - 1);
-				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
-				double ciede = CIEDE(lab1, lab2);
-				W.at<double>(i * rows + j, i * rows + j - 1) = ciede;
-				sum += ciede;
+				if (j >= 1)
+				{
+					bgr = orig.at<Vec3b>(i, j - 1);
+					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+					double ciede = CIEDE(lab1, lab2);
+					W.at<double>(i * rows + j, i * rows + j - 1) = ciede;
+					sum += ciede;
+				}
+				if (i < orig.rows - 1)
+				{
+					bgr = orig.at<Vec3b>(i + 1);
+					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+					double ciede = CIEDE(lab1, lab2);
+					W.at<double>(i * rows + j, (i + 1) * rows + j) = ciede;
+					sum += ciede;
+				}
+				if (j < orig.cols - 1)
+				{
+					bgr = orig.at<Vec3b>(j + 1);
+					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+					double ciede = CIEDE(lab1, lab2);
+					W.at<double>(i * rows + j, i * rows + j + 1) = ciede;
+					sum += ciede;
+				}
+				D.at<double>(i * rows + j, i * rows + j) = sum;
 			}
-			if (i < orig.rows - 1)
-			{
-				bgr = orig.at<Vec3b>(i + 1);
-				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
-				double ciede = CIEDE(lab1, lab2);
-				W.at<double>(i * rows + j, (i + 1) * rows + j) = ciede;
-				sum += ciede;
-			}
-			if (j < orig.cols - 1)
-			{
-				bgr = orig.at<Vec3b>(j + 1);
-				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
-				double ciede = CIEDE(lab1, lab2);
-				W.at<double>(i * rows + j, i * rows + j + 1) = ciede;
-				sum += ciede;
-			}
-			D.at<double>(i * rows + i, i * rows + i) = sum;
 		}
-	}
 
-	return orig;
+		return orig;
+	}
 }
