@@ -29,6 +29,8 @@ void merge(Region &region);
 
 Mat normalizedCut(Mat orig);
 
+Mat meanShift(Mat orig);
+
 
 double homogeneity(Mat region);
 double mean(Mat region);

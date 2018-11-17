@@ -18,6 +18,18 @@ double CIE76(Vec3d Lab1, Vec3d Lab2)
 	return sqrt(pow(L2 - L1, 2) + pow(a2 - a1, 2) + pow(b2 - b1, 2));
 }
 
+
+double CIEDE2000(Vec3d Lab1, Vec3d Lab2)
+{
+	double L2, L1, a2, a1, b2, b1;
+	L2 = Lab2[0];
+	L1 = Lab1[0];
+	a2 = Lab2[1];
+	a1 = Lab1[1];
+	b2 = Lab2[2];
+	b1 = Lab1[2];
+}
+
 double CIEDE(Vec3d Lab1, Vec3d Lab2)
 {
 	return CIE76(Lab1, Lab2);
@@ -223,6 +235,15 @@ Mat normalizedCut(Mat orig)
 			}
 		}
 
+		//TODO: решить уравнение (КАК)?
+		//рекурсия?
+
+
 		return orig;
 	}
+}
+
+Mat meanShift(Mat orig)
+{
+	return Mat();
 }
