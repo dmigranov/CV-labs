@@ -159,18 +159,54 @@ void local_features(Mat orig)
 
 Mat SIFT(Mat orig, double sigma)
 {
-	//5x5, 9x9, ...
+	//5x5, 9x9, 13x13...
 	//для каждого размера строим пирамиду, считаем => объединяем результаты
-	Mat res1, res2, res3, res;
+	/*Mat res1, res2, res3, res;
 	res1 = gauss_filter(orig, sigma);
 	res2 = gauss_filter(orig, sigma*2);
 	res3 = gauss_filter(orig, sigma * 3);
 	//std::cout << res2 - res1;
-	res = res1 - res3;
-	return res;
+	res = res1 - res3;*/
+	
+	return gauss_DOG(orig, sigma, 5);
 }
-
-Mat gauss_DOG(Mat orig, double sigma, int k, unsigned int filter_size)
+//filter_size = 2n+1
+Mat gauss_DOG(Mat original, double sigma, /*int k, */int filterSize)
 {
-	return Mat();
+	Mat orig;
+	original.convertTo(orig, CV_64F);
+	Mat newimg(orig.rows, orig.cols, orig.type());
+	newimg = 0;
+
+	Mat gauss(filterSize, filterSize, CV_64FC1);
+	double div = 0;
+	for (int x = -filterSize / 2; x < filterSize / 2 + 1; x++)
+		for (int y = -filterSize / 2; y < filterSize / 2 + 1; y++)
+		{
+			gauss.at<double>(x + filterSize / 2, y + filterSize / 2) = exp(-(x * x + y * y) / (2.0 * sigma * sigma)) / (2.0 * M_PI * sigma * sigma);
+			div += gauss.at<double>(x + filterSize / 2, y + filterSize / 2);
+		}
+	gauss /= div;
+
+
+
+	for (int i = 0; i < orig.rows; i++)
+		for (int j = 0; j < orig.cols; j++)
+		{
+			for (int x = -filterSize / 2; x < filterSize / 2 + 1; x++)
+				for (int y = -filterSize / 2; y < filterSize / 2 + 1; y++)
+				{
+					if (i + x >= 0 && i + x < orig.rows && j + y >= 0 && j + y < orig.cols)
+					{
+						if (orig.channels() == 3)
+							newimg.at<Vec3d>(i, j) += orig.at<Vec3d>(i + x, j + y) * gauss.at<double>(x + filterSize / 2, y + filterSize / 2);
+						else if (orig.channels() == 1)
+							newimg.at<double>(i, j) += orig.at<double>(i + x, j + y) * gauss.at<double>(x + filterSize / 2, y + filterSize / 2);
+					}
+				}
+		}
+	
+	//std::cout << newimg;
+	newimg.convertTo(newimg, original.type());
+	return newimg;
 }

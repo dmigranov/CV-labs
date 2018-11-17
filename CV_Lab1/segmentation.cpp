@@ -28,6 +28,7 @@ double CIEDE2000(Vec3d Lab1, Vec3d Lab2)
 	a1 = Lab1[1];
 	b2 = Lab2[2];
 	b1 = Lab1[2];
+	return 0;
 }
 
 double CIEDE(Vec3d Lab1, Vec3d Lab2)
