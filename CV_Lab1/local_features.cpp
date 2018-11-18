@@ -167,17 +167,31 @@ Mat SIFT(Mat orig, double sigma)
 	//TODO:заполнить остальные массивы dogs (дилемма: или уменьшать изображение в два раза, или мен€ть размер фильтра? “ак и не пон€л...
 
 	//return gauss_DOG(orig, sigma, 5, 5);
-	for (int i = 0; i < 9; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		dogs[0][i] = gauss_DOG(copy, sigma, 5);
 	}
-	for (int i = 0; i < 9; i++)
+	for (int k = 1; k < 3; k++)
 	{
-		imshow(std::to_string(i), dogs[0][i]);
+		for (int i = 0; i < orig.rows; i++)
+			for (int j = 0; j < orig.cols; j++)
+			{
+				for (int x = -1; x < 2; x++)
+					for (int y = -1; y < 2; y++)
+					{
+						if (i + x >= 0 && i + x < orig.rows && j + y >= 0 && j + y < orig.cols)
+						{
+							//проверка €вл€етс€ ли максимумом
+						}
+					}
+					
+			}
 	}
 	return Mat();
 }
-//filter_size = 2n+1
+
+
+//filter_size = 2n+1!
 Mat gauss_DOG(Mat &original, double sigma, int filterSize)
 {
 	Mat orig;
@@ -185,7 +199,6 @@ Mat gauss_DOG(Mat &original, double sigma, int filterSize)
 	Mat newimg(orig.rows, orig.cols, orig.type());
 	newimg = 0;
 	Mat gauss(filterSize, filterSize, CV_64FC1);
-	//Mat kgauss(filterSize, filterSize, CV_64FC1);
 	double div = 0;
 
 	for (int x = -filterSize / 2; x < filterSize / 2 + 1; x++)
