@@ -161,47 +161,45 @@ Mat SIFT(Mat orig, double sigma)
 {
 	//5x5, 9x9, 13x13...
 	//для каждого размера строим пирамиду, считаем => объединяем результаты
-
+	Mat copy;
+	orig.copyTo(copy);
 	Mat dogs[3][9] = {Mat(orig.rows, orig.cols, orig.type())};
 	//TODO:заполнить остальные массивы dogs (дилемма: или уменьшать изображение в два раза, или менять размер фильтра? Так и не понял...
 
 	//return gauss_DOG(orig, sigma, 5, 5);
 	for (int i = 0; i < 9; i++)
 	{
-		dogs[0][i] = gauss_DOG(orig, sigma, i+2, 5);
+		dogs[0][i] = gauss_DOG(copy, sigma, 5);
 	}
 	for (int i = 0; i < 9; i++)
 	{
-		imshow(std::to_string(i+2), dogs[0][i]);
+		imshow(std::to_string(i), dogs[0][i]);
 	}
 	return Mat();
 }
 //filter_size = 2n+1
-Mat gauss_DOG(Mat original, double sigma, int k, int filterSize)
+Mat gauss_DOG(Mat &original, double sigma, int filterSize)
 {
 	Mat orig;
 	original.convertTo(orig, CV_64F);
 	Mat newimg(orig.rows, orig.cols, orig.type());
 	newimg = 0;
 	Mat gauss(filterSize, filterSize, CV_64FC1);
-	Mat kgauss(filterSize, filterSize, CV_64FC1);
-	double div = 0, kdiv = 0;
+	//Mat kgauss(filterSize, filterSize, CV_64FC1);
+	double div = 0;
 
 	for (int x = -filterSize / 2; x < filterSize / 2 + 1; x++)
 		for (int y = -filterSize / 2; y < filterSize / 2 + 1; y++)
 		{
 			//k раз применить фильтр с сигма эквивалентно ли одному k*сигма?
 			gauss.at<double>(x + filterSize / 2, y + filterSize / 2) = exp(-(x * x + y * y) / (2.0 * sigma * sigma)) / (2.0 * M_PI * sigma * sigma);
-			kgauss.at<double>(x + filterSize / 2, y + filterSize / 2) = exp(-(x * x + y * y) / (2.0 * k * k *sigma * sigma)) / (2.0 * M_PI * k * k * sigma * sigma);
+			//kgauss.at<double>(x + filterSize / 2, y + filterSize / 2) = exp(-(x * x + y * y) / (2.0 * k * k *sigma * sigma)) / (2.0 * M_PI * k * k * sigma * sigma);
 			div += gauss.at<double>(x + filterSize / 2, y + filterSize / 2);
-			kdiv += kgauss.at<double>(x + filterSize / 2, y + filterSize / 2);
+			//kdiv += kgauss.at<double>(x + filterSize / 2, y + filterSize / 2);
 		}
-
 	gauss /= div;
-	kgauss /= kdiv;
-	gauss = kgauss - gauss; //Dog(x, y, sigma) = (G(k*sigma) - G(sigma)) * I
-
-
+	//kgauss /= kdiv;
+	//Dog(x, y, sigma) = (G(k*sigma) - G(sigma)) * I
 
 	for (int i = 0; i < orig.rows; i++)
 		for (int j = 0; j < orig.cols; j++)
@@ -218,8 +216,11 @@ Mat gauss_DOG(Mat original, double sigma, int k, int filterSize)
 					}
 				}
 		}
-	
-	//std::cout << newimg;
+
+	Mat ret = newimg - orig;
 	newimg.convertTo(newimg, original.type());
-	return newimg;
+	ret.convertTo(ret, original.type());
+	original = newimg;
+
+	return ret;
 }

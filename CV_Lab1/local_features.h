@@ -11,4 +11,4 @@ void local_features(Mat orig);
 Mat harris_detector(Mat orig);
 Mat forstner_detector(Mat orig);
 Mat SIFT(Mat orig, double sigma);
-Mat gauss_DOG(Mat orig, double sigma, int k, int filter_size);
+Mat gauss_DOG(Mat &orig, double sigma, int filter_size);
