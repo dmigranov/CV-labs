@@ -162,18 +162,20 @@ Mat SIFT(Mat orig, double sigma)
 	//5x5, 9x9, 13x13...
 	//для каждого размера строим пирамиду, считаем => объединяем результаты
 	Mat copy;
-	orig.copyTo(copy);
+	//orig.copyTo(copy);
+	copy = getLMatrix(orig);
 	Mat ret;
 	orig.copyTo(ret);
-	Mat dogs[3][9] = {Mat(orig.rows, orig.cols, orig.type())};
+	//Mat dogs[3][9] = {Mat(orig.rows, orig.cols, orig.type())};
+	Mat dogs[3][9] = { Mat(orig.rows, orig.cols, copy.type()) };
 	//TODO:заполнить остальные массивы dogs (дилемма: или уменьшать изображение в два раза, или менять размер фильтра? Так и не понял...
 
 	//return gauss_DOG(orig, sigma, 5, 5);
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 8; i++)
 	{
 		dogs[0][i] = gauss_DOG(copy, sigma, 5);
 	}
-	for (int k = 1; k < 3; k++)
+	for (int k = 1; k < 7; k++)
 	{
 		for (int i = 0; i < orig.rows; i++)
 			for (int j = 0; j < orig.cols; j++)
@@ -186,13 +188,13 @@ Mat SIFT(Mat orig, double sigma)
 						if (i + x >= 0 && i + x < orig.rows && j + y >= 0 && j + y < orig.cols)
 						{
 							//if (dogs[0][k - 1].at<Vec3b>(i, j) >= dogs[0][k].at<Vec3b>(i + x, j + y) && dogs[0][k].at<Vec3b>(i, j) >= dogs[0][k].at<Vec3b>(i + x, j + y) && dogs[0][k + 1].at<Vec3b>(i, j) >= dogs[0][k].at<Vec3b>(i + x, j + y))
-							if (moreEqual(dogs[0][k - 1].at<Vec3b>(i, j), dogs[0][k].at<Vec3b>(i + x, j + y)) && moreEqual(dogs[0][k].at<Vec3b>(i, j), dogs[0][k].at<Vec3b>(i + x, j + y)) && moreEqual(dogs[0][k + 1].at<Vec3b>(i, j), dogs[0][k].at<Vec3b>(i + x, j + y)))
+							if (moreEqual(dogs[0][k].at<double>(i, j), dogs[0][k - 1].at<double>(i + x, j + y)) && moreEqual(dogs[0][k].at<double>(i, j), dogs[0][k].at<double>(i + x, j + y)) && moreEqual(dogs[0][k].at<double>(i, j), dogs[0][k + 1].at<double>(i + x, j + y)))
 								counter++;
 							desiredCount++;
 						}
 					}
-				if (counter == desiredCount)
-					ret.at<Vec3b>(i, j) = 0;//лок макс
+				if (counter == desiredCount) //лок макс
+					ret.at<Vec3b>(i, j) = 0;
 					
 			}
 	}
@@ -247,7 +249,8 @@ Mat gauss_DOG(Mat &original, double sigma, int filterSize)
 	return ret;
 }
 
-bool moreEqual(Vec3b v1, Vec3b v2)
+bool moreEqual(double v1, double v2)
 {
-	return v1[0] >= v2[0] && v1[1] >= v2[1] && v1[2] >= v2[2];
+	//return v1[0] >= v2[0] && v1[1] >= v2[1] && v1[2] >= v2[2];
+	return v1 >= v2;
 }
