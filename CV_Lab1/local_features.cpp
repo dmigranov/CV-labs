@@ -173,7 +173,7 @@ Mat SIFT(Mat orig, double sigma)
 	//return gauss_DOG(orig, sigma, 5, 5);
 	for (int i = 0; i < 6; i++)
 	{
-		dogs[0][i] = gauss_DOG(copy, sigma, 5);
+		dogs[0][i] = gauss_DOG(copy, sigma, 13);
 	}
 	for (int k = 1; k < 5; k++)
 	{
@@ -191,23 +191,23 @@ Mat SIFT(Mat orig, double sigma)
 							//if (dogs[0][k - 1].at<Vec3b>(i, j) >= dogs[0][k].at<Vec3b>(i + x, j + y) && dogs[0][k].at<Vec3b>(i, j) >= dogs[0][k].at<Vec3b>(i + x, j + y) && dogs[0][k + 1].at<Vec3b>(i, j) >= dogs[0][k].at<Vec3b>(i + x, j + y))
 							if (more(dogs[0][k].at<double>(i, j), dogs[0][k - 1].at<double>(i + x, j + y)))
 								moreCounter++;
-							if(more(dogs[0][k].at<double>(i, j), dogs[0][k].at<double>(i + x, j + y)))
+							if((x != 0 || y != 0) && more(dogs[0][k].at<double>(i, j), dogs[0][k].at<double>(i + x, j + y)))
 								moreCounter++;
 							if (more(dogs[0][k].at<double>(i, j), dogs[0][k + 1].at<double>(i + x, j + y)))
 								moreCounter++;
 
 							if (less(dogs[0][k].at<double>(i, j), dogs[0][k - 1].at<double>(i + x, j + y)))
 								lessCounter++;
-							if (less(dogs[0][k].at<double>(i, j), dogs[0][k].at<double>(i + x, j + y)))
+							if ((x != 0 || y != 0 ) && less(dogs[0][k].at<double>(i, j), dogs[0][k].at<double>(i + x, j + y)))
 								lessCounter++;
 							if (less(dogs[0][k].at<double>(i, j), dogs[0][k + 1].at<double>(i + x, j + y)))
 								lessCounter++;
 							
 						}
 					}
-				if(moreCounter > 25)
-					std::cout << moreCounter << std::endl;
-				if (moreCounter == 27 || lessCounter == 27) //лок макс
+				//if(moreCounter >= 25)
+					//std::cout << moreCounter << std::endl;
+				if (moreCounter == 26 || lessCounter == 26) //лок макс
 					ret.at<Vec3b>(i, j) = 0;
 					
 			}
@@ -266,10 +266,10 @@ Mat gauss_DOG(Mat &original, double sigma, int filterSize)
 bool more(double v1, double v2)
 {
 	//return v1[0] >= v2[0] && v1[1] >= v2[1] && v1[2] >= v2[2];
-	return v1 >= v2;
+	return v1 > v2;
 }
 
 bool less(double v1, double v2)
 {
-	return v1 <= v2;
+	return v1 < v2;
 }
