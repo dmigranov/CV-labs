@@ -38,7 +38,10 @@ double CIEDE2000(Vec3d Lab1, Vec3d Lab2)
 	double c2_ = sqrt(a2_ * a2_ + b2 * b2);
 	double h1_ = atan2(b1, a1_);
 	h1_ = (h1_ + M_PI) / M_PI * 180; //проверить
+	double h2_ = atan2(b2, a2_);
+	h2_ = (h2_ + M_PI) / M_PI * 180;
 	double dh_; //delta h_
+	//if(abs)
 	std::cout << h1_ << std::endl;
 	return 0;
 }

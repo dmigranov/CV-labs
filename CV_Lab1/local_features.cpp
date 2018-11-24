@@ -167,7 +167,7 @@ Mat SIFT(Mat orig, double sigma)
 	Mat ret;
 	orig.copyTo(ret);
 	//Mat dogs[3][9] = {Mat(orig.rows, orig.cols, orig.type())};
-	Mat dogs[3][9] = { Mat(orig.rows, orig.cols, copy.type()) };
+	Mat dogs[3][9] = { Mat(orig.rows, orig.cols, CV_64FC1) };
 	Mat features = Mat(orig.rows, orig.cols, orig.type());
 	Mat magnitudes = Mat(orig.rows, orig.cols, CV_64FC1);
 	Mat orientations = Mat(orig.rows, orig.cols, CV_64FC1);
@@ -219,16 +219,22 @@ Mat SIFT(Mat orig, double sigma)
 					if (moreCounter >= 26 || lessCounter >= 26) //лок макс мин
 						ret.at<Vec3b>(i, j) = 0;
 						features.at<Vec3b>(i, j) = 255;
-						if (i > 0 && j < orig.cols - 1)
+						if (i > 0 && j > 0 && j < orig.cols - 1 && i < orig.rows - 1)
 						{
-							magnitudes.at<double>(i, j) = sqrt(pow(dogs[s][k].at<double>(i + 1, j) + dogs[s][k].at<double>(i - 1, j), 2) + pow(dogs[s][k].at<double>(i, j + 1) + dogs[s][k].at<double>(i, j - 1), 2)); //TODO: ошибка
-							orientations.at<double>(i, j) = atan2(dogs[s][k].at<double>(i, j + 1) - dogs[s][k].at<double>(i, j - 1), dogs[s][k].at<double>(i + 1, j) + dogs[s][k].at<double>(i - 1, j)) + M_PI; //TODO: ашипка
-						}//std::cout << "here3" << std::endl;
+							magnitudes.at<double>(i, j) = sqrt(
+								pow(dogs[s][k].at<double>(i + 1, j) + dogs[s][k].at<double>(i - 1, j), 2)
+								+
+								pow( dogs[s][k].at<double>(i, j + 1) + dogs[s][k].at<double>(i, j - 1), 2 )
+							);
+							
+							orientations.at<double>(i, j) = atan2(dogs[s][k].at<double>(i, j + 1) - dogs[s][k].at<double>(i, j - 1), dogs[s][k].at<double>(i + 1, j) + dogs[s][k].at<double>(i - 1, j));  //atan2 [-pi, +pi]
+							//std::cout << orientations.at<double>(i, j) << " ";
+						}
 				}
 		}
 	}
 	//imshow("FEATURES", features);
-	std::cout << orientations;
+	//std::cout << orientations;
 
 	//descriptor
 
