@@ -187,7 +187,7 @@ void merge(Region &region)
 
 Mat normalizedCut(Mat orig)
 {
-	Mat W(orig.rows + orig.cols, orig.rows + orig.cols, CV_64FC1);
+	Mat W(orig.rows * orig.cols, orig.rows * orig.cols, CV_64FC1);
 	uint rows = orig.rows;
 	Mat D(W.rows, W.cols, W.type());
 	W = 0;
@@ -236,7 +236,8 @@ Mat normalizedCut(Mat orig)
 			}
 		}
 
-		//TODO: решить уравнение (КАК)?
+		//TODO: решить уравнение 
+		//(D - W) * y = lambda * D * y
 		//рекурсия?
 
 

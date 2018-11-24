@@ -13,4 +13,5 @@ Mat forstner_detector(Mat orig);
 Mat SIFT(Mat orig, double sigma);
 Mat gauss_DOG(Mat &orig, double sigma, int filter_size);
 
-bool moreEqual(double v1, double v2);
+bool more(double v1, double v2);
+bool less(double v1, double v2);
