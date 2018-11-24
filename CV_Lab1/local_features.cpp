@@ -175,7 +175,7 @@ Mat SIFT(Mat orig, double sigma)
 	features = 0;
 	//TODO:заполнить остальные массивы dogs 
 
-	//return gauss_DOG(orig, sigma, 5, 5);
+
 	for (int i = 0; i < 6; i++)
 	{
 		dogs[0][i] = gauss_DOG(copy, sigma, 7, i + 2);
@@ -198,7 +198,6 @@ Mat SIFT(Mat orig, double sigma)
 						{
 							if (i + x >= 0 && i + x < orig.rows && j + y >= 0 && j + y < orig.cols)
 							{
-								//if (dogs[0][k - 1].at<Vec3b>(i, j) >= dogs[0][k].at<Vec3b>(i + x, j + y) && dogs[0][k].at<Vec3b>(i, j) >= dogs[0][k].at<Vec3b>(i + x, j + y) && dogs[0][k + 1].at<Vec3b>(i, j) >= dogs[0][k].at<Vec3b>(i + x, j + y))
 								if (more(dogs[s][k].at<double>(i, j), dogs[s][k - 1].at<double>(i + x, j + y)))
 									moreCounter++;
 								if ((x != 0 || y != 0) && more(dogs[s][k].at<double>(i, j), dogs[s][k].at<double>(i + x, j + y)))
@@ -233,10 +232,8 @@ Mat SIFT(Mat orig, double sigma)
 				}
 		}
 	}
-	//imshow("FEATURES", features);
-	//std::cout << orientations;
 
-	//descriptor
+	//TODO: descriptor
 
 	return ret;
 }
