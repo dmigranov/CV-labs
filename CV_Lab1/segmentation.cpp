@@ -28,6 +28,18 @@ double CIEDE2000(Vec3d Lab1, Vec3d Lab2)
 	a1 = Lab1[1];
 	b2 = Lab2[2];
 	b1 = Lab1[2];
+
+	double c1 = sqrt(a1*a1 + b1 * b1);
+	double c2 = sqrt(a2*a2 + b2 * b2);
+	double _c = (c1 + c2) / 2; //c с крышкой
+	double a1_ = a1 + a1 / 2 * (1 - sqrt(pow(_c, 7) / (pow(_c, 7) + pow(25, 7)))); //a1'
+	double a2_ = a2 + a2 / 2 * (1 - sqrt(pow(_c, 7) / (pow(_c, 7) + pow(25, 7)))); //a1'
+	double c1_ = sqrt(a1_ * a1_ + b1 * b1);
+	double c2_ = sqrt(a2_ * a2_ + b2 * b2);
+	double h1_ = atan2(b1, a1_);
+	h1_ = (h1_ + M_PI) / M_PI * 180; //проверить
+	double dh_; //delta h_
+	std::cout << h1_ << std::endl;
 	return 0;
 }
 

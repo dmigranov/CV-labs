@@ -12,7 +12,7 @@ Mat harris_detector(Mat orig);
 Mat forstner_detector(Mat orig);
 Mat SIFT(Mat orig, double sigma);
 Mat gauss_DOG(Mat &orig, double sigma, int filter_size);
-Mat gauss_DOG(Mat &orig, double sigma, int filter_size, int k);
+Mat gauss_DOG(Mat orig, double sigma, int filter_size, int k);
 
 bool more(double v1, double v2);
 bool less(double v1, double v2);

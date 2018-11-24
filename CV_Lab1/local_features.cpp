@@ -168,22 +168,28 @@ Mat SIFT(Mat orig, double sigma)
 	orig.copyTo(ret);
 	//Mat dogs[3][9] = {Mat(orig.rows, orig.cols, orig.type())};
 	Mat dogs[3][9] = { Mat(orig.rows, orig.cols, copy.type()) };
+	Mat features = Mat(orig.rows, orig.cols, orig.type());
+	Mat magnitudes = Mat(orig.rows, orig.cols, CV_64FC1);
+	Mat orientations = Mat(orig.rows, orig.cols, CV_64FC1);
+
+	features = 0;
 	//TODO:заполнить остальные массивы dogs 
 
 	//return gauss_DOG(orig, sigma, 5, 5);
 	for (int i = 0; i < 6; i++)
 	{
-		dogs[0][i] = gauss_DOG(copy, sigma, 5, i + 2);
-		dogs[1][i] = gauss_DOG(copy, sigma, 9, i + 2);
-		dogs[2][i] = gauss_DOG(copy, sigma, 13, i + 2);
+		dogs[0][i] = gauss_DOG(copy, sigma, 7, i + 2);
+		//dogs[1][i] = gauss_DOG(copy, sigma, 11, i + 2);
+		//dogs[2][i] = gauss_DOG(copy, sigma, 15, i + 2);
 	}
-	for (int s = 0; s < 3; s++)
+	for (int s = 0; s < 1; s++) //3
 	{
 		for (int k = 1; k < 5; k++)
 		{
 			for (int i = 0; i < orig.rows; i++)
 				for (int j = 0; j < orig.cols; j++)
 				{
+					//std::cout << dogs[s][k].at<double>(i, j) << " ";
 					uint moreCounter = 0;
 					uint lessCounter = 0;
 					uint desiredCount = 0;
@@ -209,20 +215,29 @@ Mat SIFT(Mat orig, double sigma)
 
 							}
 						}
-					/*if(moreCounter >= 25)
-						std::cout << moreCounter << std::endl;*/
-					if (moreCounter >= 26 || lessCounter >= 26) //лок макс
-						ret.at<Vec3b>(i, j) = 0;
 
+					if (moreCounter >= 26 || lessCounter >= 26) //лок макс мин
+						ret.at<Vec3b>(i, j) = 0;
+						features.at<Vec3b>(i, j) = 255;
+						if (i > 0 && j < orig.cols - 1)
+						{
+							magnitudes.at<double>(i, j) = sqrt(pow(dogs[s][k].at<double>(i + 1, j) + dogs[s][k].at<double>(i - 1, j), 2) + pow(dogs[s][k].at<double>(i, j + 1) + dogs[s][k].at<double>(i, j - 1), 2)); //TODO: ошибка
+							orientations.at<double>(i, j) = atan2(dogs[s][k].at<double>(i, j + 1) - dogs[s][k].at<double>(i, j - 1), dogs[s][k].at<double>(i + 1, j) + dogs[s][k].at<double>(i - 1, j)) + M_PI; //TODO: ашипка
+						}//std::cout << "here3" << std::endl;
 				}
 		}
 	}
+	//imshow("FEATURES", features);
+	std::cout << orientations;
+
+	//descriptor
+
 	return ret;
 }
 
 
 //filter_size = 2n+1!
-Mat gauss_DOG(Mat &original, double sigma, int filterSize, int k)
+Mat gauss_DOG(Mat original, double sigma, int filterSize, int k)
 {
 	Mat orig;
 	original.convertTo(orig, CV_64F);
@@ -258,7 +273,9 @@ Mat gauss_DOG(Mat &original, double sigma, int filterSize, int k)
 						if (orig.channels() == 3)
 							newimg.at<Vec3d>(i, j) += orig.at<Vec3d>(i + x, j + y) * gauss.at<double>(x + filterSize / 2, y + filterSize / 2);
 						else if (orig.channels() == 1)
+						{
 							newimg.at<double>(i, j) += orig.at<double>(i + x, j + y) * gauss.at<double>(x + filterSize / 2, y + filterSize / 2);
+						}
 					}
 				}
 		}
@@ -269,13 +286,12 @@ Mat gauss_DOG(Mat &original, double sigma, int filterSize, int k)
 	original = newimg;
 
 	return ret;*/
-	newimg.convertTo(newimg, original.type());
+	//newimg.convertTo(newimg, original.type());
 	return newimg;
 }
 
 bool more(double v1, double v2)
 {
-	//return v1[0] >= v2[0] && v1[1] >= v2[1] && v1[2] >= v2[2];
 	return v1 > v2;
 }
 
