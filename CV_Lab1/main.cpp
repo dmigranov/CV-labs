@@ -259,6 +259,10 @@ int main(int argc, char **argv)
 			Mat newimg = erosion(dilation(morphimg, circle5x5), circle7x7); //по сути closing с разными матрицами
 			std::cout << "Cell count: " << countObjects(dilation(opening(newimg, circle3x3), circle3x3)) << std::endl; ///final
 		}
+		else if (k == '1')
+		{
+			std::cout << CIEDE2000(Vec3d(1,1,1), Vec3d(1,1,1));
+		}
 		else if (k == '0')
 			break;
 		

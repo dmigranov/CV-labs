@@ -36,3 +36,4 @@ Mat meanShift(Mat orig);
 
 double homogeneity(Mat region);
 double mean(Mat region);
+double CIEDE2000(Vec3d Lab1, Vec3d Lab2);

@@ -41,8 +41,20 @@ double CIEDE2000(Vec3d Lab1, Vec3d Lab2)
 	double h2_ = atan2(b2, a2_);
 	h2_ = (h2_ + M_PI) / M_PI * 180;
 	double dh_; //delta h_
-	//if(abs)
-	std::cout << h1_ << std::endl;
+
+	if (abs(h1_ - h2_) <= 180)
+		dh_ = h2_ - h1_;
+	else if (abs(h1_ - h2_) > 180 && h2_ <= h1_)
+		dh_ = h2_ - h1_ + 360;
+	else
+		dh_ = h2_ - h1_ - 360;
+
+
+	double dH_; //H большое!
+	dH_ = 2 * sqrt(c1_ * c2_) * sin(dh_ / 2);
+	//_H_ //H' с крышкой
+
+
 	return 0;
 }
 
