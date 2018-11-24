@@ -29,13 +29,25 @@ double CIEDE2000(Vec3d Lab1, Vec3d Lab2)
 	b2 = Lab2[2];
 	b1 = Lab1[2];
 
+	//подчёркивание слева - крышка
+	//подчёркивание справа - '
+	//d - дельта
+
+	double dL_ = L2 - L1;
+	double _L = (L1 + L2) / 2;
+
 	double c1 = sqrt(a1*a1 + b1 * b1);
 	double c2 = sqrt(a2*a2 + b2 * b2);
 	double _c = (c1 + c2) / 2; //c с крышкой
+
 	double a1_ = a1 + a1 / 2 * (1 - sqrt(pow(_c, 7) / (pow(_c, 7) + pow(25, 7)))); //a1'
 	double a2_ = a2 + a2 / 2 * (1 - sqrt(pow(_c, 7) / (pow(_c, 7) + pow(25, 7)))); //a1'
 	double c1_ = sqrt(a1_ * a1_ + b1 * b1);
 	double c2_ = sqrt(a2_ * a2_ + b2 * b2);
+	double _c_ = (c1_ + c2_) / 2; //c' с крышкой
+	double dC_ = c2_ - c1_; //delta c'
+
+
 	double h1_ = atan2(b1, a1_);
 	h1_ = (h1_ + M_PI) / M_PI * 180; //проверить
 	double h2_ = atan2(b2, a2_);
@@ -53,7 +65,37 @@ double CIEDE2000(Vec3d Lab1, Vec3d Lab2)
 	double dH_; //H большое!
 	dH_ = 2 * sqrt(c1_ * c2_) * sin(dh_ / 2);
 	//_H_ //H' с крышкой
+	double _H_;
+	if (abs(h1_ - h2_) <= 180)
+		_H_ = (h2_ + h1_) / 2;
+	else if (abs(h1_ - h2_) > 180 && h2_ + h1_ < 360)
+		_H_ = (h2_ + h1_ + 360) / 2;
+	else
+		_H_ = (h2_ + h1_ - 360) / 2;
 
+
+	double T = 1 - 0.17*cos(_H_ - 30) + 0.24 * cos(2 * _H_) + 0.32 * cos(3 * _H_ + 6) - 0.2 * cos(4 * _H_ - 63);
+	double Sl = 1 + 0.015 * pow(_L - 50, 2)
+					/
+					sqrt(20 + pow(_L - 50, 2));
+	double Sc = 1 + 0.045 * _c_;
+	double Sh = 1 + 0.015 * _c_ * T;
+	double Rt = -2; //TODO: дописать
+
+
+
+
+
+
+	/*double dE = sqrt(
+		pow(, 2)
+		+
+		pow(, 2)
+		+
+		pow(, 2)
+		+
+		Rt * 
+	);*/
 
 	return 0;
 }
@@ -107,7 +149,7 @@ void split(Region &region, uint iterNum)
 	int rows = regmat.rows;
 	int cols = regmat.cols;
 
-	if (homogeneity(regmat) > k)
+	if (homogeneity(regmat) > k) //в зависимости от номера итерации использовать разные формулы: на первых пяти можно по L, далее - CIEDE2000
 	{
 		region.addChild(Region(regmat(Rect(0, 0, cols / 2, rows / 2))));								
 		region.addChild(Region(regmat(Rect(cols / 2, 0, cols - cols / 2, rows / 2))));
@@ -267,6 +309,10 @@ Mat normalizedCut(Mat orig)
 		//(D - W) * y = lambda * D * y
 		//рекурсия?
 
+
+
+
+		
 
 		return orig;
 	}
