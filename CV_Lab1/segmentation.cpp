@@ -256,66 +256,82 @@ void merge(Region &region)
 
 Mat normalizedCut(Mat orig)
 {
-	Mat W(orig.rows * orig.cols, orig.rows * orig.cols, CV_64FC1);
-	uint rows = orig.rows;
+	Mat W(orig.rows * orig.cols, orig.rows * orig.cols, CV_32FC1);
+	//uint rows = orig.rows;
+	uint cols = orig.cols;
 	Mat D(W.rows, W.cols, W.type());
 	W = 0;
 	D = 0;
-
+	//std::cout << orig.rows <<  " " << orig.cols << std::endl; //14 52
 	for (int i = 0; i < orig.rows; i++)
 	{
 		for (int j = 0; j < orig.cols; j++)
 		{
 			Vec3b bgr = orig.at<Vec3b>(i, j);
 			Vec3d lab1 = getLab(bgr[2], bgr[1], bgr[0]);
-			double sum = 0;
+			float sum = 0;
 			if (i >= 1)
 			{
 				bgr = orig.at<Vec3b>(i - 1, j);
 				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
-				double ciede = CIEDE(lab1, lab2);
-				W.at<double>(i * rows + j, (i - 1) * rows + j) = ciede;
+				float ciede = CIEDE(lab1, lab2);
+				W.at<float>(i * cols + j, (i - 1) * cols + j) = ciede;
 				sum += ciede;
-				//может, стоит как-то сразу для (j,i) и сократить цикл?
-				if (j >= 1)
-				{
-					bgr = orig.at<Vec3b>(i, j - 1);
-					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
-					double ciede = CIEDE(lab1, lab2);
-					W.at<double>(i * rows + j, i * rows + j - 1) = ciede;
-					sum += ciede;
-				}
-				if (i < orig.rows - 1)
-				{
-					bgr = orig.at<Vec3b>(i + 1);
-					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
-					double ciede = CIEDE(lab1, lab2);
-					W.at<double>(i * rows + j, (i + 1) * rows + j) = ciede;
-					sum += ciede;
-				}
-				if (j < orig.cols - 1)
-				{
-					bgr = orig.at<Vec3b>(j + 1);
-					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
-					double ciede = CIEDE(lab1, lab2);
-					W.at<double>(i * rows + j, i * rows + j + 1) = ciede;
-					sum += ciede;
-				}
-				D.at<double>(i * rows + j, i * rows + j) = sum;
 			}
-		}
+			//может, стоит как-то сразу для (j,i) и сократить цикл?
+			if (j >= 1)
+			{
+				bgr = orig.at<Vec3b>(i, j - 1);
+				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+				float ciede = CIEDE(lab1, lab2);
+				W.at<float>(i * cols + j, i * cols + j - 1) = ciede;
+				sum += ciede;
+			}
+			if (i < orig.rows - 1)
+			{
+				bgr = orig.at<Vec3b>(i + 1);
+				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+				float ciede = CIEDE(lab1, lab2);
+				W.at<float>(i * cols + j, (i + 1) * cols + j) = ciede;
+				sum += ciede;
+			}
+			if (j < orig.cols - 1)
+			{
+				bgr = orig.at<Vec3b>(j + 1);
+				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+				float ciede = CIEDE(lab1, lab2);
+				W.at<float>(i * cols + j, i * cols + j + 1) = ciede;
+				sum += ciede;
+			}
+			D.at<float>(i * cols + j, i * cols + j) = sum;
 
-		//TODO: решить уравнение 
+		}
+	}
+
 		//(D - W) * y = lambda * D * y
 		//рекурсия?
+		/*for (int i = 0; i < D.rows; i++)
+		{
+				if (D.at<float>(i, i) == 0)
+					std::cout << i << std::endl; 
+		}*/
+				//52
 
-
-
+		//std::cout << determinant(D) << std::endl;
+		Mat eigenMat = D.inv() * (D - W);
+		
+		~D;
+		~W;
+		//std::cout << eigenMat << std::endl;
+		Mat eigenvectors;
+		Mat eigenvalues;
+		eigen(eigenMat, eigenvalues, eigenvectors);
+		//std::cout << eigenvectors;
 
 		
 
 		return orig;
-	}
+	
 }
 
 Mat meanShift(Mat orig)
