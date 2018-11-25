@@ -132,9 +132,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="filtration.cpp" />
+    <ClCompile Include="InputNeuron.cpp" />
     <ClCompile Include="lab.cpp" />
     <ClCompile Include="local_features.cpp" />
     <ClCompile Include="morphology.cpp" />
+    <ClCompile Include="Network.cpp" />
+    <ClCompile Include="Neuron.cpp" />
     <ClCompile Include="segmentation.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -144,9 +147,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="filtration.h" />
+    <ClInclude Include="InputNeuron.h" />
     <ClInclude Include="lab.h" />
     <ClInclude Include="local_features.h" />
     <ClInclude Include="morphology.h" />
+    <ClInclude Include="Network.h" />
+    <ClInclude Include="Neuron.h" />
     <ClInclude Include="segmentation.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
