@@ -33,6 +33,9 @@ double CIEDE2000(Vec3d Lab1, Vec3d Lab2)
 	//подчёркивание справа - '
 	//d - дельта
 
+	double kL, kC, kH;
+	kL= kC = kH = 1;
+
 	double dL_ = L2 - L1;
 	double _L = (L1 + L2) / 2;
 
@@ -80,24 +83,22 @@ double CIEDE2000(Vec3d Lab1, Vec3d Lab2)
 					sqrt(20 + pow(_L - 50, 2));
 	double Sc = 1 + 0.045 * _c_;
 	double Sh = 1 + 0.015 * _c_ * T;
-	double Rt = -2; //TODO: дописать
+	double Rt = -2 * sqrt(pow(_c_, 7) / (pow(_c_, 7) + pow(25, 7))) * sin(
+	60 * exp( - pow( (_H_ - 275) / 25, 2) )
+	);
 
 
-
-
-
-
-	/*double dE = sqrt(
-		pow(, 2)
+	double dE = sqrt(
+		pow(dL_ / (kL *Sl), 2)
 		+
-		pow(, 2)
+		pow(dC_ / (kC * Sc), 2)
 		+
-		pow(, 2)
+		pow(dH_ / (kH * Sh), 2)
 		+
-		Rt * 
-	);*/
+		Rt * dC_ / (kC * Sc) * dH_ / (kH * Sh)
+	);
 
-	return 0;
+	return dE;
 }
 
 double CIEDE(Vec3d Lab1, Vec3d Lab2)
@@ -253,7 +254,6 @@ void merge(Region &region)
 
 //ИТОГО: первые пять шагов просто сплитим, дальше  - на каждой итерации сплитим и мёрджим! TODO
 
-
 Mat normalizedCut(Mat orig)
 {
 	Mat ret(orig.rows, orig.cols, orig.type());
@@ -263,7 +263,7 @@ Mat normalizedCut(Mat orig)
 	Mat D(W.rows, W.cols, W.type());
 	W = 0;
 	D = 0;
-	//std::cout << orig.rows <<  " " << orig.cols << std::endl; //14 52
+
 	for (int i = 0; i < orig.rows; i++)
 	{
 		for (int j = 0; j < orig.cols; j++)
@@ -310,13 +310,11 @@ Mat normalizedCut(Mat orig)
 	}
 
 		//(D - W) * y = lambda * D * y
-		//рекурсия?
+
 
 		Mat eigenMat = D.inv() * (D - W);
-		
 		~D;
 		~W;
-		//std::cout << eigenMat << std::endl;
 		Mat eigenvectors;
 		Mat eigenvalues;
 		eigen(eigenMat, eigenvalues, eigenvectors);
@@ -356,10 +354,7 @@ Mat normalizedCut(Mat orig)
 
 		}
 
-		
-
 		return ret;
-	
 }
 
 Mat meanShift(Mat orig)
