@@ -256,6 +256,7 @@ void merge(Region &region)
 
 Mat normalizedCut(Mat orig)
 {
+	Mat ret(orig.rows, orig.cols, orig.type());
 	Mat W(orig.rows * orig.cols, orig.rows * orig.cols, CV_32FC1);
 	//uint rows = orig.rows;
 	uint cols = orig.cols;
@@ -310,14 +311,7 @@ Mat normalizedCut(Mat orig)
 
 		//(D - W) * y = lambda * D * y
 		//рекурсия?
-		/*for (int i = 0; i < D.rows; i++)
-		{
-				if (D.at<float>(i, i) == 0)
-					std::cout << i << std::endl; 
-		}*/
-				//52
 
-		//std::cout << determinant(D) << std::endl;
 		Mat eigenMat = D.inv() * (D - W);
 		
 		~D;
@@ -326,11 +320,45 @@ Mat normalizedCut(Mat orig)
 		Mat eigenvectors;
 		Mat eigenvalues;
 		eigen(eigenMat, eigenvalues, eigenvectors);
-		//std::cout << eigenvectors;
+		//eigenvectors : vectors are stored in rows
+		double min = 100000, oldmin = 100000;
+		float * minptr = NULL, *oldminptr = NULL;
+		for (int i = 0; i < eigenvectors.rows; i++)
+		{
+			float * row = eigenvectors.ptr<float>(i);
+			double norm = 0;
+			for (int j = 0; j < eigenvectors.cols; j++)
+			{
+				norm += row[j] * row[j];
+			}
+			if (norm < min)
+			{
+				oldmin = min;
+				min = norm;
+				oldminptr = minptr;
+				minptr = row;
+			}
+		}
+
+		/*for (int j = 0; j < eigenvectors.cols; j++)
+		{
+			std::cout << oldminptr[j] << " ";
+		}
+		std::cout << std::endl;*/
+		for (int j = 0; j < eigenvectors.cols; j++)
+		{
+			int y = j / orig.cols;
+			int x = j % orig.cols;
+			if (oldminptr[j] < 0)
+				ret.at<Vec3b>(y, x) = 0;
+			else
+				ret.at<Vec3b>(y, x) = Vec3b(255, 255,255);
+
+		}
 
 		
 
-		return orig;
+		return ret;
 	
 }
 
