@@ -19,6 +19,8 @@ double CIE76(Vec3d Lab1, Vec3d Lab2)
 }
 
 
+//double euclidean_distance(Vec3d )
+
 double CIEDE2000(Vec3d Lab1, Vec3d Lab2)
 {
 	double L2, L1, a2, a1, b2, b1;
@@ -103,7 +105,8 @@ double CIEDE2000(Vec3d Lab1, Vec3d Lab2)
 
 double CIEDE(Vec3d Lab1, Vec3d Lab2)
 {
-	return CIE76(Lab1, Lab2);
+	//return CIE76(Lab1, Lab2);
+	return CIEDE2000(Lab1, Lab2);
 }
 
 double homogeneity(Mat region)
@@ -252,7 +255,6 @@ void merge(Region &region)
 
 }
 
-//ИТОГО: первые пять шагов просто сплитим, дальше  - на каждой итерации сплитим и мёрджим! TODO
 
 Mat normalizedCut(Mat orig)
 {
@@ -310,7 +312,13 @@ Mat normalizedCut(Mat orig)
 	}
 
 		//(D - W) * y = lambda * D * y
+	//std::cout << W;
 
+	for (int i = 0; i < D.rows; i++)
+	{
+		if (D.at<float>(i, i) == 0)
+			std::cout << i << std::endl;
+	}
 
 		Mat eigenMat = D.inv() * (D - W);
 		~D;
@@ -321,6 +329,7 @@ Mat normalizedCut(Mat orig)
 		//eigenvectors : vectors are stored in rows
 		double min = 100000, oldmin = 100000;
 		float * minptr = NULL, *oldminptr = NULL;
+
 		for (int i = 0; i < eigenvectors.rows; i++)
 		{
 			float * row = eigenvectors.ptr<float>(i);

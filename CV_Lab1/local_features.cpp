@@ -179,10 +179,10 @@ Mat SIFT(Mat orig, double sigma)
 	for (int i = 0; i < 6; i++)
 	{
 		dogs[0][i] = gauss_DOG(copy, sigma, 7, i + 2);
-		//dogs[1][i] = gauss_DOG(copy, sigma, 11, i + 2);
-		//dogs[2][i] = gauss_DOG(copy, sigma, 15, i + 2);
+		dogs[1][i] = gauss_DOG(copy, sigma, 11, i + 2);
+		dogs[2][i] = gauss_DOG(copy, sigma, 15, i + 2);
 	}
-	for (int s = 0; s < 1; s++) //3
+	for (int s = 0; s < 3; s++) //3
 	{
 		for (int k = 1; k < 5; k++)
 		{

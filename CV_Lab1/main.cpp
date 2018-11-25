@@ -244,6 +244,12 @@ int main(int argc, char **argv)
 			imshow("SIFT", SIFT(img, sqrt(2)));
 			//SIFT(img, 0.5);
 		}
+		else if (k == 'f')
+		{
+			local_features(img);
+
+
+		}
 		else if (k == 'c')
 		{
 			img_2 = canny(img, lowerSlider / 100.0, upperSlider / 100.0);
@@ -261,7 +267,7 @@ int main(int argc, char **argv)
 		}
 		else if (k == '1')
 		{
-			std::cout << CIEDE2000(Vec3d(1,1,1), Vec3d(1,1,1));
+			//std::cout << CIEDE2000(Vec3d(2,2,2), Vec3d(1,1,2));
 		}
 		else if (k == '0')
 			break;
