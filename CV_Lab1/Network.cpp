@@ -15,5 +15,6 @@ Network::Network(uint imageRows, uint imageCols) : outputNeurons(5)
 		}
 
 		inputNeurons.push_back(n);
+		//обучение: обучать надо выходные нейроны
 	}
 }
