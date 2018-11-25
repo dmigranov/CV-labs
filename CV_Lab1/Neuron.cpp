@@ -5,9 +5,15 @@ void Neuron::setValue(double value)
 	this->value = value;
 }
 
+Neuron::Neuron()
+{
+	this->value = 0;
+}
+
 Neuron::Neuron(double value)
 {
 	this->value = value;
+
 }
 
 double Neuron::activationFunction()

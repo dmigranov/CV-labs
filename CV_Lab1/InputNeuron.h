@@ -4,5 +4,6 @@ class InputNeuron : public Neuron
 {
 public:
 	virtual double weightedSum();
+	InputNeuron(double value);
 };
 

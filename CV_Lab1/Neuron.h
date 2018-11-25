@@ -14,11 +14,13 @@ public:
 	};
 
 	void setValue(double value);
+	Neuron();
 	Neuron(double value);
 	double activationFunction();
 	virtual double weightedSum();
-protected:
+
 	std::vector<Input> inputs;
+protected:
 	double value;
 
 
