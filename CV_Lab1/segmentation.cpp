@@ -280,7 +280,7 @@ Mat normalizedCut(Mat orig)
 				bgr = orig.at<Vec3b>(i - 1, j);
 				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 				float ciede = CIEDE(lab1, lab2);
-				W.ref<float>(i * cols + j, (i - 1) * cols + j) = ciede;
+				W.ref<float>(i * cols + j, (i - 1) * cols + j) = -ciede;	//с минусом ибо D - W
 				sum += ciede;
 			}
 			//может, стоит как-то сразу для (j,i) и сократить цикл?
@@ -289,7 +289,7 @@ Mat normalizedCut(Mat orig)
 				bgr = orig.at<Vec3b>(i, j - 1);
 				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 				float ciede = CIEDE(lab1, lab2);
-				W.ref<float>(i * cols + j, i * cols + j - 1) = ciede;
+				W.ref<float>(i * cols + j, i * cols + j - 1) = -ciede;
 				sum += ciede;
 			}
 			if (i < orig.rows - 1)
@@ -297,7 +297,7 @@ Mat normalizedCut(Mat orig)
 				bgr = orig.at<Vec3b>(i + 1);
 				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 				float ciede = CIEDE(lab1, lab2);
-				W.ref<float>(i * cols + j, (i + 1) * cols + j) = ciede;
+				W.ref<float>(i * cols + j, (i + 1) * cols + j) = -ciede;
 				sum += ciede;
 			}
 			if (j < orig.cols - 1)
@@ -305,7 +305,7 @@ Mat normalizedCut(Mat orig)
 				bgr = orig.at<Vec3b>(j + 1);
 				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 				float ciede = CIEDE(lab1, lab2);
-				W.ref<float>(i * cols + j, i * cols + j + 1) = ciede;
+				W.ref<float>(i * cols + j, i * cols + j + 1) = -ciede;
 				sum += ciede;
 			}
 			D.at(i * cols + j) = sum;
@@ -322,13 +322,13 @@ Mat normalizedCut(Mat orig)
 	//сейчас посчитаем D - W
 	
 	
-	/*W = -W; //со sparse так не получится
-	for (int i = 0; i < W.rows; i++)
+
+	for (int i = 0; i < W.size(0); i++)
 	{
 		W.ref<float>(i, i) += D.at(i);
 	}
 	std::cout << "Found W := D - W" << std::endl;
-	*/
+	
 
 
 
