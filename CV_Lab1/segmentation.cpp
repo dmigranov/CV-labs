@@ -258,13 +258,15 @@ void merge(Region &region)
 
 Mat normalizedCut(Mat orig)
 {
-	Mat ret(orig.rows, orig.cols, orig.type());
-	Mat W(orig.rows * orig.cols, orig.rows * orig.cols, CV_32FC1);
+	
+	const int sizes[] = { orig.rows * orig.cols, orig.rows * orig.cols };
+	//Mat W(orig.rows * orig.cols, orig.rows * orig.cols, CV_32FC1);
+	SparseMat W(2, sizes, CV_32FC1);
 	//uint rows = orig.rows;
 	uint cols = orig.cols;
-	Mat D(W.rows, W.cols, W.type());
-	W = 0;
-	D = 0;
+	//Mat D(W.rows, W.cols, W.type());
+	std::vector<float> D(orig.rows * orig.cols, 0);
+
 
 	for (int i = 0; i < orig.rows; i++)
 	{
@@ -278,7 +280,7 @@ Mat normalizedCut(Mat orig)
 				bgr = orig.at<Vec3b>(i - 1, j);
 				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 				float ciede = CIEDE(lab1, lab2);
-				W.at<float>(i * cols + j, (i - 1) * cols + j) = ciede;
+				W.ref<float>(i * cols + j, (i - 1) * cols + j) = ciede;
 				sum += ciede;
 			}
 			//может, стоит как-то сразу для (j,i) и сократить цикл?
@@ -287,7 +289,7 @@ Mat normalizedCut(Mat orig)
 				bgr = orig.at<Vec3b>(i, j - 1);
 				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 				float ciede = CIEDE(lab1, lab2);
-				W.at<float>(i * cols + j, i * cols + j - 1) = ciede;
+				W.ref<float>(i * cols + j, i * cols + j - 1) = ciede;
 				sum += ciede;
 			}
 			if (i < orig.rows - 1)
@@ -295,7 +297,7 @@ Mat normalizedCut(Mat orig)
 				bgr = orig.at<Vec3b>(i + 1);
 				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 				float ciede = CIEDE(lab1, lab2);
-				W.at<float>(i * cols + j, (i + 1) * cols + j) = ciede;
+				W.ref<float>(i * cols + j, (i + 1) * cols + j) = ciede;
 				sum += ciede;
 			}
 			if (j < orig.cols - 1)
@@ -303,69 +305,75 @@ Mat normalizedCut(Mat orig)
 				bgr = orig.at<Vec3b>(j + 1);
 				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 				float ciede = CIEDE(lab1, lab2);
-				W.at<float>(i * cols + j, i * cols + j + 1) = ciede;
+				W.ref<float>(i * cols + j, i * cols + j + 1) = ciede;
 				sum += ciede;
 			}
-			D.at<float>(i * cols + j, i * cols + j) = sum;
+			D.at(i * cols + j) = sum;
 
 		}
 	}
 
-		//(D - W) * y = lambda * D * y
-	//std::cout << W;
+	//(D - W) * y = lambda * D * y
+	std::cout << "W and D are filled" << std::endl;
 
-	for (int i = 0; i < D.rows; i++)
+	//Mat eigenMat = D.inv() * (D - W);	//D^-1 * (D - W)
+	//D.release();
+	//W.release();
+	//сейчас посчитаем D - W
+	
+	
+	/*W = -W; //со sparse так не получится
+	for (int i = 0; i < W.rows; i++)
+	{
+		W.ref<float>(i, i) += D.at(i);
+	}
+	std::cout << "Found W := D - W" << std::endl;
+	*/
+
+
+
+	/*for (int i = 0; i < D.rows; i++)
 	{
 		if (D.at<float>(i, i) == 0)
 			std::cout << i << std::endl;
-	}
+	}*/
 
-		Mat eigenMat = D.inv() * (D - W);
-		D.release();
-		W.release();
-		Mat eigenvectors;
-		Mat eigenvalues;
-		eigen(eigenMat, eigenvalues, eigenvectors);
-		//eigenvectors : vectors are stored in rows
-		double min = 100000, oldmin = 100000;
-		float * minptr = NULL, *oldminptr = NULL;
+	
+	/*Mat eigenvectors;
+	Mat eigenvalues;
+	eigen(eigenMat, eigenvalues, eigenvectors);
+	//eigenvectors : vectors are stored in rows
+	double min = 100000, oldmin = 100000;
+	float * minptr = NULL, *oldminptr = NULL;
 
-		for (int i = 0; i < eigenvectors.rows; i++)
-		{
-			float * row = eigenvectors.ptr<float>(i);
-			double norm = 0;
-			for (int j = 0; j < eigenvectors.cols; j++)
-			{
-				norm += row[j] * row[j];
-			}
-			if (norm < min)
-			{
-				oldmin = min;
-				min = norm;
-				oldminptr = minptr;
-				minptr = row;
-			}
-		}
-
-		/*for (int j = 0; j < eigenvectors.cols; j++)
-		{
-			std::cout << oldminptr[j] << " ";
-		}
-		std::cout << std::endl;*/
+	for (int i = 0; i < eigenvectors.rows; i++)
+	{
+		float * row = eigenvectors.ptr<float>(i);
+		double norm = 0;
 		for (int j = 0; j < eigenvectors.cols; j++)
 		{
-			int y = j / orig.cols;
-			int x = j % orig.cols;
-			if (oldminptr[j] < 0)
-				ret.at<Vec3b>(y, x) = 0;
-			else
-				ret.at<Vec3b>(y, x) = Vec3b(255, 255,255);
-
+			norm += row[j] * row[j];
 		}
+		if (norm < min)
+		{
+			oldmin = min;
+			min = norm;
+			oldminptr = minptr;
+			minptr = row;
+		}
+	}
 
-		return ret;
+	for (int j = 0; j < eigenvectors.cols; j++)
+	{
+		int y = j / orig.cols;
+		int x = j % orig.cols;
+		if (oldminptr[j] < 0)
+			ret.at<Vec3b>(y, x) = 0;
+		else
+			ret.at<Vec3b>(y, x) = Vec3b(255, 255,255);
+	}*/
+	return orig;
 }
-
 Mat meanShift(Mat orig)
 {
 	return Mat();
