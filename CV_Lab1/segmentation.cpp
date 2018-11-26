@@ -321,8 +321,8 @@ Mat normalizedCut(Mat orig)
 	}
 
 		Mat eigenMat = D.inv() * (D - W);
-		~D;
-		~W;
+		D.release();
+		W.release();
 		Mat eigenvectors;
 		Mat eigenvalues;
 		eigen(eigenMat, eigenvalues, eigenvectors);
