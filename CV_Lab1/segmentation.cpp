@@ -319,10 +319,9 @@ Mat normalizedCut(Mat orig)
 	//Mat eigenMat = D.inv() * (D - W);	//D^-1 * (D - W)
 	//D.release();
 	//W.release();
-	//сейчас посчитаем D - W
-	
-	
 
+
+	//сейчас посчитаем D - W
 	for (int i = 0; i < W.size(0); i++)
 	{
 		W.ref<float>(i, i) += D.at(i);
@@ -330,7 +329,9 @@ Mat normalizedCut(Mat orig)
 	std::cout << "Found W := D - W" << std::endl;
 	
 
-
+	//TODO: D^-1 * (D - W):
+	//первый ряд делим на d1
+	//второй на d2 и т.д
 
 	/*for (int i = 0; i < D.rows; i++)
 	{
