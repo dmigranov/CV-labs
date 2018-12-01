@@ -265,7 +265,7 @@ Mat normalizedCut(Mat orig)
 	//Mat W(orig.rows * orig.cols, orig.rows * orig.cols, CV_32FC1);
 	//SparseMat W(2, sizes, CV_32FC1);
 	unsigned long rowscols = orig.rows * orig.cols;
-	Eigen::SparseMatrix<float> W_(orig.rows * orig.cols, orig.rows * orig.cols);
+	Eigen::SparseMatrix<float> W_(rowscols, rowscols);
 	W_.reserve(Eigen::VectorXi::Constant(orig.rows * orig.cols, 5)); //5 - это в случае 4-связности (4 + 1 диаг.) 
 	//TODO: после переделеки на 8-связность поставить 9
 	//uint rows = orig.rows;
@@ -339,15 +339,18 @@ Mat normalizedCut(Mat orig)
 
 	int count = 0;
 	//сейчас посчитаем D - W
-	for (int i = 0; i < W.size(0); i++)
+	for (int i = 0; i < rowscols; i++)
 	{
-		W.ref<float>(i, i) += D.at(i);
+		//W.ref<float>(i, i) += D.at(i);
+		W_.insert(i, i) = D[i];
 	}
 	std::cout << "Found W := D - W" << std::endl;
 
 
-	/*
-	SparseMatIterator it = W.begin();
+	//TODO: D^-1 * (D - W):
+	//первый ряд делим на d1
+	//второй на d2 и т.д
+	/*SparseMatIterator it = W.begin();
 	SparseMatIterator it_end = W.end();
 
 
@@ -357,19 +360,21 @@ Mat normalizedCut(Mat orig)
 		int node_i = n->idx[0];
 		it.value<float>() /= D[node_i];
 		count++; //251403
-	}
-
-	std::cout << "Found W := D^(-1) * (D - W) " << count << " " << W.size(0) <<" " << std::endl;*/
-
-	//TODO: D^-1 * (D - W):
-	//первый ряд делим на d1
-	//второй на d2 и т.д
-
-	/*for (int i = 0; i < D.rows; i++)
-	{
-		if (D.at<float>(i, i) == 0)
-			std::cout << i << std::endl;
 	}*/
+
+	for (int k = 0; k < W_.outerSize(); k++)
+	{
+		for (Eigen::SparseMatrix<float>::InnerIterator it(W_, k); it; ++it)
+		{
+			it.valueRef() /= D[it.row()];
+			//std::cout << it.row() << std::endl; //точно row? наверно
+			count++;
+		}
+	}
+	std::cout << "Found W := D^(-1) * (D - W) " << count << " " << std::endl;;
+
+	
+	//TODO: find eigenvectors
 
 	
 	/*Mat eigenvectors;
