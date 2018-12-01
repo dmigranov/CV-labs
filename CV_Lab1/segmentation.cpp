@@ -1,6 +1,7 @@
 #include "segmentation.h"
 
 
+
 //const double k = 0.0004;
 
 const double k = 0.0018;
@@ -282,6 +283,15 @@ Mat normalizedCut(Mat orig)
 				float ciede = CIEDE(lab1, lab2);
 				W.ref<float>(i * cols + j, (i - 1) * cols + j) = -ciede;	//с минусом ибо D - W
 				sum += ciede;
+
+				/*if (j >= 1)
+				{
+					bgr = orig.at<Vec3b>(i - 1, j - 1);
+					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+					float ciede = CIEDE(lab1, lab2);
+					W.ref<float>(i * cols + j, (i - 1) * cols + j - 1) = -ciede;	//с минусом ибо D - W
+					sum += ciede;
+				}*/ //TODO: 8-связность
 			}
 			//может, стоит как-то сразу для (j,i) и сократить цикл?
 			if (j >= 1)
@@ -363,9 +373,9 @@ Mat normalizedCut(Mat orig)
 	
 	/*Mat eigenvectors;
 	Mat eigenvalues;
-	eigen(eigenMat, eigenvalues, eigenvectors);
+	eigen(eigenMat, eigenvalues, eigenvectors);*/
 	//eigenvectors : vectors are stored in rows
-	double min = 100000, oldmin = 100000;
+	/*double min = 100000, oldmin = 100000;
 	float * minptr = NULL, *oldminptr = NULL;
 
 	for (int i = 0; i < eigenvectors.rows; i++)
