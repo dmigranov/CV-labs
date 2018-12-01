@@ -1,6 +1,7 @@
 #include "segmentation.h"
 
-
+#include <Eigen/Core>
+#include <Eigen/Sparse>
 
 //const double k = 0.0004;
 
@@ -263,6 +264,9 @@ Mat normalizedCut(Mat orig)
 	const int sizes[] = { orig.rows * orig.cols, orig.rows * orig.cols };
 	//Mat W(orig.rows * orig.cols, orig.rows * orig.cols, CV_32FC1);
 	SparseMat W(2, sizes, CV_32FC1);
+	Eigen::SparseMatrix<float> W_(orig.rows * orig.cols, orig.rows * orig.cols);
+	typedef Eigen::Triplet<float> Triplet;
+	std::vector<Triplet> tripletList;
 	//uint rows = orig.rows;
 	uint cols = orig.cols;
 	//Mat D(W.rows, W.cols, W.type());
