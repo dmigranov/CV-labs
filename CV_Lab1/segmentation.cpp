@@ -385,15 +385,15 @@ Mat normalizedCut(Mat orig)
 	}*/
 	//TODO: find eigenvectors
 	Spectra::SparseGenMatProd<float> op(W_);
-	Spectra::GenEigsSolver<float, Spectra::SMALLEST_MAGN, Spectra::SparseGenMatProd<float>> eigs(&op, 2, 5); //вроде бы выбирает два наименьших значения
+	Spectra::GenEigsSolver<float, Spectra::SMALLEST_MAGN, Spectra::SparseGenMatProd<float>> eigs(&op, 2, 50); //вроде бы выбирает два наименьших значения
 	eigs.init();
-	const auto nconv = eigs.compute();
+	const auto nconv = eigs.compute(1500, 1e-3, 0);
 	std::cout << "Converged eigenvalues: " << nconv << std::endl;
 
 	if (eigs.info() == Spectra::SUCCESSFUL)
 	{
 		const auto evectors = eigs.eigenvectors();
-		std::cout << evectors << std::endl;
+		//std::cout << evectors(1) << std::endl;
 	}
 
 	/*Mat eigenvectors;
