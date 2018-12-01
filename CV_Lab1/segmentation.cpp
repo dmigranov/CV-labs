@@ -263,10 +263,11 @@ Mat normalizedCut(Mat orig)
 	
 	const int sizes[] = { orig.rows * orig.cols, orig.rows * orig.cols };
 	//Mat W(orig.rows * orig.cols, orig.rows * orig.cols, CV_32FC1);
-	SparseMat W(2, sizes, CV_32FC1);
+	//SparseMat W(2, sizes, CV_32FC1);
+	unsigned long rowscols = orig.rows * orig.cols;
 	Eigen::SparseMatrix<float> W_(orig.rows * orig.cols, orig.rows * orig.cols);
-	typedef Eigen::Triplet<float> Triplet;
-	std::vector<Triplet> tripletList;
+	W_.reserve(Eigen::VectorXi::Constant(orig.rows * orig.cols, 5)); //5 - это в случае 4-связности (4 + 1 диаг.) 
+	//TODO: после переделеки на 8-связность поставить 9
 	//uint rows = orig.rows;
 	uint cols = orig.cols;
 	//Mat D(W.rows, W.cols, W.type());
@@ -285,7 +286,8 @@ Mat normalizedCut(Mat orig)
 				bgr = orig.at<Vec3b>(i - 1, j);
 				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 				float ciede = CIEDE(lab1, lab2);
-				W.ref<float>(i * cols + j, (i - 1) * cols + j) = -ciede;	//с минусом ибо D - W
+				//W.ref<float>(i * cols + j, (i - 1) * cols + j) = -ciede;	//с минусом ибо D - W
+				W_.insert(i * cols + j, (i - 1) * cols + j) = -ciede;
 				sum += ciede;
 
 				/*if (j >= 1)
@@ -303,7 +305,8 @@ Mat normalizedCut(Mat orig)
 				bgr = orig.at<Vec3b>(i, j - 1);
 				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 				float ciede = CIEDE(lab1, lab2);
-				W.ref<float>(i * cols + j, i * cols + j - 1) = -ciede;
+				//W.ref<float>(i * cols + j, i * cols + j - 1) = -ciede;
+				W_.insert(i * cols + j, i * cols + j - 1) = -ciede;
 				sum += ciede;
 			}
 			if (i < orig.rows - 1)
@@ -311,7 +314,8 @@ Mat normalizedCut(Mat orig)
 				bgr = orig.at<Vec3b>(i + 1);
 				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 				float ciede = CIEDE(lab1, lab2);
-				W.ref<float>(i * cols + j, (i + 1) * cols + j) = -ciede;
+				//W.ref<float>(i * cols + j, (i + 1) * cols + j) = -ciede;
+				W_.insert(i * cols + j, (i + 1) * cols + j) = -ciede;
 				sum += ciede;
 			}
 			if (j < orig.cols - 1)
@@ -319,7 +323,8 @@ Mat normalizedCut(Mat orig)
 				bgr = orig.at<Vec3b>(j + 1);
 				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 				float ciede = CIEDE(lab1, lab2);
-				W.ref<float>(i * cols + j, i * cols + j + 1) = -ciede;
+				//W.ref<float>(i * cols + j, i * cols + j + 1) = -ciede;
+				W_.insert(i * cols + j, i * cols + j + 1) = -ciede;
 				sum += ciede;
 			}
 			D.at(i * cols + j) = sum;
@@ -331,25 +336,17 @@ Mat normalizedCut(Mat orig)
 	std::cout << "W and D are filled" << std::endl;
 
 	//Mat eigenMat = D.inv() * (D - W);	//D^-1 * (D - W)
-	//D.release();
-	//W.release();
 
 	int count = 0;
 	//сейчас посчитаем D - W
 	for (int i = 0; i < W.size(0); i++)
 	{
 		W.ref<float>(i, i) += D.at(i);
-
-		/*for (int j = 0; j < W.size(1); j++)
-		{
-			W.ref<float>(i, j) /= D[i];
-			count++;
-		}*/
 	}
 	std::cout << "Found W := D - W" << std::endl;
 
 
-
+	/*
 	SparseMatIterator it = W.begin();
 	SparseMatIterator it_end = W.end();
 
@@ -362,7 +359,7 @@ Mat normalizedCut(Mat orig)
 		count++; //251403
 	}
 
-	std::cout << "Found W := D^(-1) * (D - W) " << count << " " << W.size(0) <<" " << std::endl;
+	std::cout << "Found W := D^(-1) * (D - W) " << count << " " << W.size(0) <<" " << std::endl;*/
 
 	//TODO: D^-1 * (D - W):
 	//первый ряд делим на d1
