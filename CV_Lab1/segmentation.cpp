@@ -333,12 +333,22 @@ Mat normalizedCut(Mat orig)
 	}
 	std::cout << "Found W := D - W" << std::endl;
 
-	SparseMatIterator_ <float> it = W.begin<float>();
-	SparseMatIterator_ <float> it_end = W.end<float>();
+	//SparseMatIterator_ <float> it = W.begin<float>();
+	//SparseMatIterator_ <float> it_end = W.end<float>();
 
+	SparseMatIterator it = W.begin();
+	SparseMatIterator it_end = W.end();
 
+	int count = 0;
+	for (; it != it_end; it++)
+	{
+		const SparseMat::Node * n = it.node();
+		int node_i = n->idx[0];
+		it.value<float>() /= D[node_i];
+		count++;
+	}
 
-	//std::cout << "Found W := D^(-1) * (D - W)" << std::endl;
+	std::cout << "Found W := D^(-1) * (D - W) " << count << std::endl;
 
 	//TODO: D^-1 * (D - W):
 	//первый ряд делим на d1
