@@ -3,6 +3,10 @@
 #include <Eigen/Core>
 #include <Eigen/Sparse>
 
+#include <GenEigsSolver.h>
+#include <SparseGenMatProd.h>
+
+
 //const double k = 0.0004;
 
 const double k = 0.0018;
@@ -366,17 +370,32 @@ Mat normalizedCut(Mat orig)
 	{
 		for (Eigen::SparseMatrix<float>::InnerIterator it(W_, k); it; ++it)
 		{
-			it.valueRef() /= D[it.row()];
+			if(D[it.row()] != 0)		//???
+				it.valueRef() /= D[it.row()];
 			//std::cout << it.row() << std::endl; //точно row? наверно
 			count++;
 		}
 	}
-	std::cout << "Found W := D^(-1) * (D - W) " << count << " " << std::endl;;
+	std::cout << "Found D^-1 * (D - W)" << std::endl;;
 
-	
+	/*for (int k = 0; k < rowscols; k++)
+	{
+		if (D[k] == 0)
+			std::cout << k << std::endl;
+	}*/
 	//TODO: find eigenvectors
+	Spectra::SparseGenMatProd<float> op(W_);
+	Spectra::GenEigsSolver<float, Spectra::SMALLEST_MAGN, Spectra::SparseGenMatProd<float>> eigs(&op, 2, 5); //вроде бы выбирает два наименьших значения
+	eigs.init();
+	const auto nconv = eigs.compute();
+	std::cout << "Converged eigenvalues: " << nconv << std::endl;
 
-	
+	if (eigs.info() == Spectra::SUCCESSFUL)
+	{
+		const auto evectors = eigs.eigenvectors();
+		std::cout << evectors << std::endl;
+	}
+
 	/*Mat eigenvectors;
 	Mat eigenvalues;
 	eigen(eigenMat, eigenvalues, eigenvectors);*/
