@@ -325,9 +325,20 @@ Mat normalizedCut(Mat orig)
 	for (int i = 0; i < W.size(0); i++)
 	{
 		W.ref<float>(i, i) += D.at(i);
+
+		/*for (int j = 0; j < W.size(1); j++)
+		{
+			W.ref<float>(i, j) /= D[i];
+		}*/
 	}
 	std::cout << "Found W := D - W" << std::endl;
-	
+
+	SparseMatIterator_ <float> it = W.begin<float>();
+	SparseMatIterator_ <float> it_end = W.end<float>();
+
+
+
+	//std::cout << "Found W := D^(-1) * (D - W)" << std::endl;
 
 	//TODO: D^-1 * (D - W):
 	//первый ряд делим на d1
