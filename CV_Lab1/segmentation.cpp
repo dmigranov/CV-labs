@@ -396,30 +396,7 @@ Mat normalizedCut(Mat orig)
 		//std::cout << evectors(1) << std::endl;
 	}
 
-	/*Mat eigenvectors;
-	Mat eigenvalues;
-	eigen(eigenMat, eigenvalues, eigenvectors);*/
-	//eigenvectors : vectors are stored in rows
-	/*double min = 100000, oldmin = 100000;
-	float * minptr = NULL, *oldminptr = NULL;
-
-	for (int i = 0; i < eigenvectors.rows; i++)
-	{
-		float * row = eigenvectors.ptr<float>(i);
-		double norm = 0;
-		for (int j = 0; j < eigenvectors.cols; j++)
-		{
-			norm += row[j] * row[j];
-		}
-		if (norm < min)
-		{
-			oldmin = min;
-			min = norm;
-			oldminptr = minptr;
-			minptr = row;
-		}
-	}
-
+	/*
 	for (int j = 0; j < eigenvectors.cols; j++)
 	{
 		int y = j / orig.cols;
