@@ -182,7 +182,6 @@ void split(Region &region, uint iterNum)
 	}
 }
 
-
 void merge(Region &region)
 {
 	//изначально их всегда четыре
@@ -260,7 +259,6 @@ void merge(Region &region)
 	}
 
 }
-
 
 Mat normalizedCut(Mat orig)
 {
@@ -409,7 +407,14 @@ Mat normalizedCut(Mat orig)
 
 	return ret;
 }
+
+
+
 Mat meanShift(Mat orig)
 {
-	return Mat();
+	Mat copy, ret;
+	orig.copyTo(copy);
+
+
+
 }
