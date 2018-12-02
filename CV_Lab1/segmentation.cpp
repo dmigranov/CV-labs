@@ -111,8 +111,8 @@ double CIEDE2000(Vec3d Lab1, Vec3d Lab2)
 
 double CIEDE(Vec3d Lab1, Vec3d Lab2)
 {
-	//return CIE76(Lab1, Lab2);
-	return CIEDE2000(Lab1, Lab2);
+	return CIE76(Lab1, Lab2);
+	//return CIEDE2000(Lab1, Lab2);
 }
 
 double homogeneity(Mat region)
@@ -264,14 +264,11 @@ void merge(Region &region)
 
 Mat normalizedCut(Mat orig)
 {
-	
-	const int sizes[] = { orig.rows * orig.cols, orig.rows * orig.cols };
 	//Mat W(orig.rows * orig.cols, orig.rows * orig.cols, CV_32FC1);
 	//SparseMat W(2, sizes, CV_32FC1);
 	unsigned long rowscols = orig.rows * orig.cols;
 	Eigen::SparseMatrix<float> W_(rowscols, rowscols);
 	W_.reserve(Eigen::VectorXi::Constant(orig.rows * orig.cols, 9)); //5 - было в случае 4-связности (4 + 1 диаг.) сейчас - 9 
-	//uint rows = orig.rows;
 	uint cols = orig.cols;
 	std::vector<float> D(orig.rows * orig.cols, 0);
 
@@ -311,7 +308,6 @@ Mat normalizedCut(Mat orig)
 				}
 
 			}
-
 			if (j >= 1)
 			{
 				bgr = orig.at<Vec3b>(i, j - 1);
@@ -354,28 +350,19 @@ Mat normalizedCut(Mat orig)
 				sum += ciede;
 			}
 			D.at(i * cols + j) = sum;
-
 		}
 	}
-
 	//(D - W) * y = lambda * D * y
 	std::cout << "W and D are filled" << std::endl;
-
 	//Mat eigenMat = D.inv() * (D - W);	//D^-1 * (D - W)
 
-	int count = 0;
-	//сейчас посчитаем D - W
 	for (int i = 0; i < rowscols; i++)
 	{
 		//W.ref<float>(i, i) += D.at(i);
 		W_.insert(i, i) = D[i];
 	}
 	std::cout << "Found W := D - W" << std::endl;
-
-
-	//TODO: D^-1 * (D - W):
-	//первый ряд делим на d1
-	//второй на d2 и т.д
+	//TODO: D^-1 * (D - W): первый ряд делим на d1 второй на d2 и т.д
 	/*for (; it != it_end; it++)
 	{
 		const SparseMat::Node * n = it.node();
@@ -383,7 +370,6 @@ Mat normalizedCut(Mat orig)
 		it.value<float>() /= D[node_i];
 		count++; //251403
 	}*/
-
 	for (int k = 0; k < W_.outerSize(); k++)
 	{
 		for (Eigen::SparseMatrix<float>::InnerIterator it(W_, k); it; ++it)
@@ -391,34 +377,37 @@ Mat normalizedCut(Mat orig)
 			if(D[it.row()] != 0)		//???
 				it.valueRef() /= D[it.row()];
 			//std::cout << it.row() << std::endl; //точно row? наверно
-			//count++;
 		}
 	}
 	std::cout << "Found D^-1 * (D - W)" << std::endl;;
 
 	Spectra::SparseGenMatProd<float> op(W_);
-	Spectra::GenEigsSolver<float, Spectra::SMALLEST_MAGN, Spectra::SparseGenMatProd<float>> eigs(&op, 2, 50); //вроде бы выбирает два наименьших значения
+	Spectra::GenEigsSolver<float, Spectra::SMALLEST_REAL, Spectra::SparseGenMatProd<float>> eigs(&op, 2, 50); //вроде бы выбирает два наименьших значения
 	eigs.init();
 	const auto nconv = eigs.compute(1500, 1e-2, 0);
 	std::cout << "Converged eigenvalues: " << nconv << std::endl;
 
+
+	Mat ret(orig.rows, orig.cols, orig.type());
 	if (eigs.info() == Spectra::SUCCESSFUL)
 	{
 		const auto evectors = eigs.eigenvectors(); //eigen::MatrixXcf
-		std::cout << evectors << std::endl;
+		const auto evector = evectors.col(0); //отсортированы так, что сначала идут бОльшие, поэтому нужен нулевой
+
+		for (int j = 0; j < rowscols; j++)
+		{
+			int y = j / orig.cols;
+			int x = j % orig.cols;
+			if (evector[j].real() < 0)
+				ret.at<Vec3b>(y, x) = 0;
+			else
+				ret.at<Vec3b>(y, x) = Vec3b(255, 255, 255);
+
+		}
+		//std::cout << evectors << std::endl;
 	}
 
-	/*
-	for (int j = 0; j < eigenvectors.cols; j++)
-	{
-		int y = j / orig.cols;
-		int x = j % orig.cols;
-		if (oldminptr[j] < 0)
-			ret.at<Vec3b>(y, x) = 0;
-		else
-			ret.at<Vec3b>(y, x) = Vec3b(255, 255,255);
-	}*/
-	return orig;
+	return ret;
 }
 Mat meanShift(Mat orig)
 {
