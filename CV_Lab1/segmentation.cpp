@@ -270,11 +270,9 @@ Mat normalizedCut(Mat orig)
 	//SparseMat W(2, sizes, CV_32FC1);
 	unsigned long rowscols = orig.rows * orig.cols;
 	Eigen::SparseMatrix<float> W_(rowscols, rowscols);
-	W_.reserve(Eigen::VectorXi::Constant(orig.rows * orig.cols, 5)); //5 - это в случае 4-связности (4 + 1 диаг.) 
-	//TODO: после переделеки на 8-связность поставить 9
+	W_.reserve(Eigen::VectorXi::Constant(orig.rows * orig.cols, 9)); //5 - было в случае 4-связности (4 + 1 диаг.) сейчас - 9 
 	//uint rows = orig.rows;
 	uint cols = orig.cols;
-	//Mat D(W.rows, W.cols, W.type());
 	std::vector<float> D(orig.rows * orig.cols, 0);
 
 
@@ -294,40 +292,64 @@ Mat normalizedCut(Mat orig)
 				W_.insert(i * cols + j, (i - 1) * cols + j) = -ciede;
 				sum += ciede;
 
-				/*if (j >= 1)
+				if (j >= 1)
 				{
 					bgr = orig.at<Vec3b>(i - 1, j - 1);
 					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 					float ciede = CIEDE(lab1, lab2);
-					W.ref<float>(i * cols + j, (i - 1) * cols + j - 1) = -ciede;	//с минусом ибо D - W
+					W_.insert(i * cols + j, (i - 1) * cols + j - 1) = -ciede;
 					sum += ciede;
-				}*/ //TODO: 8-связность
+				}
+
+				if (j < orig.cols - 1)
+				{
+					bgr = orig.at<Vec3b>(i - 1, j + 1);
+					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+					float ciede = CIEDE(lab1, lab2);
+					W_.insert(i * cols + j, (i - 1) * cols + j + 1) = -ciede;
+					sum += ciede;
+				}
+
 			}
-			//может, стоит как-то сразу для (j,i) и сократить цикл?
+
 			if (j >= 1)
 			{
 				bgr = orig.at<Vec3b>(i, j - 1);
 				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 				float ciede = CIEDE(lab1, lab2);
-				//W.ref<float>(i * cols + j, i * cols + j - 1) = -ciede;
 				W_.insert(i * cols + j, i * cols + j - 1) = -ciede;
 				sum += ciede;
 			}
 			if (i < orig.rows - 1)
 			{
-				bgr = orig.at<Vec3b>(i + 1);
+				bgr = orig.at<Vec3b>(i + 1, j);
 				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 				float ciede = CIEDE(lab1, lab2);
-				//W.ref<float>(i * cols + j, (i + 1) * cols + j) = -ciede;
 				W_.insert(i * cols + j, (i + 1) * cols + j) = -ciede;
 				sum += ciede;
+
+				if (j >= 1)
+				{
+					bgr = orig.at<Vec3b>(i + 1, j - 1);
+					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+					float ciede = CIEDE(lab1, lab2);
+					W_.insert(i * cols + j, (i + 1) * cols + j - 1) = -ciede;
+					sum += ciede;
+				}
+				if (j < orig.cols - 1)
+				{
+					bgr = orig.at<Vec3b>(i + 1, j + 1);
+					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+					float ciede = CIEDE(lab1, lab2);
+					W_.insert(i * cols + j, (i + 1) * cols + j + 1) = -ciede;
+					sum += ciede;
+				}
 			}
 			if (j < orig.cols - 1)
 			{
-				bgr = orig.at<Vec3b>(j + 1);
+				bgr = orig.at<Vec3b>(i, j + 1);
 				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 				float ciede = CIEDE(lab1, lab2);
-				//W.ref<float>(i * cols + j, i * cols + j + 1) = -ciede;
 				W_.insert(i * cols + j, i * cols + j + 1) = -ciede;
 				sum += ciede;
 			}
@@ -354,11 +376,7 @@ Mat normalizedCut(Mat orig)
 	//TODO: D^-1 * (D - W):
 	//первый ряд делим на d1
 	//второй на d2 и т.д
-	/*SparseMatIterator it = W.begin();
-	SparseMatIterator it_end = W.end();
-
-
-	for (; it != it_end; it++)
+	/*for (; it != it_end; it++)
 	{
 		const SparseMat::Node * n = it.node();
 		int node_i = n->idx[0];
@@ -373,27 +391,21 @@ Mat normalizedCut(Mat orig)
 			if(D[it.row()] != 0)		//???
 				it.valueRef() /= D[it.row()];
 			//std::cout << it.row() << std::endl; //точно row? наверно
-			count++;
+			//count++;
 		}
 	}
 	std::cout << "Found D^-1 * (D - W)" << std::endl;;
 
-	/*for (int k = 0; k < rowscols; k++)
-	{
-		if (D[k] == 0)
-			std::cout << k << std::endl;
-	}*/
-	//TODO: find eigenvectors
 	Spectra::SparseGenMatProd<float> op(W_);
 	Spectra::GenEigsSolver<float, Spectra::SMALLEST_MAGN, Spectra::SparseGenMatProd<float>> eigs(&op, 2, 50); //вроде бы выбирает два наименьших значения
 	eigs.init();
-	const auto nconv = eigs.compute(1500, 1e-3, 0);
+	const auto nconv = eigs.compute(1500, 1e-2, 0);
 	std::cout << "Converged eigenvalues: " << nconv << std::endl;
 
 	if (eigs.info() == Spectra::SUCCESSFUL)
 	{
-		const auto evectors = eigs.eigenvectors();
-		//std::cout << evectors(1) << std::endl;
+		const auto evectors = eigs.eigenvectors(); //eigen::MatrixXcf
+		std::cout << evectors << std::endl;
 	}
 
 	/*
