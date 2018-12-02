@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="filtration.cpp" />
+    <ClCompile Include="InputLayer.cpp" />
     <ClCompile Include="InputNeuron.cpp" />
     <ClCompile Include="lab.cpp" />
     <ClCompile Include="local_features.cpp" />
@@ -146,7 +147,9 @@
     <Image Include="image2.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CNeuron.h" />
     <ClInclude Include="filtration.h" />
+    <ClInclude Include="InputLayer.h" />
     <ClInclude Include="InputNeuron.h" />
     <ClInclude Include="lab.h" />
     <ClInclude Include="local_features.h" />

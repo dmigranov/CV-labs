@@ -16,6 +16,9 @@
     <Filter Include="Neuro">
       <UniqueIdentifier>{c2c978c2-124b-4afd-8b43-ebf39f85f173}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ConvolutionalNeuro">
+      <UniqueIdentifier>{47ee4feb-364a-4cb6-9dd7-a3ace0224e90}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="filtration.cpp">
@@ -44,6 +47,9 @@
     </ClCompile>
     <ClCompile Include="Network.cpp">
       <Filter>Neuro</Filter>
+    </ClCompile>
+    <ClCompile Include="InputLayer.cpp">
+      <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -78,6 +84,12 @@
     </ClInclude>
     <ClInclude Include="Network.h">
       <Filter>Neuro</Filter>
+    </ClInclude>
+    <ClInclude Include="CNeuron.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="InputLayer.h">
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

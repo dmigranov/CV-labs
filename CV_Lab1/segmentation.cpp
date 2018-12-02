@@ -416,5 +416,5 @@ Mat meanShift(Mat orig)
 	orig.copyTo(copy);
 
 
-
+	return Mat();
 }
