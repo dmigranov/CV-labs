@@ -29,9 +29,10 @@ Mat splitmerge(Mat orig);
 void split(Region &region, uint iterNum);
 void merge(Region &region);
 
-
+void normalizedCut(Mat &orig, Mat mask, uint iter);
+void fillWithMean(Mat &orig, Mat mask);
 Mat normalizedCut(Mat orig);
-Mat normalizedCut(Mat &orig, Mat mask, uint iter);
+
 
 Mat meanShift(Mat orig);
 

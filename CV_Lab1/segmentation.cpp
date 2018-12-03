@@ -123,6 +123,11 @@ double homogeneity(Mat region)
 		for (int j = 0; j < region.cols; j++)
 			dev += pow(region.at<double>(i, j) - avg, 2);
 	return dev / (region.cols * region.rows - 1);
+
+	//для итерация > 5 по цвету, экспонента ("было в первой лекции") 
+	//dist - евклид
+	//exp(-dist(c(x), c(y) ^ 2    / w * sigma ^ 2))
+	//сигма подбирается руками
 }
 
 double mean(Mat region)
@@ -262,18 +267,32 @@ void merge(Region &region)
 
 Mat normalizedCut(Mat orig)
 {
-	Mat mask(orig.rows, orig.cols, CV_8U);
+	Mat mask(orig.rows, orig.cols, CV_8UC1);
 	mask = 1;
 	Mat copy;
 	orig.copyTo(copy);
-	return normalizedCut(copy, mask, 2);
+	normalizedCut(copy, mask, 1);
+	return copy;
 }
 
-Mat normalizedCut(Mat &orig, Mat mask, uint iter)
+void normalizedCut(Mat &orig, Mat mask, uint iter)
 {
 	//Mat W(orig.rows * orig.cols, orig.rows * orig.cols, CV_32FC1);
 	//SparseMat W(2, sizes, CV_32FC1);
 
+	std::cout << "Iteration: " << iter << std::endl;
+	if (iter == 0)
+	{
+		fillWithMean(orig, mask);
+		std::cout << "Enough" << std::endl;
+		return;
+	}
+
+
+
+	Mat mask1(orig.rows, orig.cols, mask.type()), mask2(orig.rows, orig.cols, mask.type());
+	//mask1 = 0;
+	//mask2 = 0;
 
 	unsigned long rowscols = orig.rows * orig.cols;
 	Eigen::SparseMatrix<float> W_(rowscols, rowscols);
@@ -286,79 +305,82 @@ Mat normalizedCut(Mat &orig, Mat mask, uint iter)
 	{
 		for (int j = 0; j < orig.cols; j++)
 		{
-			Vec3b bgr = orig.at<Vec3b>(i, j);
-			Vec3d lab1 = getLab(bgr[2], bgr[1], bgr[0]);
-			float sum = 0;
-			if (i >= 1)
+			if (mask.at<uchar>(i, j) != 0)
 			{
-				bgr = orig.at<Vec3b>(i - 1, j);
-				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
-				float ciede = CIEDE(lab1, lab2);
-				//W.ref<float>(i * cols + j, (i - 1) * cols + j) = -ciede;	//с минусом ибо D - W
-				W_.insert(i * cols + j, (i - 1) * cols + j) = -ciede;
-				sum += ciede;
+				Vec3b bgr = orig.at<Vec3b>(i, j);
+				Vec3d lab1 = getLab(bgr[2], bgr[1], bgr[0]);
+				float sum = 0;
+				if (i >= 1)
+				{
+					bgr = orig.at<Vec3b>(i - 1, j);
+					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+					float ciede = CIEDE(lab1, lab2);
+					//W.ref<float>(i * cols + j, (i - 1) * cols + j) = -ciede;	//с минусом ибо D - W
+					W_.insert(i * cols + j, (i - 1) * cols + j) = -ciede;
+					sum += ciede;
 
+					if (j >= 1)
+					{
+						bgr = orig.at<Vec3b>(i - 1, j - 1);
+						Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+						float ciede = CIEDE(lab1, lab2);
+						W_.insert(i * cols + j, (i - 1) * cols + j - 1) = -ciede;
+						sum += ciede;
+					}
+
+					if (j < orig.cols - 1)
+					{
+						bgr = orig.at<Vec3b>(i - 1, j + 1);
+						Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+						float ciede = CIEDE(lab1, lab2);
+						W_.insert(i * cols + j, (i - 1) * cols + j + 1) = -ciede;
+						sum += ciede;
+					}
+
+				}
 				if (j >= 1)
 				{
-					bgr = orig.at<Vec3b>(i - 1, j - 1);
+					bgr = orig.at<Vec3b>(i, j - 1);
 					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 					float ciede = CIEDE(lab1, lab2);
-					W_.insert(i * cols + j, (i - 1) * cols + j - 1) = -ciede;
+					W_.insert(i * cols + j, i * cols + j - 1) = -ciede;
 					sum += ciede;
 				}
-
-				if (j < orig.cols - 1)
+				if (i < orig.rows - 1)
 				{
-					bgr = orig.at<Vec3b>(i - 1, j + 1);
+					bgr = orig.at<Vec3b>(i + 1, j);
 					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 					float ciede = CIEDE(lab1, lab2);
-					W_.insert(i * cols + j, (i - 1) * cols + j + 1) = -ciede;
+					W_.insert(i * cols + j, (i + 1) * cols + j) = -ciede;
 					sum += ciede;
-				}
 
-			}
-			if (j >= 1)
-			{
-				bgr = orig.at<Vec3b>(i, j - 1);
-				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
-				float ciede = CIEDE(lab1, lab2);
-				W_.insert(i * cols + j, i * cols + j - 1) = -ciede;
-				sum += ciede;
-			}
-			if (i < orig.rows - 1)
-			{
-				bgr = orig.at<Vec3b>(i + 1, j);
-				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
-				float ciede = CIEDE(lab1, lab2);
-				W_.insert(i * cols + j, (i + 1) * cols + j) = -ciede;
-				sum += ciede;
-
-				if (j >= 1)
-				{
-					bgr = orig.at<Vec3b>(i + 1, j - 1);
-					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
-					float ciede = CIEDE(lab1, lab2);
-					W_.insert(i * cols + j, (i + 1) * cols + j - 1) = -ciede;
-					sum += ciede;
+					if (j >= 1)
+					{
+						bgr = orig.at<Vec3b>(i + 1, j - 1);
+						Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+						float ciede = CIEDE(lab1, lab2);
+						W_.insert(i * cols + j, (i + 1) * cols + j - 1) = -ciede;
+						sum += ciede;
+					}
+					if (j < orig.cols - 1)
+					{
+						bgr = orig.at<Vec3b>(i + 1, j + 1);
+						Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
+						float ciede = CIEDE(lab1, lab2);
+						W_.insert(i * cols + j, (i + 1) * cols + j + 1) = -ciede;
+						sum += ciede;
+					}
 				}
 				if (j < orig.cols - 1)
 				{
-					bgr = orig.at<Vec3b>(i + 1, j + 1);
+					bgr = orig.at<Vec3b>(i, j + 1);
 					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 					float ciede = CIEDE(lab1, lab2);
-					W_.insert(i * cols + j, (i + 1) * cols + j + 1) = -ciede;
+					W_.insert(i * cols + j, i * cols + j + 1) = -ciede;
 					sum += ciede;
 				}
+				D.at(i * cols + j) = sum;
 			}
-			if (j < orig.cols - 1)
-			{
-				bgr = orig.at<Vec3b>(i, j + 1);
-				Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
-				float ciede = CIEDE(lab1, lab2);
-				W_.insert(i * cols + j, i * cols + j + 1) = -ciede;
-				sum += ciede;
-			}
-			D.at(i * cols + j) = sum;
 		}
 	}
 	//(D - W) * y = lambda * D * y
@@ -396,7 +418,7 @@ Mat normalizedCut(Mat &orig, Mat mask, uint iter)
 	const auto nconv = eigs.compute(1500, 1e-2, 0);
 	std::cout << "Converged eigenvalues: " << nconv << std::endl;
 
-
+	//наименьший собств вектор скорее всего будет ноль
 	Mat ret(orig.rows, orig.cols, orig.type());
 	if (eigs.info() == Spectra::SUCCESSFUL)
 	{
@@ -408,18 +430,62 @@ Mat normalizedCut(Mat &orig, Mat mask, uint iter)
 			int y = j / orig.cols;
 			int x = j % orig.cols;
 			if (evector[j].real() < 0)
-				mat1.at<Vec3b>(y, x) = 0;
+			{
+				mask1.at<uchar>(y, x) = 1;
+				mask2.at<uchar>(y, x) = 0;
+			}
 			else
-				mat2.at<Vec3b>(y, x) = 0;
-
+			{
+				mask2.at<uchar>(y, x) = 0;
+				mask2.at<uchar>(y, x) = 1;
+			}
 		}
-		//std::cout << evectors << std::endl;
+
+		std::cout << mask1 << std::endl << std::endl;
+		std::cout << mask2 << std::endl << std::endl;
+		iter--;
+		normalizedCut(orig, mask1, iter);
+		normalizedCut(orig, mask2, iter);
+	}
+}
+
+void fillWithMean(Mat & orig, Mat mask)
+{
+	//Vec3b sum = 0;
+
+	int sumx = 0, sumy = 0, sumz = 0;
+	int count = 0;
+	for (int i = 0; i < orig.rows; i++)
+	{
+		for (int j = 0; j < orig.rows; j++)
+		{
+			std::cout << (int)mask.at<uchar>(i, j);
+			if (mask.at<uchar>(i, j) == 1)
+			{
+				count++;
+				Vec3b color = orig.at<Vec3b>(i, j);
+				sumx += color[0];
+				sumx += color[1];
+				sumx += color[2];
+			}
+		}
+	}
+	sumx /= count;
+	sumy /= count;
+	sumz /= count;
+	for (int i = 0; i < orig.rows; i++)
+	{
+		for (int j = 0; j < orig.rows; j++)
+		{
+			if (mask.at<uchar>(i, j) == 1)
+			{
+				orig.at<Vec3b>(i, j)[0] = sumx;
+				orig.at<Vec3b>(i, j)[1] = sumy;
+				orig.at<Vec3b>(i, j)[2] = sumz;
+			}
+		}
 	}
 
-	imshow("MAT1", mat1);
-	imshow("MAT2", mat2);
-
-	return Mat();
 }
 
 
