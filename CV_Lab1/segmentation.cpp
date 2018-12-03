@@ -262,8 +262,19 @@ void merge(Region &region)
 
 Mat normalizedCut(Mat orig)
 {
+	Mat mask(orig.rows, orig.cols, CV_8U);
+	mask = 1;
+	Mat copy;
+	orig.copyTo(copy);
+	return normalizedCut(copy, mask, 2);
+}
+
+Mat normalizedCut(Mat &orig, Mat mask, uint iter)
+{
 	//Mat W(orig.rows * orig.cols, orig.rows * orig.cols, CV_32FC1);
 	//SparseMat W(2, sizes, CV_32FC1);
+
+
 	unsigned long rowscols = orig.rows * orig.cols;
 	Eigen::SparseMatrix<float> W_(rowscols, rowscols);
 	W_.reserve(Eigen::VectorXi::Constant(orig.rows * orig.cols, 9)); //5 - было в случае 4-связности (4 + 1 диаг.) сейчас - 9 
@@ -397,15 +408,18 @@ Mat normalizedCut(Mat orig)
 			int y = j / orig.cols;
 			int x = j % orig.cols;
 			if (evector[j].real() < 0)
-				ret.at<Vec3b>(y, x) = 0;
+				mat1.at<Vec3b>(y, x) = 0;
 			else
-				ret.at<Vec3b>(y, x) = Vec3b(255, 255, 255);
+				mat2.at<Vec3b>(y, x) = 0;
 
 		}
 		//std::cout << evectors << std::endl;
 	}
 
-	return ret;
+	imshow("MAT1", mat1);
+	imshow("MAT2", mat2);
+
+	return Mat();
 }
 
 
