@@ -471,7 +471,7 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 		const auto evectors = eigs.eigenvectors(); //eigen::MatrixXcf
 		const auto evector = evectors.col(1); //вроде бы отсортированы так, что сначала идут бОльшие, поэтому нужен нулевой
 		//но на самом деле col(0) - нулевое собств значение		
-		std::cout << evector << std::endl;
+		std::cout << evectors << std::endl;
 		for (int j = 0; j < rowscols; j++)
 		{
 			int y = j / orig.cols;
