@@ -4,7 +4,9 @@
 #include <Eigen/Sparse>
 
 #include <GenEigsSolver.h>
+#include <SymEigsSolver.h>
 #include <SparseGenMatProd.h>
+#include <SparseSymMatProd.h>
 
 
 //const double k = 0.0004;
@@ -426,15 +428,8 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 		W_.insert(i, i) = D[i];
 	}
 	std::cout << "Found W := D - W" << std::endl;
-	//TODO: D^-1 * (D - W): первый ряд делим на d1 второй на d2 и т.д
-	/*for (; it != it_end; it++)
-	{
-		const SparseMat::Node * n = it.node();
-		int node_i = n->idx[0];
-		it.value<float>() /= D[node_i];
-		count++; //251403
-	}*/
-	for (int k = 0; k < W_.outerSize(); k++)
+	//!!! D^-1 * (D - W): первый ряд делим на d1 второй на d2 и т.д !!!
+	/*for (int k = 0; k < W_.outerSize(); k++)
 	{
 		for (Eigen::SparseMatrix<float>::InnerIterator it(W_, k); it; ++it)
 		{
@@ -443,26 +438,45 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 			//std::cout << it.row() << std::endl; //точно row? наверно
 		}
 	}
-	std::cout << "Found D^-1 * (D - W)" << std::endl;;
+	std::cout << "Found D^-1 * (D - W)" << std::endl; */
+
+	for (int k = 0; k < W_.outerSize(); k++)
+	{
+		for (Eigen::SparseMatrix<float>::InnerIterator it(W_, k); it; ++it)
+		{
+			if (D[it.row()] != 0)		//???
+				it.valueRef() /= sqrt(D[it.row()]);
+			if (D[it.col()] != 0)		//???
+				it.valueRef() /= sqrt(D[it.col()]);
+			//std::cout << it.row() << std::endl; //точно row? наверно
+		}
+	}
+	std::cout << "Found D^-1/2 * (D - W) * D^-1/2" << std::endl; //it is symmetric
+
 
 	Spectra::SparseGenMatProd<float> op(W_);
-	Spectra::GenEigsSolver<float, Spectra::SMALLEST_REAL, Spectra::SparseGenMatProd<float>> eigs(&op, 2, 50); //вроде бы выбирает два наименьших значения
+	Spectra::SparseSymMatProd<float> symOp(W_);
+	//Spectra::GenEigsSolver<float, Spectra::SMALLEST_REAL, Spectra::SparseGenMatProd<float>> eigs(&op, 2, 50); //вроде бы выбирает два наименьших значения
+	Spectra::SymEigsSolver<float, Spectra::SMALLEST_ALGE, Spectra::SparseSymMatProd<float>> eigs(&symOp, 2, 50); //вроде бы выбирает два наименьших значения
+
 	eigs.init();
-	const auto nconv = eigs.compute(2000, 1e-3, 0);
+	const auto nconv = eigs.compute(2000, 1e-3);
 	std::cout << "Converged eigenvalues: " << nconv << std::endl;
 
 	//наименьший собств вектор скорее всего будет ноль
 	Mat ret(orig.rows, orig.cols, orig.type());
 	if (eigs.info() == Spectra::SUCCESSFUL)
 	{
+		const auto evalues = eigs.eigenvalues();
 		const auto evectors = eigs.eigenvectors(); //eigen::MatrixXcf
-		const auto evector = evectors.col(0); //отсортированы так, что сначала идут бОльшие, поэтому нужен нулевой
+		const auto evector = evectors.col(1); //вроде бы отсортированы так, что сначала идут бОльшие, поэтому нужен нулевой
+		//но на самом деле col(0) - нулевое собств значение		
 		std::cout << evector << std::endl;
 		for (int j = 0; j < rowscols; j++)
 		{
 			int y = j / orig.cols;
 			int x = j % orig.cols;
-			if (evector[j].real() < 0)
+			if (evector[j] < -0.009)
 			{
 				mask1.at<uchar>(y, x) = 255;
 				mask2.at<uchar>(y, x) = 0;
