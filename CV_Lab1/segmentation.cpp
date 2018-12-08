@@ -111,8 +111,8 @@ double CIEDE2000(Vec3d Lab1, Vec3d Lab2)
 
 double CIEDE(Vec3d Lab1, Vec3d Lab2)
 {
-	return CIE76(Lab1, Lab2);
-	//return CIEDE2000(Lab1, Lab2);
+	//return CIE76(Lab1, Lab2);
+	return CIEDE2000(Lab1, Lab2);
 }
 
 double homogeneity(Mat region)
@@ -295,7 +295,7 @@ Mat normalizedCut(Mat orig)
 	mask = 1;
 	Mat copy;
 	orig.copyTo(copy);
-	normalizedCut(copy, mask, 3);
+	normalizedCut(copy, mask, 2);
 	return copy;
 }
 
@@ -332,6 +332,7 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 				float sum = 0;
 				if (i >= 1)
 				{
+
 					bgr = orig.at<Vec3b>(i - 1, j);
 					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 					float ciede = CIEDE(lab1, lab2);
@@ -341,6 +342,7 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 
 					if (j >= 1)
 					{
+
 						bgr = orig.at<Vec3b>(i - 1, j - 1);
 						Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 						float ciede = CIEDE(lab1, lab2);
@@ -350,6 +352,7 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 
 					if (j < orig.cols - 1)
 					{
+
 						bgr = orig.at<Vec3b>(i - 1, j + 1);
 						Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 						float ciede = CIEDE(lab1, lab2);
@@ -360,6 +363,7 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 				}
 				if (j >= 1)
 				{
+
 					bgr = orig.at<Vec3b>(i, j - 1);
 					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 					float ciede = CIEDE(lab1, lab2);
@@ -368,6 +372,7 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 				}
 				if (i < orig.rows - 1)
 				{
+
 					bgr = orig.at<Vec3b>(i + 1, j);
 					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 					float ciede = CIEDE(lab1, lab2);
@@ -393,6 +398,7 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 				}
 				if (j < orig.cols - 1)
 				{
+
 					bgr = orig.at<Vec3b>(i, j + 1);
 					Vec3d lab2 = getLab(bgr[2], bgr[1], bgr[0]);
 					float ciede = CIEDE(lab1, lab2);
@@ -400,6 +406,7 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 					sum += ciede;
 				}
 				D.at(i * cols + j) = sum;
+				//std::cout << count << " "; //максимум - 8 всё ок
 			}
 		}
 	}
@@ -435,7 +442,7 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 	Spectra::SparseGenMatProd<float> op(W_);
 	Spectra::GenEigsSolver<float, Spectra::SMALLEST_REAL, Spectra::SparseGenMatProd<float>> eigs(&op, 2, 50); //вроде бы выбирает два наименьших значения
 	eigs.init();
-	const auto nconv = eigs.compute(1500, 1e-2, 0);
+	const auto nconv = eigs.compute(1500, 1e-3, 0);
 	std::cout << "Converged eigenvalues: " << nconv << std::endl;
 
 	//наименьший собств вектор скорее всего будет ноль
@@ -444,7 +451,7 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 	{
 		const auto evectors = eigs.eigenvectors(); //eigen::MatrixXcf
 		const auto evector = evectors.col(0); //отсортированы так, что сначала идут бОльшие, поэтому нужен нулевой
-
+		std::cout << evector << std::endl;
 		for (int j = 0; j < rowscols; j++)
 		{
 			int y = j / orig.cols;
