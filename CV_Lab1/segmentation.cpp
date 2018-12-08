@@ -290,7 +290,7 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 
 
 
-	Mat mask1(orig.rows, orig.cols, mask.type()), mask2(orig.rows, orig.cols, mask.type());
+	Mat mask1(orig.rows, orig.cols, CV_8UC1), mask2(orig.rows, orig.cols, CV_8UC1);
 	//mask1 = 0;
 	//mask2 = 0;
 
@@ -431,18 +431,18 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 			int x = j % orig.cols;
 			if (evector[j].real() < 0)
 			{
-				mask1.at<uchar>(y, x) = 1;
+				mask1.at<uchar>(y, x) = 255;
 				mask2.at<uchar>(y, x) = 0;
 			}
 			else
 			{
-				mask2.at<uchar>(y, x) = 0;
-				mask2.at<uchar>(y, x) = 1;
+				mask1.at<uchar>(y, x) = 0;
+				mask2.at<uchar>(y, x) = 255;
 			}
 		}
 
-		std::cout << mask1 << std::endl << std::endl;
-		std::cout << mask2 << std::endl << std::endl;
+		//std::cout << mask1 << std::endl << std::endl;
+		//std::cout << mask2 << std::endl << std::endl;
 		iter--;
 		normalizedCut(orig, mask1, iter);
 		normalizedCut(orig, mask2, iter);
@@ -452,36 +452,37 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 void fillWithMean(Mat & orig, Mat mask)
 {
 	//Vec3b sum = 0;
-
+	std::cout << mask << std::endl;
 	int sumx = 0, sumy = 0, sumz = 0;
 	int count = 0;
 	for (int i = 0; i < orig.rows; i++)
 	{
-		for (int j = 0; j < orig.rows; j++)
+		for (int j = 0; j < orig.cols; j++)
 		{
-			std::cout << (int)mask.at<uchar>(i, j);
-			if (mask.at<uchar>(i, j) == 1)
+
+			if ((uint)mask.at<uchar>(i, j) == 255)
 			{
 				count++;
 				Vec3b color = orig.at<Vec3b>(i, j);
 				sumx += color[0];
-				sumx += color[1];
-				sumx += color[2];
+				sumy += color[1];
+				sumz += color[2];
 			}
 		}
 	}
 	sumx /= count;
 	sumy /= count;
 	sumz /= count;
+	Vec3b nc(sumx, sumy, sumz);
 	for (int i = 0; i < orig.rows; i++)
 	{
-		for (int j = 0; j < orig.rows; j++)
+		for (int j = 0; j < orig.cols; j++)
 		{
-			if (mask.at<uchar>(i, j) == 1)
+			if (mask.at<uchar>(i, j) == 255)
 			{
-				orig.at<Vec3b>(i, j)[0] = sumx;
-				orig.at<Vec3b>(i, j)[1] = sumy;
-				orig.at<Vec3b>(i, j)[2] = sumz;
+
+				orig.at<Vec3b>(i, j) = nc;
+
 			}
 		}
 	}
