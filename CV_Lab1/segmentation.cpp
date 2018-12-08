@@ -295,7 +295,7 @@ Mat normalizedCut(Mat orig)
 	mask = 1;
 	Mat copy;
 	orig.copyTo(copy);
-	normalizedCut(copy, mask, 2);
+	normalizedCut(copy, mask, 1);
 	return copy;
 }
 
@@ -325,6 +325,12 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 	{
 		for (int j = 0; j < orig.cols; j++)
 		{
+			//а кто сказал, что при таком заполнении дискриминант матрицы не будет равен нулю?
+			//но как тогда заполнять?
+			//и кстати, зачем я ее много раз считаю
+			//СТОПЭ
+			//вообще по хорошему на проходах после первого меняется размер матрицы смежностей!
+			//но это тоже как-то сложно...
 			if (mask.at<uchar>(i, j) != 0)
 			{
 				Vec3b bgr = orig.at<Vec3b>(i, j);
@@ -442,7 +448,7 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 	Spectra::SparseGenMatProd<float> op(W_);
 	Spectra::GenEigsSolver<float, Spectra::SMALLEST_REAL, Spectra::SparseGenMatProd<float>> eigs(&op, 2, 50); //вроде бы выбирает два наименьших значения
 	eigs.init();
-	const auto nconv = eigs.compute(1500, 1e-3, 0);
+	const auto nconv = eigs.compute(2000, 1e-3, 0);
 	std::cout << "Converged eigenvalues: " << nconv << std::endl;
 
 	//наименьший собств вектор скорее всего будет ноль
@@ -467,6 +473,7 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 				mask2.at<uchar>(y, x) = 255;
 			}
 		}
+		imshow("MASK", mask1);
 		iter--;
 		normalizedCut(orig, mask1, iter);
 		normalizedCut(orig, mask2, iter);
