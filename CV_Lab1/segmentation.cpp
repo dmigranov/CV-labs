@@ -130,6 +130,30 @@ double homogeneity(Mat region)
 	//сигма подбирается руками
 }
 
+Vec3b meanRGB(Mat region)
+{
+	long sumx = 0, sumy = 0, sumz = 0;
+	uint count = region.rows * region.cols;
+	for (int i = 0; i < region.rows; i++)
+		for (int j = 0; j < region.cols; j++)
+		{
+
+			Vec3b color = region.at<Vec3b>(i, j);
+			sumx += color[0];
+			sumy += color[1];
+			sumz += color[2];
+		}
+	Vec3b newcolor(sumx / count, sumy / count, sumz / count);
+	return newcolor;
+}
+
+double homogeneityRGB(Mat region)
+{
+	double dev = 0;
+	Vec3b avg = meanRGB(region);
+	return 0;
+}
+
 double mean(Mat region)
 {
 
@@ -271,7 +295,7 @@ Mat normalizedCut(Mat orig)
 	mask = 1;
 	Mat copy;
 	orig.copyTo(copy);
-	normalizedCut(copy, mask, 1);
+	normalizedCut(copy, mask, 3);
 	return copy;
 }
 
@@ -288,11 +312,7 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 		return;
 	}
 
-
-
 	Mat mask1(orig.rows, orig.cols, CV_8UC1), mask2(orig.rows, orig.cols, CV_8UC1);
-	//mask1 = 0;
-	//mask2 = 0;
 
 	unsigned long rowscols = orig.rows * orig.cols;
 	Eigen::SparseMatrix<float> W_(rowscols, rowscols);
@@ -440,9 +460,6 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 				mask2.at<uchar>(y, x) = 255;
 			}
 		}
-
-		//std::cout << mask1 << std::endl << std::endl;
-		//std::cout << mask2 << std::endl << std::endl;
 		iter--;
 		normalizedCut(orig, mask1, iter);
 		normalizedCut(orig, mask2, iter);
@@ -452,7 +469,6 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 void fillWithMean(Mat & orig, Mat mask)
 {
 	//Vec3b sum = 0;
-	std::cout << mask << std::endl;
 	int sumx = 0, sumy = 0, sumz = 0;
 	int count = 0;
 	for (int i = 0; i < orig.rows; i++)
@@ -480,9 +496,7 @@ void fillWithMean(Mat & orig, Mat mask)
 		{
 			if (mask.at<uchar>(i, j) == 255)
 			{
-
 				orig.at<Vec3b>(i, j) = nc;
-
 			}
 		}
 	}
