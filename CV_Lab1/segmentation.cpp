@@ -450,7 +450,7 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 				it.valueRef() /= sqrt(D[it.col()]);
 			//std::cout << it.row() << std::endl; //точно row? наверно
 		}
-	}
+	} //может ошибка в делении? ПРОВЕРИТЬ!!!!
 	std::cout << "Found D^-1/2 * (D - W) * D^-1/2" << std::endl; //it is symmetric
 
 
