@@ -226,6 +226,11 @@ void split(Region &region, uint iterNum)
 		region.addChild(Region(regmat(Rect(cols / 2, rows / 2, cols - cols / 2, rows - rows / 2))));
 
 
+		Mat qw(rows/2, cols, regmat.type());
+		qw(Rect(0, 0, cols/2, rows/2)) = regmat(Rect(0, 0, cols / 2, rows / 2));
+		qw(Rect(0, 0, cols - cols / 2, rows/2)) = regmat(Rect(cols / 2, 0, cols - cols / 2, rows / 2));
+		regmat(Rect(cols / 2, 0, cols - cols / 2, rows / 2)) = 0;
+
 		/*if (iterNum > 5)
 		{
 			merge(region);
@@ -249,7 +254,8 @@ void merge(Region &region)
 	Mat		hmerged1, hmerged2, vmerged1, vmerged2;
 	bool	hb1, hb2, vb1, vb2;
 
-
+	//Mat		hmerged1(region.children[0].mat.rows, region.children[0].mat.cols + region.children[1].mat.cols, region.mat.type());
+	//!
 	if (region.children.size() == 0)
 		return;
 
