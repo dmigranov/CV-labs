@@ -230,8 +230,8 @@ int main(int argc, char **argv)
 		}
 		else if (k == 'S')
 		{
-			//imshow("Split and Merge", splitmerge(img)); //раском.
-			imshow("Norm cut", normalizedCut(img));
+			imshow("Split and Merge", splitmerge(img)); //раском.
+			//imshow("Norm cut", normalizedCut(img));
 		}
 		else if (k == 'l')
 		{

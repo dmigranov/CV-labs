@@ -9,9 +9,10 @@
 #include <SparseSymMatProd.h>
 
 
-//const double k = 0.0004;
+const double k = 0.01;
 
-const double k = 0.0018;
+//const double k = 0.000005;
+
 
 double CIE76(Vec3d Lab1, Vec3d Lab2)
 {
@@ -124,12 +125,23 @@ double homogeneity(Mat region)
 	for (int i = 0; i < region.rows; i++)
 		for (int j = 0; j < region.cols; j++)
 			dev += pow(region.at<double>(i, j) - avg, 2);
-	return dev / (region.cols * region.rows - 1);
+	if (region.cols * region.rows != 1)
+		return dev / (region.cols * region.rows - 1);
+	else
+		return dev;
 
 	//для итерация > 5 по цвету, экспонента ("было в первой лекции") 
 	//dist - евклид
 	//exp(-dist(c(x), c(y) ^ 2    / w * sigma ^ 2))
 	//сигма подбирается руками
+}
+
+double homogeneity(Mat region, uint iter)
+{
+	/*if (iter > 5 || iter = -1)
+		return homogeneityRGB(region);
+	else*/
+		return homogeneity(getLMatrix(region));
 }
 
 Vec3b meanRGB(Mat region)
@@ -151,9 +163,26 @@ Vec3b meanRGB(Mat region)
 
 double homogeneityRGB(Mat region)
 {
-	double dev = 0;
+	std::cout << "BEGIN" << std::endl;
+	long double dev = 0;
 	Vec3b avg = meanRGB(region);
-	return 0;
+	double sigma = 1;
+	for (int i = 0; i < region.rows; i++)
+		for (int j = 0; j < region.cols; j++)
+		{
+			Vec3b color = region.at<Vec3b>(i, j);
+			double eucl = //sqrt(
+				pow(avg[0]-color[0], 2) + pow(avg[1] - color[1], 2) + pow(avg[2] - color[2], 2)  //)
+			;
+			//dev += eucl;
+			double similarity = exp(-eucl/2 * sigma * sigma);
+			std::cout << similarity << std::endl;
+			dev += similarity;
+
+		}
+	std::cout << "END" << std::endl;
+
+	return dev / (region.cols * region.rows - 1);
 }
 
 double mean(Mat region)
@@ -172,8 +201,9 @@ double mean(Mat region)
 Mat splitmerge(Mat orig)
 {
 
-	Mat L = getLMatrix(orig);
-	Region r(L);
+	/*Mat L = getLMatrix(orig);
+	Region r(L);*/
+	Region r(orig);
 	Mat res(r.mat.rows, r.mat.cols, r.mat.type());
 
 	uint iterNum = 0;
@@ -189,8 +219,8 @@ void split(Region &region, uint iterNum)
 
 	int rows = regmat.rows;
 	int cols = regmat.cols;
-
-	if (homogeneity(regmat) > k) //в зависимости от номера итерации использовать разные формулы: на первых пяти можно по L, далее - CIEDE2000
+	std::cout << homogeneity(regmat, iterNum) << std::endl;
+	if (homogeneity(regmat, iterNum) > k) //в зависимости от номера итерации использовать разные формулы: на первых пяти можно по L, далее - CIEDE2000
 	{
 		region.addChild(Region(regmat(Rect(0, 0, cols / 2, rows / 2))));								
 		region.addChild(Region(regmat(Rect(cols / 2, 0, cols - cols / 2, rows / 2))));
@@ -209,7 +239,7 @@ void split(Region &region, uint iterNum)
 	}
 	else
 	{
-		region.mat = mean(regmat);
+		region.mat = meanRGB(regmat);
 	}
 }
 
@@ -224,9 +254,10 @@ void merge(Region &region)
 		return;
 
 	hconcat(region.children[0].mat, region.children[1].mat, hmerged1);
-	hb1 = homogeneity(hmerged1) < k;
+	//hb1 = homogeneityRGB(hmerged1) < k;
+	hb1 = homogeneity(hmerged1, -1) < k;
 	hconcat(region.children[2].mat, region.children[3].mat, hmerged2);
-	hb2 = homogeneity(hmerged2) < k;
+	hb2 = homogeneity(hmerged2, -1) < k;
 	
 	if (hb1 && !hb2)
 	{
@@ -257,9 +288,9 @@ void merge(Region &region)
 	else //!hb1 && !hb2
 	{
 		vconcat(region.children[0].mat, region.children[2].mat, vmerged1);
-		vb1 = homogeneity(vmerged1) < k;
+		vb1 = homogeneity(vmerged1, -1) < k;
 		vconcat(region.children[1].mat, region.children[3].mat, vmerged2);
-		vb2 = homogeneity(vmerged2) < k;
+		vb2 = homogeneity(vmerged2, -1) < k;
 		
 
 		if (vb1 && !vb2)
@@ -303,9 +334,6 @@ Mat normalizedCut(Mat orig)
 
 void normalizedCut(Mat &orig, Mat mask, uint iter)
 {
-	//Mat W(orig.rows * orig.cols, orig.rows * orig.cols, CV_32FC1);
-	//SparseMat W(2, sizes, CV_32FC1);
-
 	std::cout << "Iteration: " << iter << std::endl;
 	if (iter == 0)
 	{
@@ -530,6 +558,7 @@ void fillWithMean(Mat & orig, Mat mask)
 	}
 
 }
+
 
 
 
