@@ -9,7 +9,7 @@
 #include <SparseSymMatProd.h>
 
 
-const double k = 0.02;
+const double k = 0.002;
 
 //const double k = 0.000005;
 
@@ -279,29 +279,28 @@ void merge(Region &region)
 	}
 	else if (!hb1 && hb2)
 	{
-		Region newregion(region.children[2]);
-		newregion.addMat = region.children[3].mat;
 		region.children.erase(region.children.end() - 1);
 		region.children.erase(region.children.end() - 1);
-		region.children.push_back(newregion);
+		Mat newmat = region.mat(Rect(0, rows/2, cols, rows - rows / 2));
+		region.children.push_back(Region(newmat));
+
 	}
 	else if (hb2 && hb1)
 	{
 		//std::cout << "here3" << std::endl;
 		//hmerged1 = (mean(region.children[0].mat) + mean(region.children[1].mat)) / 2;
 		//hmerged2 = (mean(region.children[2].mat) + mean(region.children[3].mat)) / 2;
-		Region newregion1(region.children[0]);
-		newregion1.addMat = region.children[1].mat;
-		Region newregion2(region.children[2]);
-		newregion2.addMat = region.children[3].mat;
+
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
-		region.children.push_back(newregion1);
-		region.children.push_back(newregion2);
+		Mat newmat1 = region.mat(Rect(0, 0, cols, rows / 2));
+		region.children.push_back(Region(newmat1));
+		Mat newmat2 = region.mat(Rect(0, rows / 2, cols, rows - rows / 2));
+		region.children.push_back(Region(newmat2));
 	}
-	else //!hb1 && !hb2
+	/*else //!hb1 && !hb2
 	{
 		vconcat(region.children[0].mat, region.children[2].mat, vmerged1);
 		vb1 = homogeneity(vmerged1, -1) < k;
@@ -338,7 +337,7 @@ void merge(Region &region)
 			region.children.push_back(newregion1);
 			region.children.push_back(newregion2);
 		}
-	}
+	}*/
 
 }
 
