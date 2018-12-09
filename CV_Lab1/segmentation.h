@@ -15,6 +15,7 @@ class Region
 public:
 	std::vector <Region> children;
 	Mat mat;
+	Mat addMat;
 	Region(Mat m)
 	{
 		mat = m;

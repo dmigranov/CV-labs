@@ -226,12 +226,12 @@ void split(Region &region, uint iterNum)
 		region.addChild(Region(regmat(Rect(cols / 2, rows / 2, cols - cols / 2, rows - rows / 2))));
 
 
-		Mat qw(rows/2, cols, regmat.type());
+		/*Mat qw(rows/2, cols, regmat.type());
 		qw(Rect(0, 0, cols/2, rows/2)) = regmat(Rect(0, 0, cols / 2, rows / 2));
 		qw(Rect(0, 0, cols - cols / 2, rows/2)) = regmat(Rect(cols / 2, 0, cols - cols / 2, rows / 2));
-		regmat(Rect(cols / 2, 0, cols - cols / 2, rows / 2)) = 0;
+		regmat(Rect(cols / 2, 0, cols - cols / 2, rows / 2)) = 0;*/
 
-		/*if (iterNum > 5)
+		if (iterNum > 5)
 		{
 			merge(region);
 		}
@@ -239,12 +239,12 @@ void split(Region &region, uint iterNum)
 		for (Region r : region.children)
 		{
 			split(r, ++iterNum);
-		}*/
+		}
 	}
 	else
 	{
 		region.mat = meanRGB(regmat); //он не всю матрицу восприниает
-		
+		region.addMat = meanRGB(regmat);
 	}
 }
 
@@ -269,28 +269,37 @@ void merge(Region &region)
 	if (hb1 && !hb2)
 	{
 		//hmerged1 = (mean(region.children[0].mat) + mean(region.children[1].mat)) / 2;
+		Region newregion(region.children[0]);
+		newregion.addMat = region.children[1].mat;
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
-		region.children.push_back(Region(hmerged1));
+		//region.children.push_back(Region(hmerged1));
+		region.children.push_back(newregion);
+
 	}
 	else if (!hb1 && hb2)
 	{
-		//hmerged2 = (mean(region.children[2].mat) + mean(region.children[3].mat)) / 2;
+		Region newregion(region.children[2]);
+		newregion.addMat = region.children[3].mat;
 		region.children.erase(region.children.end() - 1);
 		region.children.erase(region.children.end() - 1);
-		region.children.push_back(Region(hmerged2));
+		region.children.push_back(newregion);
 	}
 	else if (hb2 && hb1)
 	{
 		//std::cout << "here3" << std::endl;
 		//hmerged1 = (mean(region.children[0].mat) + mean(region.children[1].mat)) / 2;
 		//hmerged2 = (mean(region.children[2].mat) + mean(region.children[3].mat)) / 2;
+		Region newregion1(region.children[0]);
+		newregion1.addMat = region.children[1].mat;
+		Region newregion2(region.children[2]);
+		newregion2.addMat = region.children[3].mat;
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
-		region.children.push_back(Region(hmerged1));
-		region.children.push_back(Region(hmerged2));
+		region.children.push_back(newregion1);
+		region.children.push_back(newregion2);
 	}
 	else //!hb1 && !hb2
 	{
@@ -302,28 +311,32 @@ void merge(Region &region)
 
 		if (vb1 && !vb2)
 		{
-			//vmerged1 = (mean(region.children[0].mat) + mean(region.children[2].mat)) / 2;
+			Region newregion(region.children[0]);
+			newregion.addMat = region.children[2].mat;
 			region.children.erase(region.children.begin());
 			region.children.erase(region.children.begin() + 1);
-			region.children.push_back(Region(vmerged1));
+			region.children.push_back(newregion);
 		}
 		else if (!vb1 && vb2)
 		{
-			//vmerged2 = (mean(region.children[1].mat) + mean(region.children[3].mat)) / 2;
+			Region newregion(region.children[1]);
+			newregion.addMat = region.children[3].mat;
 			region.children.erase(region.children.begin() + 1);		//ft
 			region.children.erase(region.children.end() - 1);		//ft	//ftft - > fft
-			region.children.push_back(Region(vmerged2));
+			region.children.push_back(newregion);
 		}
 		else if (vb2 && vb1)
 		{
-			//vmerged1 = (mean(region.children[0].mat) + mean(region.children[2].mat)) / 2;
-			//vmerged2 = (mean(region.children[1].mat) + mean(region.children[3].mat)) / 2;
+			Region newregion1(region.children[0]);
+			newregion1.addMat = region.children[2].mat;
+			Region newregion2(region.children[1]);
+			newregion2.addMat = region.children[3].mat;
 			region.children.erase(region.children.begin()); 
 			region.children.erase(region.children.begin());
 			region.children.erase(region.children.begin());
 			region.children.erase(region.children.begin());
-			region.children.push_back(Region(vmerged1));
-			region.children.push_back(Region(vmerged2));
+			region.children.push_back(newregion1);
+			region.children.push_back(newregion2);
 		}
 	}
 
