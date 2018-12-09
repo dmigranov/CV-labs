@@ -9,7 +9,7 @@
 #include <SparseSymMatProd.h>
 
 
-const double k = 0.01;
+const double k = 0.02;
 
 //const double k = 0.000005;
 
@@ -163,7 +163,6 @@ Vec3b meanRGB(Mat region)
 
 double homogeneityRGB(Mat region)
 {
-	std::cout << "BEGIN" << std::endl;
 	long double dev = 0;
 	Vec3b avg = meanRGB(region);
 	double sigma = 1;
@@ -176,11 +175,10 @@ double homogeneityRGB(Mat region)
 			;
 			//dev += eucl;
 			double similarity = exp(-eucl/2 * sigma * sigma);
-			std::cout << similarity << std::endl;
+			//std::cout << similarity << std::endl;
 			dev += similarity;
 
 		}
-	std::cout << "END" << std::endl;
 
 	return dev / (region.cols * region.rows - 1);
 }
@@ -219,7 +217,7 @@ void split(Region &region, uint iterNum)
 
 	int rows = regmat.rows;
 	int cols = regmat.cols;
-	std::cout << homogeneity(regmat, iterNum) << std::endl;
+	
 	if (homogeneity(regmat, iterNum) > k) //в зависимости от номера итерации использовать разные формулы: на первых пяти можно по L, далее - CIEDE2000
 	{
 		region.addChild(Region(regmat(Rect(0, 0, cols / 2, rows / 2))));								
@@ -229,7 +227,7 @@ void split(Region &region, uint iterNum)
 
 		if (iterNum > 5)
 		{
-			merge(region);
+			//merge(region);
 		}
 
 		for (Region r : region.children)
