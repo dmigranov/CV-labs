@@ -225,15 +225,16 @@ void split(Region &region, uint iterNum)
 		region.addChild(Region(regmat(Rect(0, rows / 2, cols / 2, rows - rows / 2))));
 		region.addChild(Region(regmat(Rect(cols / 2, rows / 2, cols - cols / 2, rows - rows / 2))));
 
-		if (iterNum > 5)
+
+		/*if (iterNum > 5)
 		{
-			//merge(region);
+			merge(region);
 		}
 
 		for (Region r : region.children)
 		{
 			split(r, ++iterNum);
-		}
+		}*/
 	}
 	else
 	{
@@ -253,6 +254,7 @@ void merge(Region &region)
 		return;
 
 	hconcat(region.children[0].mat, region.children[1].mat, hmerged1);
+	hmerged1 = 0;
 	//hb1 = homogeneityRGB(hmerged1) < k;
 	hb1 = homogeneity(hmerged1, -1) < k;
 	hconcat(region.children[2].mat, region.children[3].mat, hmerged2);
