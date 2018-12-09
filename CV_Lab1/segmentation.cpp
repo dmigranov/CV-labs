@@ -515,18 +515,18 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 		std::cout << evectors << std::endl;
 		for (int j = 0; j < rowscols; j++)
 		{
-			int y = j / orig.cols;
-			int x = j % orig.cols;
-			if (evector[j] < -0.009)
-			{
-				mask1.at<uchar>(y, x) = 255;
-				mask2.at<uchar>(y, x) = 0;
-			}
-			else
-			{
-				mask1.at<uchar>(y, x) = 0;
-				mask2.at<uchar>(y, x) = 255;
-			}
+		int y = j / orig.cols;
+		int x = j % orig.cols;
+		if (evector[j] < -0.009)
+		{
+			mask1.at<uchar>(y, x) = 255;
+			mask2.at<uchar>(y, x) = 0;
+		}
+		else
+		{
+			mask1.at<uchar>(y, x) = 0;
+			mask2.at<uchar>(y, x) = 255;
+		}
 		}
 		imshow("MASK", mask1);
 		iter--;
@@ -575,27 +575,62 @@ void fillWithMean(Mat & orig, Mat mask)
 
 
 
-Mat meanShift(Mat orig, int spatialRadius, int colorRadius)
+Mat meanShift(Mat orig, int spatialRadius, double colorRadius)
 {
+	const int maxStep = 5;
+	const int colorStop = 0.3;
+	const int spatialStop = 0.3;
 	Mat copy, ret;
 	orig.copyTo(copy);
 
 	int cols = orig.cols;
 	int rows = orig.rows;
 
-	std::vector<Point5D> space; //xy bgr
+	Point5D curr, prev;
 
 	for (int i = 0; i < orig.rows; i++)
 	{
 		for (int j = 0; j < orig.cols; j++)
 		{
 			int left = (j - spatialRadius) > 0 ? (j - spatialRadius) : 0;
+			int top = (i - spatialRadius) > 0 ? (i - spatialRadius) : 0;
+			int right = (j + spatialRadius) < cols ? (j + spatialRadius) : cols;
+			int bottom = (i + spatialRadius) < rows ? (i + spatialRadius) : rows;
 
-			/*Vec3b bgr = orig.at<Vec3b>(i, j);
-			space.push_back(Point5D(j, i, bgr[0], bgr[1], bgr[2]));*/
+			Vec3b bgr = orig.at<Vec3b>(i, j);
+			//space.push_back(Point5D(j, i, bgr[0], bgr[1], bgr[2]));
+
+			curr.setPoint(i, j, bgr[0], bgr[1], bgr[2]);
+			//std::cout << "here" << std::endl;
+			int step = 0;
+			do
+			{
+				prev.setPoint(curr);
+				Point5D psum(0, 0, 0, 0, 0);
+				int count = 0;
+
+				for (int x = top; x < bottom; x++)
+				{
+					for (int y = left; y < right; y++)
+					{
+						Vec3b wbgr = orig.at<Vec3b>(x, y);
+						Point5D wPoint(x, y, wbgr[0], wbgr[1], wbgr[2]);
+						if (wPoint.colorDistance(curr) < colorRadius)
+						{
+							psum.addPoint(wPoint);
+							
+							count++;
+						}
+					}
+				}
+				//std::cout << count << std::endl;
+				curr.setDiv(psum, count);
+				step++;
+			} while (curr.colorDistance(prev) > colorStop && curr.spatialDistance(prev) > spatialStop && step < maxStep);
+			
+			copy.at<Vec3b>(i, j) = Vec3b(curr.b, curr.g, curr.r);
 		}
 	}
-	space;
 
 	return copy;
 }
