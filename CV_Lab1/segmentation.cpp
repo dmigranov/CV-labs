@@ -237,7 +237,8 @@ void split(Region &region, uint iterNum)
 	}
 	else
 	{
-		region.mat = meanRGB(regmat);
+		region.mat = meanRGB(regmat); //он не всю матрицу восприниает
+		
 	}
 }
 
@@ -262,14 +263,14 @@ void merge(Region &region)
 		//hmerged1 = (mean(region.children[0].mat) + mean(region.children[1].mat)) / 2;
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
-		region.children.push_back(hmerged1);
+		region.children.push_back(Region(hmerged1));
 	}
 	else if (!hb1 && hb2)
 	{
 		//hmerged2 = (mean(region.children[2].mat) + mean(region.children[3].mat)) / 2;
 		region.children.erase(region.children.end() - 1);
 		region.children.erase(region.children.end() - 1);
-		region.children.push_back(hmerged2);
+		region.children.push_back(Region(hmerged2));
 	}
 	else if (hb2 && hb1)
 	{
@@ -280,8 +281,8 @@ void merge(Region &region)
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
-		region.children.push_back(hmerged1);
-		region.children.push_back(hmerged2);
+		region.children.push_back(Region(hmerged1));
+		region.children.push_back(Region(hmerged2));
 	}
 	else //!hb1 && !hb2
 	{
@@ -296,14 +297,14 @@ void merge(Region &region)
 			//vmerged1 = (mean(region.children[0].mat) + mean(region.children[2].mat)) / 2;
 			region.children.erase(region.children.begin());
 			region.children.erase(region.children.begin() + 1);
-			region.children.push_back(vmerged1);
+			region.children.push_back(Region(vmerged1));
 		}
 		else if (!vb1 && vb2)
 		{
 			//vmerged2 = (mean(region.children[1].mat) + mean(region.children[3].mat)) / 2;
 			region.children.erase(region.children.begin() + 1);		//ft
 			region.children.erase(region.children.end() - 1);		//ft	//ftft - > fft
-			region.children.push_back(vmerged2);
+			region.children.push_back(Region(vmerged2));
 		}
 		else if (vb2 && vb1)
 		{
@@ -313,8 +314,8 @@ void merge(Region &region)
 			region.children.erase(region.children.begin());
 			region.children.erase(region.children.begin());
 			region.children.erase(region.children.begin());
-			region.children.push_back(vmerged1);
-			region.children.push_back(vmerged2);
+			region.children.push_back(Region(vmerged1));
+			region.children.push_back(Region(vmerged2));
 		}
 	}
 
