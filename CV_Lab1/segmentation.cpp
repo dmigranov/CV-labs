@@ -244,7 +244,6 @@ void split(Region &region, uint iterNum)
 	else
 	{
 		region.mat = meanRGB(regmat); //он не всю матрицу восприниает
-		region.addMat = meanRGB(regmat);
 	}
 }
 
@@ -260,21 +259,22 @@ void merge(Region &region)
 		return;
 
 	hconcat(region.children[0].mat, region.children[1].mat, hmerged1);
-	hmerged1 = 0;
 	//hb1 = homogeneityRGB(hmerged1) < k;
 	hb1 = homogeneity(hmerged1, -1) < k;
 	hconcat(region.children[2].mat, region.children[3].mat, hmerged2);
 	hb2 = homogeneity(hmerged2, -1) < k;
+
+	int cols = region.mat.cols;
+	int rows = region.mat.rows;
 	
 	if (hb1 && !hb2)
 	{
 		//hmerged1 = (mean(region.children[0].mat) + mean(region.children[1].mat)) / 2;
-		Region newregion(region.children[0]);
-		newregion.addMat = region.children[1].mat;
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
 		//region.children.push_back(Region(hmerged1));
-		region.children.push_back(newregion);
+		Mat newmat = region.mat(Rect(0, 0, cols, rows / 2));
+		region.children.push_back(Region(newmat));
 
 	}
 	else if (!hb1 && hb2)
