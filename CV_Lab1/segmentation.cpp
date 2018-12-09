@@ -9,7 +9,7 @@
 #include <SparseSymMatProd.h>
 
 
-const double k = 0.002;
+const double k = 0.005;
 
 //const double k = 0.000005;
 
@@ -269,10 +269,8 @@ void merge(Region &region)
 	
 	if (hb1 && !hb2)
 	{
-		//hmerged1 = (mean(region.children[0].mat) + mean(region.children[1].mat)) / 2;
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
-		//region.children.push_back(Region(hmerged1));
 		Mat newmat = region.mat(Rect(0, 0, cols, rows / 2));
 		region.children.push_back(Region(newmat));
 
@@ -287,10 +285,6 @@ void merge(Region &region)
 	}
 	else if (hb2 && hb1)
 	{
-		//std::cout << "here3" << std::endl;
-		//hmerged1 = (mean(region.children[0].mat) + mean(region.children[1].mat)) / 2;
-		//hmerged2 = (mean(region.children[2].mat) + mean(region.children[3].mat)) / 2;
-
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
 		region.children.erase(region.children.begin());
@@ -581,11 +575,27 @@ void fillWithMean(Mat & orig, Mat mask)
 
 
 
-Mat meanShift(Mat orig)
+Mat meanShift(Mat orig, int spatialRadius, int colorRadius)
 {
 	Mat copy, ret;
 	orig.copyTo(copy);
 
+	int cols = orig.cols;
+	int rows = orig.rows;
 
-	return Mat();
+	std::vector<Point5D> space; //xy bgr
+
+	for (int i = 0; i < orig.rows; i++)
+	{
+		for (int j = 0; j < orig.cols; j++)
+		{
+			int left = (j - spatialRadius) > 0 ? (j - spatialRadius) : 0;
+
+			/*Vec3b bgr = orig.at<Vec3b>(i, j);
+			space.push_back(Point5D(j, i, bgr[0], bgr[1], bgr[2]));*/
+		}
+	}
+	space;
+
+	return copy;
 }

@@ -26,6 +26,34 @@ public:
 	}
 };
 
+class Point5D
+{
+public:
+	int x;
+	int y;
+	uchar b;
+	uchar g;
+	uchar r;
+
+	Point5D(int x, int y, uchar b, uchar g, uchar r)
+	{
+		this->x = x;
+		this->y = y;
+		this->b = b;
+		this->g = g;
+		this->r = r;
+	}
+
+	void setPoint(int x, int y, uchar b, uchar g, uchar r)
+	{
+		this->x = x;
+		this->y = y;
+		this->b = b;
+		this->g = g;
+		this->r = r;
+	}
+};
+
 Mat splitmerge(Mat orig);
 void split(Region &region, uint iterNum);
 void merge(Region &region);
