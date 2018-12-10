@@ -459,6 +459,10 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 			}
 		}
 	}
+	/*std::cout << W_ << std::endl;
+	for (auto i : D)
+		std::cout << i << " ";
+	std::cout << std::endl;*/
 	//(D - W) * y = lambda * D * y
 	std::cout << "W and D are filled" << std::endl;
 	//Mat eigenMat = D.inv() * (D - W);	//D^-1 * (D - W)
@@ -469,8 +473,9 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 		W_.insert(i, i) = D[i];
 	}
 	std::cout << "Found W := D - W" << std::endl;
+	std::cout << W_ << std::endl;
 	//!!! D^-1 * (D - W): первый р€д делим на d1 второй на d2 и т.д !!!
-	/*for (int k = 0; k < W_.outerSize(); k++)
+	for (int k = 0; k < W_.outerSize(); k++)
 	{
 		for (Eigen::SparseMatrix<float>::InnerIterator it(W_, k); it; ++it)
 		{
@@ -479,9 +484,9 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 			//std::cout << it.row() << std::endl; //точно row? наверно
 		}
 	}
-	std::cout << "Found D^-1 * (D - W)" << std::endl; */
-
-	for (int k = 0; k < W_.outerSize(); k++)
+	std::cout << "Found D^-1 * (D - W)" << std::endl; 
+	std::cout << W_ << std::endl;
+	/*for (int k = 0; k < W_.outerSize(); k++)
 	{
 		for (Eigen::SparseMatrix<float>::InnerIterator it(W_, k); it; ++it)
 		{
@@ -492,7 +497,7 @@ void normalizedCut(Mat &orig, Mat mask, uint iter)
 			//std::cout << it.row() << std::endl; //точно row? наверно
 		}
 	} //может ошибка в делении? ѕ–ќ¬≈–»“№!!!!
-	std::cout << "Found D^-1/2 * (D - W) * D^-1/2" << std::endl; //it is symmetric
+	std::cout << "Found D^-1/2 * (D - W) * D^-1/2" << std::endl; //it is symmetric*/
 
 
 	Spectra::SparseGenMatProd<float> op(W_);
@@ -571,9 +576,6 @@ void fillWithMean(Mat & orig, Mat mask)
 	}
 
 }
-
-
-
 
 Mat meanShift(Mat orig, int spatialRadius, double colorRadius)
 {
