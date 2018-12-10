@@ -4,6 +4,7 @@
 #include "morphology.h"
 #include "segmentation.h"
 #include "local_features.h"
+#include "model.h"
 
 using namespace cv;
 
@@ -211,6 +212,8 @@ int main(int argc, char **argv)
 			redraw();
 		else if (k == 'h')
 			L_histogram();
+		else if (k == 'H')
+			imshow("HOUGH LINES", hough(img));
 		else if (k == 'g')
 		{
 			if (sigmaSlider != 0)
@@ -231,8 +234,8 @@ int main(int argc, char **argv)
 		else if (k == 'S')
 		{
 			//imshow("Split and Merge", splitmerge(img)); //раском.
-			imshow("Norm cut", normalizedCut(img));
-			//imshow("MEAN SHIFT", meanShift(img, 17, 0.4));
+			//imshow("Norm cut", normalizedCut(img));
+			imshow("MEAN SHIFT", meanShift(img, 17, 0.4));
 		}
 		else if (k == 'l')
 		{

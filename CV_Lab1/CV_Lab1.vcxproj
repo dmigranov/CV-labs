@@ -136,6 +136,7 @@
     <ClCompile Include="InputNeuron.cpp" />
     <ClCompile Include="lab.cpp" />
     <ClCompile Include="local_features.cpp" />
+    <ClCompile Include="model.cpp" />
     <ClCompile Include="morphology.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="Neuron.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="InputNeuron.h" />
     <ClInclude Include="lab.h" />
     <ClInclude Include="local_features.h" />
+    <ClInclude Include="model.h" />
     <ClInclude Include="morphology.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="Neuron.h" />
