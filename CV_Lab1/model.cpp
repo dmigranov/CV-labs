@@ -11,13 +11,11 @@ Mat hough(Mat orig)
 	double centerX = cols / 2;
 	double centerY = rows / 2;
 
+	//заполняем аккумулятор
 	int accu_w = 180;
 	double accu_h = sqrt(2) * (rows > cols ? rows : cols); //а не слишком ли большой радиус? Максимальный же(rows^2 + cols^2)sqrt
-	
-	std::cout << accu_h << std::endl;
-
+	//std::cout << accu_h << std::endl;
 	unsigned int * accu = new unsigned int[accu_h * accu_w];
-
 	for (int y = 0; y < rows; y++)
 	{
 		for (int x = 0; x < cols; x++)
@@ -35,6 +33,7 @@ Mat hough(Mat orig)
 	}
 
 
+	//search the accumulator
 
 
 

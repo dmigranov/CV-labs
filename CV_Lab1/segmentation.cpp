@@ -580,6 +580,7 @@ void fillWithMean(Mat & orig, Mat mask)
 
 }
 
+
 Mat meanShift(Mat orig, int spatialRadius, double colorRadius)
 {
 	const int maxStep = 5;

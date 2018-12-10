@@ -234,8 +234,8 @@ int main(int argc, char **argv)
 		else if (k == 'S')
 		{
 			//imshow("Split and Merge", splitmerge(img)); //раском.
-			//imshow("Norm cut", normalizedCut(img));
-			imshow("MEAN SHIFT", meanShift(img, 17, 0.4));
+			imshow("Norm cut", normalizedCut(img));
+			//imshow("MEAN SHIFT", meanShift(img, 17, 0.4));
 		}
 		else if (k == 'l')
 		{
