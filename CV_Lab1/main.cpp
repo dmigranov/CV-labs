@@ -232,7 +232,7 @@ int main(int argc, char **argv)
 		{
 			//imshow("Split and Merge", splitmerge(img)); //раском.
 			//imshow("Norm cut", normalizedCut(img));
-			imshow("MEAN SHIFT", meanShift(img, 15, 0.7));
+			imshow("MEAN SHIFT", meanShift(img, 17, 0.4));
 		}
 		else if (k == 'l')
 		{

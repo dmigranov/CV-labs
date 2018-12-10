@@ -592,8 +592,8 @@ Mat meanShift(Mat orig, int spatialRadius, double colorRadius)
 	{
 		for (int j = 0; j < orig.cols; j++)
 		{
-			int left = (j - spatialRadius) > 0 ? (j - spatialRadius) : 0;
-			int top = (i - spatialRadius) > 0 ? (i - spatialRadius) : 0;
+			int left = (j - spatialRadius) >= 0 ? (j - spatialRadius) : 0;
+			int top = (i - spatialRadius) >= 0 ? (i - spatialRadius) : 0;
 			int right = (j + spatialRadius) < cols ? (j + spatialRadius) : cols;
 			int bottom = (i + spatialRadius) < rows ? (i + spatialRadius) : rows;
 
@@ -631,6 +631,83 @@ Mat meanShift(Mat orig, int spatialRadius, double colorRadius)
 			copy.at<Vec3b>(i, j) = Vec3b(curr.b, curr.g, curr.r);
 		}
 	}
+
+
+	//segmentation
+	int curlabel = -1;
+	//char * regions = new char[rows * cols * 3];
+	std::vector<Vec3i> regions;
+	//std::vector<int> regmembercount;
+	int ** labels = new int *[rows];
+	for (int i = 0; i < rows; i++)
+	{
+		labels[i] = new int[cols];
+		for (int j = 0; j < cols; j++)
+			labels[i][j] = -1;
+	}
+
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			if (labels[i][j] < 0) //то есть ещё не помечены
+			{
+				int membercount = 0;
+				labels[i][j] = ++curlabel;
+				Vec3b bgr = orig.at<Vec3b>(i, j);
+				curr.setPoint(i,j,bgr[0], bgr[1], bgr[2]);
+				regions.push_back(Vec3i(curr.b, curr.g, curr.r)); //regions[label]
+
+				std::vector<Point5D> neighbours;
+				neighbours.push_back(curr);
+
+				while (!neighbours.empty())
+				{
+					Point5D point = neighbours.back();
+					neighbours.pop_back();
+
+					for (int x = -1; x < 2; x++) //соседи
+					{
+						for (int y = -1; y < 2; y++)
+						{
+							if (x != 0 || y != 0)
+							{
+								int hx = point.x + x;
+								int hy = point.y + y;
+								if (hx >= 0 && hy >= 0 && hx < rows && hy < cols && labels[hx][hy] < 0)
+								{
+									Vec3b bgr = orig.at<Vec3b>(hx, hy);
+									Point5D wPoint(hx, hy, bgr[0], bgr[1], bgr[2]);
+
+									if (curr.colorDistance(wPoint) < colorRadius)
+									{
+										labels[hx][hy] = curlabel;
+										neighbours.push_back(wPoint);
+
+										regions[curlabel] += bgr;
+										membercount++;
+									}
+								}
+							}
+						}
+					}
+				}
+				membercount++;
+				regions[curlabel] /= membercount;
+			}
+		}
+	}
+
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			int label = labels[i][j];
+			copy.at<Vec3b>(i, j) = regions[label];
+		}
+	}
+
+
 
 	return copy;
 }
