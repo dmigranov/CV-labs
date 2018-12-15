@@ -213,7 +213,7 @@ int main(int argc, char **argv)
 		else if (k == 'h')
 			L_histogram();
 		else if (k == 'H')
-			imshow("HOUGH LINES", hough(img));
+			imshow("HOUGH LINES", hough(img, 40, 0.8, 0.85)); //0.5 0.55
 		else if (k == 'g')
 		{
 			if (sigmaSlider != 0)

@@ -1,11 +1,11 @@
 #include "model.h"
 
-Mat hough(Mat orig, int threshold)
+Mat hough(Mat orig, int threshold, double lower, double upper)
 {
 	Mat lines;
 	Mat ret;
 	orig.copyTo(ret);
-	lines = canny(orig, 0.2, 0.4); //получили утончёенные линии
+	lines = canny(orig, lower, upper); //получили утончёенные линии
 
 	int rows = orig.rows;
 	int cols = orig.cols;
@@ -18,7 +18,7 @@ Mat hough(Mat orig, int threshold)
 	double accu_h = sqrt(2) * (rows > cols ? rows : cols); //максимальный радиус; а не слишком ли большой? Максимальный же(rows^2 + cols^2)sqrt
 	//std::cout << accu_h << std::endl;
 	//unsigned int * accu = new unsigned int[accu_h * accu_w];
-	unsigned int * accu = (unsigned int*)calloc((accu_h + 1) * accu_w, sizeof(unsigned int));
+	unsigned int * accu = (unsigned int*)calloc((accu_h + 1) * accu_w, sizeof(unsigned int)); //?
 	for (int y = 0; y < rows; y++)
 	{
 		for (int x = 0; x < cols; x++)
@@ -28,9 +28,7 @@ Mat hough(Mat orig, int threshold)
 				for (int theta = 0; theta < 180; theta++)
 				{
 					double r = (x - centerX) * cos(theta / 180.0*M_PI) + (y - centerY) * sin(theta / 180.0*M_PI);
-					//std::cout << r << std::endl;
 					accu[(int)((round(r + accu_h/2) * accu_w)) + theta]++; //т.к массив по сути одномерный
-					//std::cout << accu[(int)((round(r + accu_h / 2) * accu_w)) + theta] << std::endl;
 				}
 			}
 		}
@@ -39,17 +37,37 @@ Mat hough(Mat orig, int threshold)
 	//search in the accumulator for maximas
 
 
-
+	//завести вектор для линий?
 
 	for (int r = 0; r < accu_h; r++)
 	{
 		for (int theta = 0; theta < accu_w; theta++)
 		{
 			if (accu[r*accu_w + theta] > threshold)
+			{
 				//std::cout << accu[r*accu_w + theta] << std::endl;
-				//ок, таковые имеются
-				//TODO: экстремумы?
 
+				
+				uint max = accu[r*accu_w + theta];
+				for (int dt = -4; dt <= 4; dt++)
+				{
+					for (int dr = -4; dr <= 4; dr++)
+					{
+						if (r + dr >= 0 && theta + dt >= 0 && r + dr < accu_h && theta + dt < accu_w)
+						{
+							if (accu[(r + dr)*accu_w + (theta + dt)] > max)
+							{
+								max = accu[(r + dr)*accu_w + (theta + dt)];
+								dr = dt = 5;
+							}
+						}
+					}
+				}
+				if (max > accu[r*accu_w + theta])
+				{
+					std::cout << max << std::endl;
+					continue;
+				}
 
 				if (theta >= 45 && theta <= 135)
 				{
@@ -62,13 +80,19 @@ Mat hough(Mat orig, int threshold)
 
 					line(ret, Point(x1, y1), Point(x2, y2), Scalar(0, 0, 255), 1, LINE_4);
 
-					std::cout << x1 << " " << x2 << " " << y1 << " " << y2 << std::endl;
+					//std::cout << x1 << " " << x2 << " " << y1 << " " << y2 << std::endl;
 				}
 				else
 				{
 					double x1, x2, y1, y2;
-					//
+					y1 = 0;
+					x1 = ((r - accu_h / 2) - (y1 - centerY) * sin(theta / 180.0*M_PI)) / cos(theta / 180.0*M_PI) + centerX;
+					y2 = rows;
+					x2 = ((r - accu_h / 2) - (y2 - centerY) * sin(theta / 180.0*M_PI)) / cos(theta / 180.0*M_PI) + centerX;
+
+					line(ret, Point(x1, y1), Point(x2, y2), Scalar(0, 0, 255), 1, LINE_4);
 				}
+			}
 		}
 	}
 
