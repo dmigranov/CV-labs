@@ -21,8 +21,7 @@ Mat hough(Mat orig, int threshold, double lower, double upper)
 	//заполняем аккумулятор
 	int accu_w = 180;
 	double accu_h = sqrt(2) * (rows > cols ? rows : cols); //максимальный радиус; а не слишком ли большой? Максимальный же(rows^2 + cols^2)sqrt
-	//std::cout << accu_h << std::endl;
-	//unsigned int * accu = new unsigned int[accu_h * accu_w];
+
 	unsigned int * accu = (unsigned int*)calloc((accu_h + 1) * accu_w, sizeof(unsigned int)); //?
 	for (int y = 0; y < rows; y++)
 	{
@@ -113,6 +112,57 @@ Mat hough_circle(Mat orig, int threshold, double lower, double upper)
 	orig.copyTo(ret);
 
 	//(r, x0, y0); r^2 = (x - x0)^2 + (y - y0)^2
+	//r = 10..50
+	//gauss?
+	Mat lines;
+	int max_r = 50, min_r = 10, dr = max_r - min_r;
+	int accu_w = 180;
+	lines = gauss_filter(orig, 10);
+	lines = canny(lines, lower, upper);
+	int rows = orig.rows;
+	int cols = orig.cols;
 
-	return ret;
+	double centerX = cols / 2;
+	double centerY = rows / 2;
+
+	unsigned int * accu = (unsigned int*)calloc(dr * (rows + 2*max_r) * (cols + 2*max_r), sizeof(unsigned int));
+	for (int y = 0; y < rows; y++)
+	{
+		for (int x = 0; x < cols; x++)
+		{
+			if (lines.at<double>(y, x) == 1)
+			{
+				for (int r = min_r; r < max_r; r++)
+				{
+					for (int theta = 0; theta < 360; theta++)
+					{
+						double a = x - r * cos(theta / 180 * M_PI);
+						double b = y - r * sin(theta / 180 * M_PI);
+
+
+
+						accu[(int)round((r + min_r) * rows * cols + (max_r + a) * rows + (max_r + b))]++;
+						std::cout << accu[(int)round((r + min_r) * rows * cols + (max_r + a) * rows + (max_r + b))] << std::endl;
+					}
+				}
+			}
+		}
+	}
+	
+
+	for (int r = min_r; r < max_r; r++)
+	{
+		for (int a = 0; a < cols + max_r; a++)
+		{
+			for (int b = 0; b < rows + max_r; b++)
+			{
+				;
+
+			}
+		}
+	}
+
+	
+	free(accu);
+	return lines;
 }

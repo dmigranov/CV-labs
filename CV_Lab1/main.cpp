@@ -213,7 +213,10 @@ int main(int argc, char **argv)
 		else if (k == 'h')
 			L_histogram();
 		else if (k == 'H')
-			imshow("HOUGH LINES", hough(img, 40, 0.8, 0.85)); //0.5 0.55
+		{
+			//imshow("HOUGH LINES", hough(img, 40, 0.8, 0.85)); //для sign2 - ок!!!
+			imshow("HOUGH CIRCLE", hough_circle(img, 100, 0.4, 0.45)); //короче круг выделился а остальное неважно. сигма = 10
+		}
 		else if (k == 'g')
 		{
 			if (sigmaSlider != 0)
