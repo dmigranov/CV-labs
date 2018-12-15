@@ -1,11 +1,16 @@
 #include "model.h"
 
+#include "filtration.h"
+
 Mat hough(Mat orig, int threshold, double lower, double upper)
 {
 	Mat lines;
 	Mat ret;
 	orig.copyTo(ret);
+
 	lines = canny(orig, lower, upper); //получили утончёенные линии
+	/*lines = gauss_filter(orig, 5);
+	lines = canny(lines, lower, upper);*/
 
 	int rows = orig.rows;
 	int cols = orig.cols;
@@ -98,6 +103,16 @@ Mat hough(Mat orig, int threshold, double lower, double upper)
 
 
 
+
+	return ret;
+}
+
+Mat hough_circle(Mat orig, int threshold, double lower, double upper)
+{
+	Mat ret;
+	orig.copyTo(ret);
+
+	//(r, x0, y0); r^2 = (x - x0)^2 + (y - y0)^2
 
 	return ret;
 }
