@@ -42,7 +42,7 @@ Mat hough(Mat orig, int threshold, double lower, double upper)
 
 
 	//завести вектор для линий?
-
+	std::vector<std::pair<std::pair<double, double>, std::pair<double, double>>> lines; //пара точек, а точка - пара даблов
 	for (int r = 0; r < accu_h; r++)
 	{
 		for (int theta = 0; theta < accu_w; theta++)
@@ -69,7 +69,6 @@ Mat hough(Mat orig, int threshold, double lower, double upper)
 				}
 				if (max > accu[r*accu_w + theta])
 				{
-					std::cout << max << std::endl;
 					continue;
 				}
 
@@ -83,8 +82,7 @@ Mat hough(Mat orig, int threshold, double lower, double upper)
 					y2 = ((r - accu_h / 2) - (x2 - centerX) * cos(theta / 180.0*M_PI)) / sin(theta / 180.0*M_PI) + centerY;
 
 					line(ret, Point(x1, y1), Point(x2, y2), Scalar(0, 0, 255), 1, LINE_4);
-
-					//std::cout << x1 << " " << x2 << " " << y1 << " " << y2 << std::endl;
+					lines.push_back();
 				}
 				else
 				{
@@ -99,8 +97,6 @@ Mat hough(Mat orig, int threshold, double lower, double upper)
 			}
 		}
 	}
-
-
 
 
 	return ret;
@@ -141,7 +137,7 @@ Mat hough_circle(Mat orig, int threshold, double lower, double upper)
 
 
 
-						accu[(int)round((r + min_r) * rows * cols + (max_r + a) * rows + (max_r + b))]++;
+						accu[(int)round((r + min_r) * rows * cols + (max_r + a) * rows + (max_r + b))]++; //тут ашмпка
 						std::cout << accu[(int)round((r + min_r) * rows * cols + (max_r + a) * rows + (max_r + b))] << std::endl;
 					}
 				}
@@ -165,4 +161,12 @@ Mat hough_circle(Mat orig, int threshold, double lower, double upper)
 	
 	free(accu);
 	return lines;
+}
+
+
+
+
+Mat triangle(Mat orig, int threshold, double lower, double upper)
+{
+	return orig;
 }
