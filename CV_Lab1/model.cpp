@@ -42,7 +42,7 @@ Mat hough(Mat orig, int threshold, double lower, double upper)
 
 
 	//завести вектор для линий?
-	std::vector<std::pair<std::pair<double, double>, std::pair<double, double>>> lines; //пара точек, а точка - пара даблов
+	std::vector<std::pair<Point2d, Point2d>> lines; //пара точек, а точка - пара даблов
 	for (int r = 0; r < accu_h; r++)
 	{
 		for (int theta = 0; theta < accu_w; theta++)
@@ -81,8 +81,8 @@ Mat hough(Mat orig, int threshold, double lower, double upper)
 					x2 = cols;
 					y2 = ((r - accu_h / 2) - (x2 - centerX) * cos(theta / 180.0*M_PI)) / sin(theta / 180.0*M_PI) + centerY;
 
-					line(ret, Point(x1, y1), Point(x2, y2), Scalar(0, 0, 255), 1, LINE_4);
-					lines.push_back();
+					//line(ret, Point(x1, y1), Point(x2, y2), Scalar(0, 0, 255), 1, LINE_4);
+					lines.push_back(std::pair<Point2d, Point2d>(Point2d(x1, y1), Point2d(x2, y2)));
 				}
 				else
 				{
@@ -92,7 +92,8 @@ Mat hough(Mat orig, int threshold, double lower, double upper)
 					y2 = rows;
 					x2 = ((r - accu_h / 2) - (y2 - centerY) * sin(theta / 180.0*M_PI)) / cos(theta / 180.0*M_PI) + centerX;
 
-					line(ret, Point(x1, y1), Point(x2, y2), Scalar(0, 0, 255), 1, LINE_4);
+					//(ret, Point(x1, y1), Point(x2, y2), Scalar(0, 0, 255), 1, LINE_4);
+					lines.push_back(std::pair<Point2d, Point2d>(Point2d(x1, y1), Point2d(x2, y2)));
 				}
 			}
 		}
@@ -134,8 +135,6 @@ Mat hough_circle(Mat orig, int threshold, double lower, double upper)
 					{
 						double a = x - r * cos(theta / 180 * M_PI);
 						double b = y - r * sin(theta / 180 * M_PI);
-
-
 
 						accu[(int)round((r + min_r) * rows * cols + (max_r + a) * rows + (max_r + b))]++; //тут ашмпка
 						std::cout << accu[(int)round((r + min_r) * rows * cols + (max_r + a) * rows + (max_r + b))] << std::endl;
