@@ -198,10 +198,10 @@ Mat triangle(Mat orig, int threshold, double lower, double upper)
 
 Mat ransac(Mat orig, int threshold, double lower, double upper)
 {
-	int maxIter = 200;
-	
+	//int maxIter = 30;
+	int maxIter = 450;
 
-	int dZero = 10;
+	int dZero = 2.5;
 
 	//for lines
 	Mat ret;
@@ -240,42 +240,47 @@ Mat ransac(Mat orig, int threshold, double lower, double upper)
 		long int b = p1.x - p2.x;
 		long int c = (p2.x) * (p1.y) - (p1.x) * (p2.y);
 	
+		double x1, x2, y1, y2;
+		x1 = p1.x - centerX;
+		x2 = p2.x - centerX;
+		y1 = p1.y - centerY;
+		y2 = p2.y - centerY;
 
+		double theta = atan2(p1.x - p2.x, p2.y - p1.y);
 
+		//atan2(p1.x - p2.x, p2.y - p1.y) - угол из левого верхнего угла!
+		//std::cout << x1 << " " << y1 << " " << x2 << " " << y2 << " " << theta / M_PI * 180 << " " << x1 * cos(theta) + y1 * sin(theta) << " " << x2* cos(theta) + y2 * sin(theta) << std::endl;
+		double r = x1 * cos(theta) + y1 * sin(theta);
 
-
-		long int r = -c;
-
-
-		std::cout << r << " " << acos(a) << " " << asin(b) << std::endl;
-
-		/*std::cout << a * p1.x + b * p1.y + c << std::endl;
-		std::cout << a * p2.x + b * p2.y + c << std::endl;*/
-		//идея: точка близко к прямой, если при подстановке значение близкок нулю...
-		/*std::cout << "-----------------------------" << std::endl;
-		std::cout << a * (p1.x) + b * (p1.y) + c << std::endl;
-		std::cout << a * (p1.x) + b * (p1.y + 1) + c << std::endl;
-		std::cout << a * (p1.x) + b * (p1.y - 1) + c << std::endl;
-		std::cout << a * (p1.x + 1) + b * (p1.y) + c << std::endl;
-		std::cout << a * (p1.x + 1) + b * (p1.y + 1) + c << std::endl;
-		std::cout << a * (p1.x + 1) + b * (p1.y - 1) + c << std::endl;
-		std::cout << a * (p1.x - 1) + b * (p1.y) + c << std::endl;
-		std::cout << a * (p1.x - 2) + b * (p1.y + 1) + c << std::endl;
-		std::cout << a * (p1.x - 3) + b * (p1.y - 1) + c << std::endl;
-		std::cout << "-----------------------------" << std::endl;*/
 		int goodPointsCount = 0;
+		int nx1 = 0, nx2 = cols, ny1 = 0, ny2 = rows;
 		for (int y = 0; y < rows; y++)
 		{
 			for (int x = 0; x < cols; x++)
 			{
-				if (lines.at<double>(y, x) == 1 && (a * (x - centerX) + b * (y - centerY) + c) < dZero)
+				
+				if (lines.at<double>(y, x) == 1 && abs((x - centerX)*cos(theta) + (y - centerY) * sin(theta) - r) < dZero)
+				{
+					//std::cout << abs((x - centerX)*cos(theta) + (y - centerY) * sin(theta) - r) << " " << x << " " << y << std::endl;
+					if (x > nx1)
+						nx1 = x;
+					if (x < nx2)
+						nx2 = x;
+					if (y > ny1)
+						ny1 = y;
+					if (y < ny2)
+						ny2 = y;
+
 					goodPointsCount++;
+				}
 			}
 		}
+		std::cout << goodPointsCount << std::endl;
 		//std::cout << goodPointsCount << std::endl;
 		if (goodPointsCount > threshold)
 		{
-			line(ret, p1, p2, Scalar(0, 0, 255), 1, LINE_4);
+			//line(ret, p1, p2, Scalar(0, 0, 255), 1, LINE_4);
+			line(ret, Point(nx1, ny1), Point(nx2, ny2), Scalar(0, 0, 255), 1, LINE_4);
 		}
 
 	}
