@@ -4,7 +4,7 @@
 #include "filtration.h"
 using namespace cv;
 
-Mat ransac(Mat orig, int threshold, double lower, double upper)
+Mat ransac_(Mat orig, int threshold, double lower, double upper)
 {
 	int maxIter = 300;
 

@@ -211,6 +211,8 @@ Mat ransac(Mat orig, int threshold, double lower, double upper)
 	int rows = orig.rows;
 	int cols = orig.cols;
 
+	double centerX = cols / 2;
+	double centerY = rows / 2;
 
 
 	int n = 2; //для прямой
@@ -234,11 +236,18 @@ Mat ransac(Mat orig, int threshold, double lower, double upper)
 		Point p1 = points[0];
 		Point p2 = points[1];
 		//ax + by + c = 0
-		long int a = p1.y - p2.y;
-		long int b = p2.x - p1.x;
-		long int c = (p1.x) * (p2.y) - (p2.x) * (p1.y);
-		//мож вычислять радиус и theta?
-		std::cout << a << " " << b << " " << c << std::endl;
+		long int a = p2.y - p1.y;
+		long int b = p1.x - p2.x;
+		long int c = (p2.x) * (p1.y) - (p1.x) * (p2.y);
+	
+
+
+
+
+		long int r = -c;
+
+
+		std::cout << r << " " << acos(a) << " " << asin(b) << std::endl;
 
 		/*std::cout << a * p1.x + b * p1.y + c << std::endl;
 		std::cout << a * p2.x + b * p2.y + c << std::endl;*/
