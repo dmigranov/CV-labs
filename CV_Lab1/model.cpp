@@ -199,7 +199,7 @@ Mat triangle(Mat orig, int threshold, double lower, double upper)
 Mat ransac(Mat orig, int threshold, double lower, double upper)
 {
 	//int maxIter = 30;
-	int maxIter = 450;
+	int maxIter = 300;
 
 	int dZero = 2.5;
 
@@ -253,7 +253,7 @@ Mat ransac(Mat orig, int threshold, double lower, double upper)
 		double r = x1 * cos(theta) + y1 * sin(theta);
 
 		int goodPointsCount = 0;
-		int nx1 = 0, nx2 = cols, ny1 = 0, ny2 = rows;
+		//int nx1 = 0, nx2 = cols, ny1 = 0, ny2 = rows;
 		for (int y = 0; y < rows; y++)
 		{
 			for (int x = 0; x < cols; x++)
@@ -262,25 +262,24 @@ Mat ransac(Mat orig, int threshold, double lower, double upper)
 				if (lines.at<double>(y, x) == 1 && abs((x - centerX)*cos(theta) + (y - centerY) * sin(theta) - r) < dZero)
 				{
 					//std::cout << abs((x - centerX)*cos(theta) + (y - centerY) * sin(theta) - r) << " " << x << " " << y << std::endl;
-					if (x > nx1)
+					/*if (x > nx1)
 						nx1 = x;
 					if (x < nx2)
 						nx2 = x;
 					if (y > ny1)
 						ny1 = y;
 					if (y < ny2)
-						ny2 = y;
+						ny2 = y;*/
 
 					goodPointsCount++;
 				}
 			}
 		}
-		std::cout << goodPointsCount << std::endl;
 		//std::cout << goodPointsCount << std::endl;
 		if (goodPointsCount > threshold)
 		{
-			//line(ret, p1, p2, Scalar(0, 0, 255), 1, LINE_4);
-			line(ret, Point(nx1, ny1), Point(nx2, ny2), Scalar(0, 0, 255), 1, LINE_4);
+			line(ret, p1, p2, Scalar(0, 0, 255), 1, LINE_4);
+			//line(ret, Point(0, b/(-c)), Point(a/(-c), 0), Scalar(0, 0, 255), 1, LINE_4);
 		}
 
 	}
