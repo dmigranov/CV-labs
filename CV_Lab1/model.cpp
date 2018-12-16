@@ -143,25 +143,7 @@ Mat hough_circle(Mat orig, int threshold, double lower, double upper)
 		}
 
 	}
-	/*for (int y = 0; y < rows; y++)
-	{
-		for (int x = 0; x < cols; x++)
-		{
-			if (lines.at<double>(y, x) == 1)
-			{
-				for (int r = min_r; r < max_r; r++)
-				{
-					for (int theta = 0; theta < 360; theta++)
-					{
-						double a = x - r * cos(theta / 180 * M_PI);
-						double b = y - r * sin(theta / 180 * M_PI);
 
-						accu[r - min_r][max_r + (int)round(b)][max_r + (int)round(a)]++;
-					}
-				}
-			}
-		}
-	}*/
 
 	int minr2 = min_r * min_r;
 	int maxr2 = (max_r - 1) * (max_r - 1);
@@ -200,7 +182,7 @@ Mat hough_circle(Mat orig, int threshold, double lower, double upper)
 				if (accu[r - min_r][b][a] >= threshold)
 				{
 					std::cout << b << " " << a << " " << r << std::endl;
-					circle(ret, Point(b, a), r, Scalar(0, 255, 0), -1, LINE_4, 0);
+					circle(ret, Point(a, b), r, Scalar(0, 255, 0), 2, LINE_4, 0);
 				}
 
 			}
