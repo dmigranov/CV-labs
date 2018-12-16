@@ -120,8 +120,6 @@ Mat hough_circle(Mat orig, int threshold, double lower, double upper)
 	int accu_w = 180;
 	lines = gauss_filter(orig, 10);
 	lines = canny(lines, lower, upper);
-	//return lines;
-	//lines = canny(orig, lower, upper);
 	
 	int rows = orig.rows;
 	int cols = orig.cols;
@@ -129,15 +127,11 @@ Mat hough_circle(Mat orig, int threshold, double lower, double upper)
 	double centerX = cols / 2;
 	double centerY = rows / 2;
 
-	//unsigned int * accu = (unsigned int*)calloc(dr * (rows + 2*max_r) * (cols + 2*max_r), sizeof(unsigned int));
+
 	unsigned int *** accu = (uint ***)calloc(dr, sizeof(uint **));
 	for (int i = 0; i < dr; i++)
 	{
-		/*accu[i] = (uint **)calloc(rows + 2 * max_r, sizeof(uint**)); //rows недостаточно
-		for (int j = 0; j < rows + 2 * max_r; j++)
-		{
-			accu[i][j] = (uint*)calloc(cols + 2 * max_r, sizeof(uint**));
-		}*/
+
 		accu[i] = (uint **)calloc(rows, sizeof(uint**)); //rows недостаточно
 		for (int j = 0; j < rows; j++)
 		{
@@ -162,7 +156,7 @@ Mat hough_circle(Mat orig, int threshold, double lower, double upper)
 						double r;
 						//r = sqrt(pow(x-x0,2) + pow(y-y0,2));
 						r = pow(x - x0, 2) + pow(y - y0, 2);
-//						r = round(r);
+
 						if (r >= minr2 && r < maxr2)
 						{
 							accu[(int)round(sqrt(r)) - min_r][y0][x0]++;
