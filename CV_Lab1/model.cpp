@@ -198,7 +198,8 @@ Mat triangle(Mat orig, int threshold, double lower, double upper)
 
 Mat ransac(Mat orig, int threshold, double lower, double upper)
 {
-	int maxIter = 300;
+	int maxIter = 200;
+	
 
 	int dZero = 10;
 
@@ -210,8 +211,7 @@ Mat ransac(Mat orig, int threshold, double lower, double upper)
 	int rows = orig.rows;
 	int cols = orig.cols;
 
-	double centerX = cols / 2;
-	double centerY = rows / 2;
+
 
 	int n = 2; //для прямой
 
@@ -227,16 +227,16 @@ Mat ransac(Mat orig, int threshold, double lower, double upper)
 			if (lines.at<double>(ry, rx) == 1)
 			{
 				points.push_back(Point(rx, ry));
-				//std::cout << rx << " " << ry << std::endl;
+
 				cur_n++;
 			}
 		}
 		Point p1 = points[0];
 		Point p2 = points[1];
 		//ax + by + c = 0
-		int a = p1.y - p2.y;
-		int b = p2.x - p1.x;
-		int c = (p1.x - centerX) * (p2.y - centerY) - (p2.x - centerX) * (p1.y - centerY);
+		long int a = p1.y - p2.y;
+		long int b = p2.x - p1.x;
+		long int c = (p1.x) * (p2.y) - (p2.x) * (p1.y);
 		//мож вычислять радиус и theta?
 		std::cout << a << " " << b << " " << c << std::endl;
 

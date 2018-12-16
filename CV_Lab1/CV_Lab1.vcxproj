@@ -137,6 +137,7 @@
     <ClCompile Include="lab.cpp" />
     <ClCompile Include="local_features.cpp" />
     <ClCompile Include="model.cpp" />
+    <ClCompile Include="model_old.cpp" />
     <ClCompile Include="morphology.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="Neuron.cpp" />
