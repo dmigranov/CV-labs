@@ -197,10 +197,10 @@ Mat hough_circle(Mat orig, int threshold, double lower, double upper)
 		{
 			for (int b = 0; b < rows; b++)
 			{
-				if (accu[r - min_r][b][a] >= 100)
+				if (accu[r - min_r][b][a] >= threshold)
 				{
 					std::cout << b << " " << a << " " << r << std::endl;
-					circle(ret, Point(b, a), r, Scalar(0, 255, 0), 2, LINE_4, 0);
+					circle(ret, Point(b, a), r, Scalar(0, 255, 0), -1, LINE_4, 0);
 				}
 
 			}
