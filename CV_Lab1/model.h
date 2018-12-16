@@ -12,6 +12,6 @@ using namespace cv;
 Mat hough(Mat orig, int threshold, double lower, double upper);
 Mat hough_circle(Mat orig, int threshold, double lower, double upper);
 
-Mat ransac();
+Mat ransac(Mat orig, int threshold, double lower, double upper);
 
 
