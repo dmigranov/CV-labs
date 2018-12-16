@@ -216,7 +216,8 @@ int main(int argc, char **argv)
 		{
 			//imshow("HOUGH LINES", hough(img, 40, 0.8, 0.85)); //для sign2 - ок!!!
 			//imshow("HOUGH CIRCLE", hough_circle(img, 100, 0.4, 0.45)); //короче круг выделился а остальное неважно. сигма = 10
-			imshow("RANSAC LINES", ransac(img, 1800, 0.8, 0.85));
+			imshow("HOUGH CIRCLE", hough_circle(img, 100, 0.4, 0.45)); //для третьей неплохо?
+			//imshow("RANSAC LINES", ransac(img, 2000, 0.8, 0.85));
 		}
 		else if (k == 'g')
 		{

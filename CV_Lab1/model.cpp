@@ -114,17 +114,29 @@ Mat hough_circle(Mat orig, int threshold, double lower, double upper)
 	//r = 10..50
 	//gauss?
 	Mat lines;
-	int max_r = 50, min_r = 10, dr = max_r - min_r;
+	int max_r = 80, min_r = 40, dr = max_r - min_r;
 	int accu_w = 180;
 	lines = gauss_filter(orig, 10);
 	lines = canny(lines, lower, upper);
+	return lines;
+	//lines = canny(orig, lower, upper);
+	
 	int rows = orig.rows;
 	int cols = orig.cols;
 
 	double centerX = cols / 2;
 	double centerY = rows / 2;
 
-	unsigned int * accu = (unsigned int*)calloc(dr * (rows + 2*max_r) * (cols + 2*max_r), sizeof(unsigned int));
+	//unsigned int * accu = (unsigned int*)calloc(dr * (rows + 2*max_r) * (cols + 2*max_r), sizeof(unsigned int));
+	unsigned int *** accu = (uint ***)calloc(dr, sizeof(uint **));
+	for (int i = 0; i < dr; i++)
+	{
+		accu[i] = (uint **)calloc(rows + 2 * max_r, sizeof(uint**)); //rows недостаточно
+		for (int j = 0; j < rows + 2 * max_r; j++)
+		{
+			accu[i][j] = (uint*)calloc(cols + 2 * max_r, sizeof(uint**));
+		}
+	}
 	for (int y = 0; y < rows; y++)
 	{
 		for (int x = 0; x < cols; x++)
@@ -138,8 +150,9 @@ Mat hough_circle(Mat orig, int threshold, double lower, double upper)
 						double a = x - r * cos(theta / 180 * M_PI);
 						double b = y - r * sin(theta / 180 * M_PI);
 
-						accu[(int)round((r + min_r) * rows * cols + (max_r + a) * rows + (max_r + b))]++; //тут ашмпка
-						std::cout << accu[(int)round((r + min_r) * rows * cols + (max_r + a) * rows + (max_r + b))] << std::endl;
+						//accu[(int)round((r + min_r) * rows * cols + (max_r + a) * rows + (max_r + b))]++; //тут ашмпка
+						//std::cout << accu[(int)round((r + min_r) * rows * cols + (max_r + a) * rows + (max_r + b))] << std::endl;
+						accu[r - min_r][max_r + (int)round(b)][max_r + (int)round(a)]++;
 					}
 				}
 			}
@@ -153,14 +166,15 @@ Mat hough_circle(Mat orig, int threshold, double lower, double upper)
 		{
 			for (int b = 0; b < rows + max_r; b++)
 			{
-				;
+				if (accu[r - min_r][b][a] == 360)
+					circle(ret, Point(b, a), r, Scalar(0, 0, 255));
 
 			}
 		}
 	}
 	
 	free(accu);
-	return lines;
+	return ret;
 }
 
 
@@ -174,7 +188,7 @@ Mat ransac(Mat orig, int threshold, double lower, double upper)
 {
 	int maxIter = 300;
 
-	int dZero = 15;
+	int dZero = 10;
 
 	//for lines
 	Mat ret;
