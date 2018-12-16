@@ -10,9 +10,11 @@ Mat hough(Mat orig, int threshold, double lower, double upper)
 	Mat ret;
 	orig.copyTo(ret);
 
-	lines = canny(orig, lower, upper); //получили утончёенные линии
-	/*lines = gauss_filter(orig, 5);
-	lines = canny(lines, lower, upper);*/
+	//lines = canny(orig, lower, upper); //ВТОРАЯ КАРТИНКА!!!
+	
+	lines = gauss_filter(orig, 5);
+	lines = canny(lines, lower, upper); //четверта картинка
+	
 
 	int rows = orig.rows;
 	int cols = orig.cols;
@@ -83,7 +85,7 @@ Mat hough(Mat orig, int threshold, double lower, double upper)
 					x2 = cols;
 					y2 = ((r - accu_h / 2) - (x2 - centerX) * cos(theta / 180.0*M_PI)) / sin(theta / 180.0*M_PI) + centerY;
 
-					//line(ret, Point(x1, y1), Point(x2, y2), Scalar(0, 0, 255), 1, LINE_4);
+					line(ret, Point(x1, y1), Point(x2, y2), Scalar(0, 0, 255), 1, LINE_4);
 					lines_vector.push_back(std::pair<Point2d, Point2d>(Point2d(x1, y1), Point2d(x2, y2)));
 				}
 				else
@@ -94,7 +96,7 @@ Mat hough(Mat orig, int threshold, double lower, double upper)
 					y2 = rows;
 					x2 = ((r - accu_h / 2) - (y2 - centerY) * sin(theta / 180.0*M_PI)) / cos(theta / 180.0*M_PI) + centerX;
 
-					//(ret, Point(x1, y1), Point(x2, y2), Scalar(0, 0, 255), 1, LINE_4);
+					line(ret, Point(x1, y1), Point(x2, y2), Scalar(0, 0, 255), 1, LINE_4);
 					lines_vector.push_back(std::pair<Point2d, Point2d>(Point2d(x1, y1), Point2d(x2, y2)));
 				}
 			}

@@ -214,9 +214,10 @@ int main(int argc, char **argv)
 			L_histogram();
 		else if (k == 'H')
 		{
-			//imshow("HOUGH LINES", hough(img, 40, 0.8, 0.85)); //дл€ sign2 - ок!!!
+			//imshow("HOUGH LINES", hough(img, 40, 0.8, 0.85)); //дл€ sign2 - ок!!! (Ѕ≈« –ј«ћџ“»я!)
+			//imshow("HOUGH LINES", hough(img, 60, 0.20, 0.25)); //дл€ sign4 (с гауссом) //неидеально но неплохо
 			//imshow("HOUGH CIRCLE", hough_circle(img, 100, 0.4, 0.45)); //короче круг выделилс€ а остальное неважно. сигма = 10
-			imshow("HOUGH CIRCLE", hough_circle(img, 100, 0.4, 0.45)); //дл€ третьей неплохо?
+			imshow("HOUGH CIRCLE", hough_circle(img, 100, 0.4, 0.45)); //Ё“ќќќќ!
 			//imshow("RANSAC LINES", ransac(img, 2000, 0.8, 0.85));
 		}
 		else if (k == 'g')
