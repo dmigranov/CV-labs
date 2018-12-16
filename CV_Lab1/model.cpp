@@ -261,16 +261,6 @@ Mat ransac(Mat orig, int threshold, double lower, double upper)
 				
 				if (lines.at<double>(y, x) == 1 && abs((x - centerX)*cos(theta) + (y - centerY) * sin(theta) - r) < dZero)
 				{
-					//std::cout << abs((x - centerX)*cos(theta) + (y - centerY) * sin(theta) - r) << " " << x << " " << y << std::endl;
-					/*if (x > nx1)
-						nx1 = x;
-					if (x < nx2)
-						nx2 = x;
-					if (y > ny1)
-						ny1 = y;
-					if (y < ny2)
-						ny2 = y;*/
-
 					goodPointsCount++;
 				}
 			}
