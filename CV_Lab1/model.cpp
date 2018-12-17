@@ -10,10 +10,10 @@ Mat hough(Mat orig, int threshold, double lower, double upper)
 	Mat ret;
 	orig.copyTo(ret);
 
-	//lines = canny(orig, lower, upper); //ВТОРАЯ КАРТИНКА!!!
+	lines = canny(orig, lower, upper); //ВТОРАЯ КАРТИНКА!!!
 	
-	lines = gauss_filter(orig, 5);
-	lines = canny(lines, lower, upper); //четверта картинка
+	/*lines = gauss_filter(orig, 5);
+	lines = canny(lines, lower, upper); //четверта картинка*/
 	
 
 	int rows = orig.rows;

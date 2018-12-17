@@ -214,11 +214,11 @@ int main(int argc, char **argv)
 			L_histogram();
 		else if (k == 'H')
 		{
-			//imshow("HOUGH LINES", hough(img, 40, 0.8, 0.85)); //для sign2 - ок!!! (БЕЗ РАЗМЫТИЯ!)
+			imshow("HOUGH LINES", hough(img, 40, 0.8, 0.85)); //для sign2 - ок!!! (БЕЗ РАЗМЫТИЯ!)
 			//imshow("HOUGH LINES", hough(img, 60, 0.20, 0.25)); //для sign4 (с гауссом) //неидеально но неплохо
 			//imshow("HOUGH CIRCLE", hough_circle(img, 100, 0.4, 0.45)); //короче круг выделился а остальное неважно. сигма = 10
 			//imshow("HOUGH CIRCLE", hough_circle(img, 100, 0.4, 0.45)); //ЭТОООО!
-			imshow("RANSAC LINES", ransac(img, 190, 0.8, 0.85)); //sign2
+			//imshow("RANSAC LINES", ransac(img, 190, 0.8, 0.85)); //sign2
 		}
 		else if (k == 'g')
 		{
